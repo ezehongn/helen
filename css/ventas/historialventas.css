@@ -1,0 +1,998 @@
+/* ========================================
+   MODAL HISTORIAL DE VENTAS
+======================================== */
+
+.modal-historial-ventas {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 3000;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 25px;
+
+    box-sizing: border-box;
+
+    background: rgba(15, 27, 43, 0.48);
+
+}
+
+
+.modal-historial-ventas.visible {
+
+    display: flex;
+
+}
+
+
+.contenido-modal-historial-ventas {
+
+    width: min(
+        1050px,
+        calc(100vw - 50px)
+    );
+
+    height: min(
+        760px,
+        calc(100vh - 50px)
+    );
+
+    display: flex;
+
+    flex-direction: column;
+
+    background: #ffffff;
+
+    border: 1px solid #dce4ed;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 20px 60px rgba(20, 35, 55, 0.25);
+
+    overflow: hidden;
+
+}
+
+
+/* ========================================
+   ENCABEZADO
+======================================== */
+
+.encabezado-historial-ventas {
+
+    min-height: 78px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 15px 22px;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid #e3e8ee;
+
+}
+
+
+.encabezado-historial-ventas h2 {
+
+    margin: 0;
+
+    color: #142b50;
+
+    font-size: 23px;
+
+    font-weight: 700;
+
+}
+
+
+.encabezado-historial-ventas p {
+
+    margin: 4px 0 0;
+
+    color: #7a8798;
+
+    font-size: 13px;
+
+}
+
+
+.cerrar-modal-historial {
+
+    width: 34px;
+
+    height: 34px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+
+    border-radius: 5px;
+
+    background: transparent;
+
+    color: #64748b;
+
+    font-size: 25px;
+
+    cursor: pointer;
+
+}
+
+
+.cerrar-modal-historial:hover {
+
+    background: #f1f4f7;
+
+    color: #24344d;
+
+}
+
+
+/* ========================================
+   CONTROLES
+======================================== */
+
+.controles-historial-ventas {
+
+    display: flex;
+
+    align-items: flex-end;
+
+    gap: 10px;
+
+    padding: 15px 22px;
+
+    border-bottom: 1px solid #e5eaf0;
+
+    box-sizing: border-box;
+
+}
+
+
+.buscador-historial-ventas {
+
+    flex: 1;
+
+    height: 40px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 0 11px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d3dce7;
+
+    border-radius: 6px;
+
+    background: #ffffff;
+
+}
+
+
+.buscador-historial-ventas span {
+
+    color: #64748b;
+
+    font-size: 19px;
+
+}
+
+.buscador-historial-ventas input {
+
+    width: 100%;
+
+    height: 100%;
+
+    padding: 0;
+
+    border: none;
+
+    outline: none;
+
+    color: #24344d;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+}
+
+.buscador-historial-ventas input::placeholder {
+
+    color: #8b98a8;
+
+}
+
+
+.filtro-historial-ventas {
+
+    width: 180px;
+
+    height: 40px;
+
+    flex-shrink: 0;
+
+    padding: 0 10px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d3dce7;
+
+    border-radius: 6px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #334155;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+}
+
+.filtro-historial-ventas:focus {
+
+    border-color: #2587e8;
+
+}
+
+/* ========================================
+   FILTRO POR FECHAS
+======================================== */
+
+.fecha-historial-ventas {
+
+    position: relative;
+
+    width: 135px;
+
+    height: 54px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: flex-end;
+
+}
+
+
+.fecha-historial-ventas label {
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    color: #718096;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    line-height: 12px;
+
+}
+
+
+
+.fecha-historial-ventas input {
+
+    width: 100%;
+
+    height: 40px;
+
+    padding: 0 9px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d3dce7;
+
+    border-radius: 6px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #334155;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+}
+
+
+.fecha-historial-ventas input:focus {
+
+    border-color: #2587e8;
+
+    box-shadow:
+        0 0 0 2px rgba(
+            37,
+            135,
+            232,
+            0.08
+        );
+
+}
+
+
+/* ========================================
+   LISTA
+======================================== */
+
+.lista-historial-completo {
+
+    flex: 1;
+
+    min-height: 0;
+
+    padding: 15px 22px;
+
+    overflow-y: auto;
+
+}
+
+
+.historial-cargando,
+.historial-vacio-completo {
+
+    min-height: 250px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    color: #7a8798;
+
+    font-size: 13px;
+
+}
+
+
+/* ========================================
+   ITEM DE VENTA
+======================================== */
+
+.item-historial-completo {
+
+    margin-bottom: 10px;
+
+    border: 1px solid #dce4ed;
+
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    overflow: hidden;
+
+}
+
+
+.encabezado-item-historial {
+
+    min-height: 72px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(190px, 1.3fr)
+        minmax(150px, 1fr)
+        130px
+        110px
+        35px;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 10px 14px;
+
+    box-sizing: border-box;
+
+    cursor: pointer;
+
+}
+
+
+.encabezado-item-historial:hover {
+
+    background: #f8fafc;
+
+}
+
+
+.numero-venta-historial {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+}
+
+
+.numero-venta-historial strong {
+
+    color: #172d50;
+
+    font-size: 14px;
+
+}
+
+
+.numero-venta-historial span {
+
+    color: #8491a3;
+
+    font-size: 11px;
+
+}
+
+
+.cliente-venta-historial {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+}
+
+
+.cliente-venta-historial strong {
+
+    color: #334155;
+
+    font-size: 12px;
+
+}
+
+
+.cliente-venta-historial span {
+
+    color: #8995a5;
+
+    font-size: 11px;
+
+}
+
+
+.total-historial {
+
+    text-align: right;
+
+    color: #122c56;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+}
+
+
+.estado-historial {
+
+    justify-self: center;
+
+    padding: 5px 9px;
+
+    border-radius: 999px;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+}
+
+
+.estado-historial.pagada {
+
+    color: #15945e;
+
+    background: #e5f8ef;
+
+}
+
+
+.estado-historial.deuda {
+
+    color: #d33b49;
+
+    background: #ffe8eb;
+
+}
+
+
+.flecha-historial {
+
+    color: #64748b;
+
+    font-size: 15px;
+
+    text-align: center;
+
+}
+
+
+/* ========================================
+   DETALLE
+======================================== */
+
+.detalle-item-historial {
+
+    display: none;
+
+    padding: 0 14px 15px;
+
+    border-top: 1px solid #e6ebf0;
+
+    background: #fbfcfd;
+
+}
+
+
+.item-historial-completo.abierto
+.detalle-item-historial {
+
+    display: block;
+
+}
+
+
+.item-historial-completo.abierto
+.flecha-historial {
+
+    transform: rotate(180deg);
+
+}
+
+
+.tabla-detalle-venta {
+
+    width: 100%;
+
+    margin-top: 13px;
+
+    border: 1px solid #dfe6ee;
+
+    border-radius: 6px;
+
+    overflow: hidden;
+
+}
+
+
+.cabecera-detalle-venta {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(180px, 1fr)
+        100px
+        80px
+        110px
+        110px;
+
+    padding: 9px 11px;
+
+    background: #f1f4f8;
+
+    color: #718096;
+
+    font-size: 10px;
+
+}
+
+
+.fila-detalle-venta {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(180px, 1fr)
+        100px
+        80px
+        110px
+        110px;
+
+    align-items: center;
+
+    padding: 9px 11px;
+
+    border-top: 1px solid #edf1f5;
+
+    color: #334155;
+
+    font-size: 11px;
+
+}
+
+
+.producto-detalle {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+
+}
+
+
+.producto-detalle strong {
+
+    color: #24344d;
+
+    font-size: 12px;
+
+}
+
+
+.producto-detalle span {
+
+    color: #8995a5;
+
+    font-size: 10px;
+
+}
+
+
+/* ========================================
+   INFORMACIÓN DEL PAGO
+======================================== */
+
+.informacion-detalle-venta {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1fr
+        1fr;
+
+    gap: 10px;
+
+    margin-top: 12px;
+
+}
+
+
+.bloque-detalle-venta {
+
+    padding: 10px;
+
+    border: 1px solid #e1e7ee;
+
+    border-radius: 6px;
+
+    background: #ffffff;
+
+}
+
+
+.bloque-detalle-venta h4 {
+
+    margin: 0 0 7px;
+
+    color: #607086;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+}
+
+
+.bloque-detalle-venta p {
+
+    margin: 3px 0;
+
+    color: #334155;
+
+    font-size: 11px;
+
+}
+
+
+.bloque-detalle-venta strong {
+
+    color: #172d50;
+
+}
+
+
+/* ========================================
+   RESUMEN
+======================================== */
+
+.resumen-detalle-venta {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 8px;
+
+    margin-top: 10px;
+
+}
+
+
+.resumen-venta-item {
+
+    padding: 8px 10px;
+
+    border-radius: 5px;
+
+    background: #f1f5f9;
+
+}
+
+
+.resumen-venta-item span {
+
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #718096;
+
+    font-size: 10px;
+
+}
+
+
+.resumen-venta-item strong {
+
+    color: #24344d;
+
+    font-size: 13px;
+
+}
+
+
+.resumen-venta-item.vuelto {
+
+    background: #e9f9f1;
+
+}
+
+
+.resumen-venta-item.vuelto strong {
+
+    color: #15945e;
+
+}
+
+
+.resumen-venta-item.deuda {
+
+    background: #fff0f2;
+
+}
+
+
+.resumen-venta-item.deuda strong {
+
+    color: #dc3545;
+
+}
+
+
+/* ========================================
+   OBSERVACIONES
+======================================== */
+
+.observaciones-historial {
+
+    margin-top: 10px;
+
+    padding: 9px 10px;
+
+    border-radius: 5px;
+
+    background: #f5f7fa;
+
+    color: #637083;
+
+    font-size: 11px;
+
+}
+
+
+.observaciones-historial strong {
+
+    color: #334155;
+
+}
+
+
+/* ========================================
+   PIE
+======================================== */
+
+.pie-historial-ventas {
+
+    min-height: 62px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 10px 22px;
+
+    box-sizing: border-box;
+
+    border-top: 1px solid #e3e8ee;
+
+}
+
+
+#cantidad-historial-ventas {
+
+    color: #718096;
+
+    font-size: 12px;
+
+}
+
+
+.boton-cerrar-historial {
+
+    height: 38px;
+
+    padding: 0 18px;
+
+    border: 1px solid #d3dce7;
+
+    border-radius: 6px;
+
+    background: #ffffff;
+
+    color: #36516f;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    cursor: pointer;
+
+}
+
+
+.boton-cerrar-historial:hover {
+
+    background: #f4f7fa;
+
+}
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 800px) {
+
+    .encabezado-item-historial {
+
+        grid-template-columns:
+            1fr
+            auto
+            30px;
+
+    }
+
+
+    .cliente-venta-historial {
+
+        display: none;
+
+    }
+
+
+    .total-historial {
+
+        text-align: left;
+
+    }
+
+
+    .estado-historial {
+
+        justify-self: start;
+
+    }
+
+    .controles-historial-ventas {
+
+        flex-wrap: wrap;
+
+    }
+
+
+    .buscador-historial-ventas {
+
+        width: 100%;
+
+        flex-basis: 100%;
+
+    }
+
+
+    .fecha-historial-ventas input {
+
+        width: 150px;
+
+    }
+
+
+    .cabecera-detalle-venta,
+    .fila-detalle-venta {
+
+        grid-template-columns:
+            1fr
+            70px
+            60px
+            90px
+            90px;
+
+    }
+
+
+    .informacion-detalle-venta {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .resumen-detalle-venta {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+}

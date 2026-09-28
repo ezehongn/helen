@@ -1,0 +1,225 @@
+<section class="pantalla-ventas">
+
+    <header class="encabezado-ventas">
+        <div>
+            <h1>Ventas</h1>
+            <p>Registrá y gestioná tus ventas</p>
+        </div>
+    </header>
+
+    <div class="contenido-ventas">
+
+        <main class="principal-ventas">
+
+            <!-- CARRITO -->
+            <section class="panel-ventas panel-carrito">
+
+                <div class="encabezado-panel-ventas">
+                    <div class="titulo-panel-ventas">
+                        <span class="icono-panel-ventas">🛒</span>
+                        <h2>Agregar productos</h2>
+                    </div>
+
+                    <button type="button"
+                            id="limpiar-venta"
+                            class="boton-secundario-ventas">
+                        🗑 Limpiar venta
+                    </button>
+                </div>
+
+                <div class="buscador-ventas">
+                    <span class="icono-busqueda-ventas">⌕</span>
+                    <input type="text"
+                           id="busqueda-productos-venta"
+                           placeholder="Buscar por nombre o categoría..."
+                           autocomplete="off">
+                </div>
+
+                <div id="resultados-productos-venta"
+                     class="resultados-productos-venta"></div>
+
+                <div class="tabla-carrito-ventas">
+
+                    <div class="cabecera-carrito-ventas">
+                        <span>Producto</span>
+                        <span>Talle / Medida</span>
+                        <span>Cantidad</span>
+                        <span>Precio</span>
+                        <span>Subtotal</span>
+                        <span>Acciones</span>
+                    </div>
+
+                    <div id="lista-carrito-ventas"></div>
+
+                    <div id="carrito-vacio" class="carrito-vacio">
+                        <span>🛒</span>
+                        <strong>No hay productos agregados</strong>
+                        <small>Buscá un producto para comenzar la venta.</small>
+                    </div>
+
+                </div>
+
+                <div class="pie-carrito-ventas">
+                    <button type="button"
+                            id="agregar-otro-producto"
+                            class="boton-agregar-producto-venta">
+                        + Agregar otro producto
+                    </button>
+
+                    <div class="total-venta">
+                        <span>Total de la venta</span>
+                        <strong id="total-venta">$ 0</strong>
+                    </div>
+                </div>
+
+            </section>
+
+
+            <!-- CLIENTE + MEDIOS DE PAGO -->
+            <div class="fila-detalles-venta">
+
+                <section class="panel-ventas panel-cliente">
+
+                    <div class="encabezado-detalle-venta">
+                        <h2>Cliente</h2>
+
+                        <button type="button"
+                                id="nuevo-cliente-venta"
+                                class="boton-outline-venta">
+                            + Nuevo cliente
+                        </button>
+                    </div>
+
+                    <div class="buscador-cliente-venta">
+                        <span class="icono-cliente-venta">♙</span>
+
+                        <input type="text"
+                               id="busqueda-cliente-venta"
+                               placeholder="Buscar por nombre, apellido o DNI..."
+                               autocomplete="off">
+
+                        <button type="button"
+                                id="limpiar-cliente-venta"
+                                class="boton-limpiar-cliente"
+                                title="Quitar cliente">
+                            ×
+                        </button>
+                    </div>
+
+                    <div id="resultados-clientes-venta"
+                         class="resultados-clientes-venta"></div>
+
+                    <div id="cliente-seleccionado-venta"
+                         class="cliente-seleccionado-venta">
+                        <span>Venta sin cliente</span>
+                    </div>
+
+                </section>
+
+
+                <section class="panel-ventas panel-medios-pago">
+
+                    <div class="encabezado-detalle-venta">
+                        <h2>Medios de pago</h2>
+
+                        <button type="button"
+                                id="agregar-medio-pago"
+                                class="boton-outline-venta">
+                            + Agregar medio de pago
+                        </button>
+                    </div>
+
+                    <div id="lista-medios-pago"
+                         class="lista-medios-pago"></div>
+
+                    <div id="sin-medios-pago"
+                         class="sin-medios-pago">
+                        Agregá un medio de pago para registrar la venta.
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- TOTALES -->
+            <section class="contenedor-totales-venta">
+
+                <div class="tarjeta-total-venta total-pagar">
+                    <span>Total a pagar</span>
+                    <strong id="total-a-pagar">$ 0</strong>
+                </div>
+
+                <div class="tarjeta-total-venta total-entregado">
+                    <span>Total entregado</span>
+                    <strong id="total-entregado">$ 0</strong>
+                </div>
+
+                <div class="tarjeta-total-venta vuelto">
+                    <span>Vuelto</span>
+                    <strong id="vuelto-venta">$ 0</strong>
+                </div>
+
+                <div class="tarjeta-total-venta saldo-deber">
+                    <span>Saldo a deber</span>
+                    <strong id="saldo-a-deber">$ 0</strong>
+                </div>
+
+            </section>
+
+
+            <!-- OBSERVACIONES -->
+            <section class="panel-final-venta">
+
+                <div class="campo-observaciones-venta">
+                    <label for="observaciones-venta">
+                        Observaciones <span>(opcional)</span>
+                    </label>
+
+                    <textarea id="observaciones-venta"
+                              rows="3"
+                              placeholder="Ej. Comentarios de la venta, dirección de entrega, etc..."></textarea>
+                </div>
+
+                <button type="button"
+                        id="registrar-venta"
+                        class="boton-registrar-venta"
+                        disabled>
+                    ✓ Registrar venta
+                </button>
+
+            </section>
+
+            <div id="mensaje-venta" class="mensaje-venta"></div>
+
+        </main>
+
+
+        <!-- HISTORIAL -->
+        <aside class="panel-ventas historial-ventas">
+
+            <div class="encabezado-historial-ventas">
+                <h2>Últimas ventas</h2>
+
+                <button type="button"
+                        id="ver-historial-completo"
+                        class="boton-outline-venta">
+                    Ver historial completo
+                </button>
+            </div>
+
+            <div id="lista-ultimas-ventas"
+                 class="lista-ultimas-ventas"></div>
+
+            <div id="historial-vacio"
+                 class="historial-vacio">
+                <span>🧾</span>
+                <strong>No hay ventas registradas</strong>
+                <small>Las ventas de este usuario aparecerán aquí.</small>
+            </div>
+
+        </aside>
+
+    </div>
+
+</section>

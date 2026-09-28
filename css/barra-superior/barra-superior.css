@@ -1,0 +1,352 @@
+/* ========================================
+   BARRA SUPERIOR
+======================================== */
+
+.barra-superior {
+    width: 100%;
+    height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 22px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #edf0f3;
+
+    position: relative;
+
+    z-index: 50;
+}
+
+
+/* ========================================
+   ESPACIO
+======================================== */
+
+.barra-superior-espacio {
+    flex: 1;
+}
+
+
+/* ========================================
+   USUARIO
+======================================== */
+
+.usuario-menu {
+    position: relative;
+}
+
+
+.usuario-boton {
+    min-width: 150px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 6px 8px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease;
+}
+
+
+.usuario-boton:hover {
+    background: #f4f6f8;
+}
+
+
+/* ========================================
+   AVATAR
+======================================== */
+
+.usuario-avatar {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #15191f;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* ========================================
+   DATOS
+======================================== */
+
+.usuario-datos {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 2px;
+}
+
+
+.usuario-nombre {
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #1c2229;
+}
+
+
+.usuario-rol {
+    font-size: 10px;
+
+    color: #8a919d;
+}
+
+
+/* ========================================
+   FLECHA
+======================================== */
+
+.usuario-flecha {
+    margin-left: auto;
+
+    font-size: 14px;
+
+    color: #68717c;
+}
+
+
+/* ========================================
+   MENÚ DESPLEGABLE
+======================================== */
+
+.menu-usuario {
+    position: absolute;
+
+    top: calc(100% + 5px);
+    right: 0;
+
+    width: 170px;
+
+    padding: 6px;
+
+    background: #ffffff;
+
+    border: 1px solid #e7eaee;
+
+    border-radius: 8px;
+
+    box-shadow:
+        0 8px 25px rgba(20, 25, 35, 0.12);
+
+    display: none;
+}
+
+
+.menu-usuario.visible {
+    display: block;
+}
+
+
+.menu-usuario button {
+    width: 100%;
+    height: 36px;
+
+    padding: 0 10px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    background: transparent;
+
+    color: #343a42;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 13px;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+
+.menu-usuario button:hover {
+    background: #f3f5f7;
+
+    color: #15191f;
+}
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 700px) {
+
+    .barra-superior {
+        height: 64px;
+
+        padding: 0 12px;
+    }
+
+
+    .usuario-boton {
+        min-width: auto;
+    }
+
+
+    .usuario-datos {
+        display: none;
+    }
+
+}
+
+/* ========================================
+   MENÚ DE USUARIOS
+======================================== */
+
+.titulo-menu-usuario {
+    padding: 7px 10px 8px;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    color: #8a919d;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+}
+
+
+.opcion-usuario {
+    width: 100%;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 0 8px;
+
+    border: none;
+    border-radius: 6px;
+
+    background: transparent;
+
+    color: #343a42;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 13px;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+
+.opcion-usuario:hover {
+    background: #f3f5f7;
+}
+
+
+.opcion-usuario.activo {
+    background: #edf4fa;
+
+    color: #21649b;
+
+    font-weight: 600;
+}
+
+
+.avatar-opcion {
+    width: 25px;
+    height: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #15191f;
+
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 600;
+}
+
+
+.opcion-usuario.activo .avatar-opcion {
+    background: #21649b;
+}
+
+
+.separador-usuario {
+    width: 100%;
+    height: 1px;
+
+    margin: 5px 0;
+
+    background: #e7eaee;
+}
+
+
+.boton-cerrar-sesion {
+    width: 100%;
+    height: 36px;
+
+    padding: 0 10px;
+
+    border: none;
+    border-radius: 6px;
+
+    background: transparent;
+
+    color: #343a42;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 13px;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+
+.boton-cerrar-sesion:hover {
+    background: #f3f5f7;
+
+    color: #b3261e;
+}

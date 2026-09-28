@@ -1,0 +1,288 @@
+<section class="pantalla-productos">
+
+    <!-- ========================================
+         ENCABEZADO
+    ======================================== -->
+
+    <header class="encabezado-productos">
+
+        <div>
+
+            <h1>
+                Productos
+            </h1>
+
+            <p>
+                Administra tu inventario
+            </p>
+
+        </div>
+
+
+        <div class="acciones-encabezado">
+
+            <button
+                type="button"
+                class="boton-registrar-ingresos"
+                id="boton-registrar-ingresos"
+            >
+                <span class="icono-ingresos">
+                    ↓
+                </span>
+
+                Registrar ingresos
+            </button>
+
+
+            <button
+                type="button"
+                class="boton-agregar-producto"
+                id="boton-agregar-producto"
+            >
+                <span>
+                    +
+                </span>
+
+                Agregar producto
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- ========================================
+         CONTROLES
+    ======================================== -->
+
+    <section class="controles-productos">
+
+        <div class="buscador-productos">
+
+            <span class="icono-busqueda">
+                ⌕
+            </span>
+
+            <input
+                type="text"
+                id="busqueda-productos"
+                placeholder="Buscar productos o categoría..."
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <select
+            id="filtro-categoria"
+            class="filtro-productos"
+        >
+
+            <option value="">
+                Todas las categorías
+            </option>
+
+        </select>
+
+
+        <select
+            id="filtro-estado"
+            class="filtro-productos"
+        >
+
+            <option value="">
+                Todos los estados
+            </option>
+
+            <option value="activo">
+                Activos
+            </option>
+
+            <option value="inactivo">
+                Inactivos
+            </option>
+
+        </select>
+
+
+        <select
+            id="orden-productos"
+            class="filtro-productos"
+        >
+
+            <option value="nombre">
+                Ordenar por
+            </option>
+
+            <option value="nombre">
+                Nombre
+            </option>
+
+            <option value="precio-menor">
+                Precio: menor a mayor
+            </option>
+
+            <option value="precio-mayor">
+                Precio: mayor a menor
+            </option>
+
+            <option value="stock-menor">
+                Stock: menor a mayor
+            </option>
+
+            <option value="stock-mayor">
+                Stock: mayor a menor
+            </option>
+
+        </select>
+
+
+        <button
+            type="button"
+            class="boton-limpiar-filtros"
+            id="boton-limpiar-filtros"
+        >
+            Limpiar filtros
+        </button>
+
+
+        <div class="cambiar-vista">
+
+            <button
+                type="button"
+                class="boton-vista activo"
+                id="vista-grilla"
+                title="Vista de grilla"
+            >
+                ▦
+            </button>
+
+
+            <button
+                type="button"
+                class="boton-vista"
+                id="vista-lista"
+                title="Vista de lista"
+            >
+                ☷
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================================
+         INFORMACIÓN
+    ======================================== -->
+
+    <div class="informacion-productos">
+
+        <strong id="cantidad-productos">
+            0 productos
+        </strong>
+
+    </div>
+
+
+    <!-- ========================================
+         CONTENIDO
+    ======================================== -->
+
+    <div class="contenido-productos">
+
+        <!-- PRODUCTOS -->
+
+        <section class="productos-principal">
+
+            <div
+                class="grilla-productos"
+                id="contenedor-productos"
+            ></div>
+
+
+            <!-- PAGINACIÓN -->
+
+            <div class="paginacion-productos">
+
+                <span id="texto-paginacion">
+                    Mostrando 0 productos
+                </span>
+
+
+                <div class="controles-paginacion">
+
+                    <button
+                        type="button"
+                        id="pagina-anterior"
+                        class="boton-paginacion"
+                    >
+                        ‹
+                    </button>
+
+
+                    <div
+                        id="numeros-pagina"
+                        class="numeros-pagina"
+                    ></div>
+
+
+                    <button
+                        type="button"
+                        id="pagina-siguiente"
+                        class="boton-paginacion"
+                    >
+                        ›
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================
+             CATEGORÍAS
+        ======================================== -->
+
+        <aside class="panel-categorias">
+
+            <div class="encabezado-categorias">
+
+                <h2>
+                    Categorías de productos
+                </h2>
+
+
+                <button
+                    type="button"
+                    id="nueva-categoria"
+                    class="boton-nueva-categoria"
+                >
+                    +
+                    Nueva categoría
+                </button>
+
+            </div>
+
+
+            <div
+                id="lista-categorias"
+                class="lista-categorias"
+            ></div>
+
+        </aside>
+
+    </div>
+
+
+    <!-- ========================================
+         CONTENEDOR DE MODALES
+    ======================================== -->
+
+    <div
+        id="modales-productos"
+    ></div>
+
+</section>

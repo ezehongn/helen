@@ -1,0 +1,349 @@
+<div class="pantalla-inicio">
+
+    <!-- ========================================
+         ENCABEZADO
+    ========================================= -->
+
+    <div class="encabezado-inicio">
+
+        <div>
+            <h1>Inicio</h1>
+
+            <p id="subtitulo-inicio">
+                Resumen general de tu negocio
+            </p>
+        </div>
+
+        <div class="selector-periodo-inicio">
+    <button
+        type="button"
+        id="periodo-actual-inicio"
+        class="boton-periodo-inicio"
+    >
+        Este mes
+        <span>▾</span>
+    </button>
+
+    <div
+        id="menu-periodo-inicio"
+        class="menu-periodo-inicio"
+        hidden
+    ></div>
+</div>
+
+    </div>
+
+
+    <!-- ========================================
+         ESTADÍSTICAS
+    ========================================= -->
+
+    <div class="estadisticas-inicio">
+
+        <!-- VENTAS HOY -->
+
+        <div class="tarjeta-estadistica-inicio">
+
+            <div class="icono-estadistica-inicio azul">
+                $
+            </div>
+
+            <div class="contenido-estadistica-inicio">
+
+                <span>Ventas hoy</span>
+
+                <strong id="ventas-hoy-inicio">
+                    $ 0
+                </strong>
+
+                <small id="comparacion-ventas-hoy-inicio" class="comparacion-estadistica-inicio"></small>
+
+            </div>
+
+        </div>
+
+
+        <!-- VENTAS DEL MES -->
+
+        <div class="tarjeta-estadistica-inicio">
+
+            <div class="icono-estadistica-inicio verde">
+                $
+            </div>
+
+            <div class="contenido-estadistica-inicio">
+
+                <span>Ventas del mes</span>
+
+                <strong id="ventas-mes-inicio">
+                    $ 0
+                </strong>
+
+                <small id="comparacion-ventas-mes-inicio" class="comparacion-estadistica-inicio"></small>
+
+            </div>
+
+        </div>
+
+
+        <!-- CANTIDAD DE VENTAS -->
+
+        <div class="tarjeta-estadistica-inicio">
+
+            <div class="icono-estadistica-inicio violeta">
+                #
+            </div>
+
+            <div class="contenido-estadistica-inicio">
+
+                <span>Cantidad de ventas</span>
+
+                <strong id="cantidad-ventas-inicio">
+                    0
+                </strong>
+
+                <small id="comparacion-cantidad-ventas-inicio" class="comparacion-estadistica-inicio"></small>
+
+            </div>
+
+        </div>
+
+
+        <!-- GASTOS -->
+
+        <div class="tarjeta-estadistica-inicio">
+
+            <div class="icono-estadistica-inicio rojo">
+                $
+            </div>
+
+            <div class="contenido-estadistica-inicio">
+
+                <span>Gastos del mes</span>
+
+                <strong id="gastos-mes-inicio">
+                    $ 0
+                </strong>
+
+                <small id="comparacion-gastos-mes-inicio" class="comparacion-estadistica-inicio"></small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================
+         CONTENIDO PRINCIPAL
+    ========================================= -->
+
+    <div class="contenido-inicio">
+
+
+        <!-- ====================================
+             VENTAS ÚLTIMOS 7 DÍAS
+        ===================================== -->
+
+        <section class="panel-inicio panel-ventas-semana">
+
+            <div class="encabezado-panel-inicio">
+
+                <h2>
+                    Ventas de los últimos 7 días
+                </h2>
+
+            </div>
+
+            <div
+                id="grafico-ventas-semana"
+                class="grafico-ventas-semana"
+            >
+            </div>
+
+        </section>
+
+
+        <!-- ====================================
+             VENTAS POR CATEGORÍA
+        ===================================== -->
+
+        <section class="panel-inicio panel-categorias">
+
+            <div class="encabezado-panel-inicio">
+
+                <h2>
+                    Ventas por categoría
+                </h2>
+
+            </div>
+
+            <div class="grafico-torta-inicio">
+    <canvas id="grafico-ventas-categorias-inicio"></canvas>
+</div>
+
+<div
+    id="leyenda-ventas-categorias-inicio"
+    class="leyenda-categorias-inicio"
+></div>
+
+        </section>
+
+
+        <!-- ====================================
+             PRODUCTOS BAJO STOCK
+        ===================================== -->
+
+        <section class="panel-inicio panel-bajo-stock">
+
+            <div class="encabezado-panel-inicio">
+
+                <h2>
+                    Productos con bajo stock
+                </h2>
+
+                <button
+                    type="button"
+                    id="ver-productos-bajo-stock"
+                    class="enlace-panel-inicio"
+                >
+                    Ver todos
+                </button>
+
+            </div>
+
+            <div class="tabla-inicio">
+
+                <div class="cabecera-tabla-inicio">
+
+                    <span>Producto</span>
+                    <span>Categoría</span>
+                    <span>Stock</span>
+                    <span>Estado</span>
+
+                </div>
+
+                <div
+                    id="lista-productos-bajo-stock"
+                    class="lista-tabla-inicio"
+                >
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ====================================
+             ÚLTIMAS VENTAS
+        ===================================== -->
+
+        <section class="panel-inicio panel-ultimas-ventas">
+
+            <div class="encabezado-panel-inicio">
+
+                <h2>
+                    Últimas ventas
+                </h2>
+
+                <button
+                    type="button"
+                    id="ver-todas-ventas-inicio"
+                    class="enlace-panel-inicio"
+                >
+                    Ver todas
+                </button>
+
+            </div>
+
+            <div class="tabla-inicio">
+
+                <div class="cabecera-tabla-inicio">
+
+                    <span>Hora</span>
+                    <span>Productos</span>
+                    <span>Cliente</span>
+                    <span>Total</span>
+
+                </div>
+
+                <div
+                    id="lista-ultimas-ventas-inicio"
+                    class="lista-tabla-inicio"
+                >
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ====================================
+             RESULTADO DEL MES
+        ===================================== -->
+
+        <section class="panel-inicio panel-resultado">
+
+            <div class="encabezado-panel-inicio">
+
+                <h2>
+                    Resultado del mes
+                </h2>
+
+            </div>
+
+            <div class="resumen-resultado-inicio">
+
+                <div>
+
+                    <span>
+                        Ventas
+                    </span>
+
+                    <strong
+                        id="resultado-ventas-inicio"
+                        class="positivo"
+                    >
+                        $ 0
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Gastos
+                    </span>
+
+                    <strong
+                        id="resultado-gastos-inicio"
+                    >
+                        $ 0
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Resultado
+                    </span>
+
+                    <strong
+                        id="resultado-final-inicio"
+                    >
+                        $ 0
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+</div>

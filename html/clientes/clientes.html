@@ -1,0 +1,750 @@
+<section class="pantalla-clientes">
+
+    <!-- ========================================
+         ENCABEZADO
+    ======================================== -->
+
+    <header class="encabezado-clientes">
+
+        <div>
+
+            <h1>Clientes</h1>
+
+            <p>
+                Gestioná tus clientes y sus deudas
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="boton-nuevo-cliente"
+            id="boton-nuevo-cliente"
+        >
+
+            <span>+</span>
+
+            Nuevo cliente
+
+        </button>
+
+    </header>
+
+
+    <!-- ========================================
+         ESTADÍSTICAS
+    ======================================== -->
+
+    <section class="estadisticas-clientes">
+
+        <article class="tarjeta-estadistica-clientes">
+
+            <div class="icono-estadistica clientes">
+                ♙
+            </div>
+
+            <div>
+
+                <span>
+                    Total de clientes
+                </span>
+
+                <strong id="estadistica-total-clientes">
+                    0
+                </strong>
+
+            </div>
+
+        </article>
+
+
+        <article class="tarjeta-estadistica-clientes">
+
+            <div class="icono-estadistica deuda">
+                !
+            </div>
+
+            <div>
+
+                <span>
+                    Clientes con deuda
+                </span>
+
+                <strong id="estadistica-clientes-deuda">
+                    0
+                </strong>
+
+            </div>
+
+        </article>
+
+
+        <article class="tarjeta-estadistica-clientes">
+
+            <div class="icono-estadistica deuda">
+                $
+            </div>
+
+            <div>
+
+                <span>
+                    Deuda total
+                </span>
+
+                <strong
+                    id="estadistica-deuda-total"
+                    class="texto-rojo"
+                >
+                    $ 0
+                </strong>
+
+            </div>
+
+        </article>
+
+
+        <article class="tarjeta-estadistica-clientes">
+
+            <div class="icono-estadistica cobrado">
+                $
+            </div>
+
+            <div>
+
+                <span>
+                    Total cobrado (mes)
+                </span>
+
+                <strong
+                    id="estadistica-total-cobrado"
+                    class="texto-verde"
+                >
+                    $ 0
+                </strong>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!-- ========================================
+         CONTENIDO PRINCIPAL
+    ======================================== -->
+
+    <section class="contenido-clientes">
+
+
+        <!-- ====================================
+             LISTADO
+        ==================================== -->
+
+        <section class="panel-listado-clientes">
+
+            <div class="encabezado-panel-clientes">
+
+                <h2>
+                    Listado de clientes
+                </h2>
+
+            </div>
+
+
+            <!-- BUSCADOR -->
+
+            <div class="buscador-clientes">
+
+                <span class="icono-busqueda-clientes">
+                    ⌕
+                </span>
+
+                <input
+                    type="text"
+                    id="busqueda-clientes"
+                    placeholder="Buscar por nombre, DNI o teléfono..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <!-- FILTROS -->
+
+            <div class="filtros-clientes">
+
+                <select
+                    id="filtro-estado-clientes"
+                    class="filtro-cliente"
+                >
+
+                    <option value="todos">
+                        Todos los clientes
+                    </option>
+
+                    <option value="deudores">
+                        Con deuda
+                    </option>
+
+                    <option value="sin-deuda">
+                        Sin deuda
+                    </option>
+
+                </select>
+
+
+                <div class="orden-clientes">
+
+                    <span>
+                        Ordenar por
+                    </span>
+
+                    <select
+                        id="orden-clientes"
+                        class="filtro-cliente"
+                    >
+
+                        <option value="deuda-mayor">
+                            Mayor deuda
+                        </option>
+
+                        <option value="deuda-menor">
+                            Menor deuda
+                        </option>
+
+                        <option value="nombre">
+                            Nombre
+                        </option>
+
+                        <option value="reciente">
+                            Último movimiento
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- CABECERA TABLA -->
+
+            <div class="cabecera-listado-clientes">
+
+                <span>
+                    Cliente
+                </span>
+
+                <span>
+                    Deuda total
+                </span>
+
+                <span>
+                    Último movimiento
+                </span>
+
+                <span>
+                    Hace
+                </span>
+
+            </div>
+
+
+            <!-- LISTA -->
+
+            <div
+                class="lista-clientes"
+                id="lista-clientes"
+            >
+
+                <div class="estado-cargando-clientes">
+
+                    Cargando clientes...
+
+                </div>
+
+            </div>
+
+
+            <!-- PIE -->
+
+            <div class="pie-listado-clientes">
+
+                <span id="texto-paginacion-clientes">
+                    Mostrando 0 clientes
+                </span>
+
+                <div
+                    class="paginacion-clientes"
+                    id="paginacion-clientes"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ====================================
+             DETALLE
+        ==================================== -->
+
+        <section
+            class="panel-detalle-cliente"
+            id="panel-detalle-cliente"
+        >
+
+            <!-- ESTADO INICIAL -->
+
+            <div
+                class="detalle-cliente-vacio"
+                id="detalle-cliente-vacio"
+            >
+
+                <div class="icono-detalle-vacio">
+                    ♙
+                </div>
+
+                <h3>
+                    Seleccioná un cliente
+                </h3>
+
+                <p>
+                    Elegí un cliente del listado para
+                    consultar su deuda y sus movimientos.
+                </p>
+
+            </div>
+
+
+            <!-- DETALLE DEL CLIENTE -->
+
+            <div
+                class="detalle-cliente-contenido"
+                id="detalle-cliente-contenido"
+                hidden
+            >
+
+                <!-- CABECERA CLIENTE -->
+
+                <div class="cabecera-detalle-cliente">
+
+                    <div
+                        class="avatar-detalle-cliente"
+                        id="avatar-detalle-cliente"
+                    >
+                        JP
+                    </div>
+
+
+                    <div class="datos-detalle-cliente">
+
+                        <h2 id="detalle-nombre-cliente">
+                            Juan Pérez
+                        </h2>
+
+
+                        <div class="datos-contacto-cliente">
+
+                            <span id="detalle-telefono-cliente">
+                                ☎ —
+                            </span>
+
+                            <span id="detalle-dni-cliente">
+                                DNI —
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="acciones-detalle-cliente">
+
+                        <button
+                            type="button"
+                            class="boton-secundario-cliente"
+                            id="boton-historial-cliente"
+                        >
+                            ☷ Historial
+                        </button>
+
+                        <button
+                            type="button"
+                            class="boton-secundario-cliente"
+                            id="boton-editar-cliente"
+                        >
+                            ✎ Editar
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DEUDA TOTAL -->
+
+                <div class="bloque-deuda-cliente">
+
+                    <span>
+                        Deuda total
+                    </span>
+
+                    <strong id="detalle-deuda-total">
+                        $ 0
+                    </strong>
+
+                </div>
+
+
+                <!-- PRODUCTOS CON DEUDA -->
+
+                <section class="seccion-productos-deuda">
+
+                    <div class="titulo-seccion-cliente">
+
+                        <div>
+
+                            <h3>
+                                Productos con deuda
+                            </h3>
+
+                            <p>
+                                Seleccioná los productos que se van a pagar
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="tabla-productos-deuda">
+
+                        <div class="cabecera-productos-deuda">
+
+                            <span></span>
+
+                            <span>
+                                Producto
+                            </span>
+
+                            <span>
+                                Fecha
+                            </span>
+
+                            <span>
+                                Cantidad
+                            </span>
+
+                            <span>
+                                Precio unit.
+                            </span>
+
+                            <span>
+                                Subtotal
+                            </span>
+
+                            <span>
+                                Saldo pendiente
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            id="lista-productos-deuda"
+                            class="lista-productos-deuda"
+                        >
+
+                            <div class="sin-productos-deuda">
+
+                                Este cliente no tiene
+                                productos pendientes.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- REGISTRAR PAGO -->
+
+                <section class="seccion-registrar-pago">
+
+                    <div class="titulo-seccion-cliente">
+
+                        <div>
+
+                            <h3>
+                                Registrar pago
+                            </h3>
+
+                            <p>
+                                Completá el monto y el medio de pago
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="datos-pago-cliente">
+
+                        <div class="campo-pago-cliente">
+
+                            <label>
+                                Monto a pagar
+                            </label>
+
+                            <div class="input-pago">
+
+                                <span>$</span>
+
+                                <input
+                                    type="text"
+                                    id="monto-pago-cliente"
+                                    inputmode="decimal"
+                                    placeholder="0"
+                                    autocomplete="off"
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="campo-pago-cliente">
+
+                            <label>
+                                Medio de pago
+                            </label>
+
+                            <select
+                                id="medio-pago-cliente"
+                            >
+
+                                <option value="efectivo">
+                                    Efectivo
+                                </option>
+
+                                <option value="transferencia">
+                                    Transferencia
+                                </option>
+
+                                <option value="debito">
+                                    Tarjeta de débito
+                                </option>
+
+                                <option value="credito">
+                                    Tarjeta de crédito
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="campo-pago-cliente">
+
+                            <label>
+                                Fecha de pago
+                            </label>
+
+                            <input
+                                type="date"
+                                id="fecha-pago-cliente"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- INTERÉS -->
+
+                    <div class="interes-pago-cliente">
+
+                        <div class="encabezado-interes">
+
+                            <div>
+
+                                <strong>
+                                    Recargo de intereses
+                                </strong>
+
+                                <span>
+                                    (opcional)
+                                </span>
+
+                            </div>
+
+                            <button
+                                type="button"
+                                id="activar-interes-cliente"
+                                class="boton-interes"
+                            >
+                                + Agregar interés
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            class="campos-interes"
+                            id="campos-interes"
+                            hidden
+                        >
+
+                            <div>
+
+                                <label>
+                                    Tipo de recargo
+                                </label>
+
+                                <select
+                                    id="tipo-interes-cliente"
+                                >
+
+                                    <option value="porcentaje">
+                                        Porcentaje
+                                    </option>
+
+                                    <option value="monto">
+                                        Monto fijo
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div>
+
+                                <label id="label-valor-interes">
+                                    Porcentaje
+                                </label>
+
+                                <div class="input-interes">
+
+                                    <input
+                                        type="text"
+                                        id="valor-interes-cliente"
+                                        inputmode="decimal"
+                                        placeholder="0"
+                                    >
+
+                                    <span id="simbolo-interes">
+                                        %
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div>
+
+                                <label>
+                                    Monto del recargo
+                                </label>
+
+                                <div
+                                    class="resultado-interes"
+                                    id="monto-interes-cliente"
+                                >
+                                    $ 0
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- RESUMEN -->
+
+                    <div class="resumen-pago-cliente">
+
+                        <div class="resumen-pago-item seleccionado">
+
+                            <span>
+                                Total seleccionado
+                            </span>
+
+                            <strong id="total-seleccionado-cliente">
+                                $ 0
+                            </strong>
+
+                        </div>
+
+
+                        <div class="resumen-pago-item entregado">
+
+                            <span>
+                                Total entregado
+                            </span>
+
+                            <strong id="total-entregado-cliente">
+                                $ 0
+                            </strong>
+
+                        </div>
+
+
+                        <div class="resumen-pago-item vuelto">
+
+                            <span>
+                                Vuelto
+                            </span>
+
+                            <strong id="vuelto-cliente">
+                                $ 0
+                            </strong>
+
+                        </div>
+
+
+                        <div class="resumen-pago-item deuda">
+
+                            <span>
+                                Saldo a deber
+                            </span>
+
+                            <strong id="saldo-deber-cliente">
+                                $ 0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="boton-registrar-pago"
+                        id="boton-registrar-pago"
+                        disabled
+                    >
+
+                        ✓ Registrar pago
+
+                    </button>
+
+                </section>
+
+            </div>
+
+        </section>
+
+    </section>
+
+
+    <!-- MODALES -->
+
+    <div id="modales-clientes"></div>
+
+</section>

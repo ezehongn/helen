@@ -1,0 +1,315 @@
+/* ========================================
+   BARRA LATERAL
+======================================== */
+
+.barra-lateral {
+    width: 190px;
+    height: 100vh;
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 20px 13px 16px;
+
+    background: #101820;
+
+    color: #ffffff;
+
+    box-shadow:
+        2px 0 12px rgba(0, 0, 0, 0.12);
+
+    z-index: 100;
+}
+
+
+/* ========================================
+   LOGO
+======================================== */
+
+.barra-logo {
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-bottom: 17px;
+}
+
+
+.barra-logo img {
+    width: 91px;
+    height: 91px;
+
+    display: block;
+
+    object-fit: contain;
+
+    border-radius: 50%;
+}
+
+
+/* ========================================
+   MENÚ
+======================================== */
+
+.menu-lateral {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+
+.item-menu {
+    width: 100%;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 13px;
+
+    gap: 15px;
+
+    border: none;
+    border-radius: 7px;
+
+    background: transparent;
+
+    color: #d7dce1;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease,
+        color 0.18s ease;
+}
+
+
+.item-menu:hover {
+    background: rgba(255, 255, 255, 0.06);
+
+    color: #ffffff;
+}
+
+
+.item-menu.activo {
+    background: #21649b;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 2px 5px rgba(0, 0, 0, 0.12);
+}
+
+
+.texto-menu {
+    white-space: nowrap;
+}
+
+
+/* ========================================
+   ICONOS
+======================================== */
+
+.icono-menu {
+    width: 22px;
+    height: 22px;
+
+    flex-shrink: 0;
+
+    display: block;
+
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+
+    opacity: 0.92;
+}
+
+
+/* ========================================
+   INICIO
+======================================== */
+
+.icono-inicio {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 10.5 12 3l9 7.5'/%3E%3Cpath d='M5.5 9.5V21h13V9.5'/%3E%3Cpath d='M9 21v-6h6v6'/%3E%3C/svg%3E");
+}
+
+
+/* ========================================
+   PRODUCTOS
+======================================== */
+
+.icono-productos {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m20.5 13.5-7 7a2 2 0 0 1-2.8 0l-7.2-7.2a2 2 0 0 1 0-2.8l7-7H17l4 4v4z'/%3E%3Ccircle cx='15.5' cy='8.5' r='1.5'/%3E%3C/svg%3E");
+}
+
+
+/* ========================================
+   VENTAS
+======================================== */
+
+.icono-ventas {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='9' cy='20' r='1.5'/%3E%3Ccircle cx='18' cy='20' r='1.5'/%3E%3Cpath d='M3 4h2l2.2 11h10.9l2-8H6'/%3E%3Cpath d='M8 8h11'/%3E%3C/svg%3E");
+}
+
+
+/* ========================================
+   CLIENTES
+======================================== */
+
+.icono-clientes {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='9' cy='8' r='3'/%3E%3Cpath d='M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6'/%3E%3Ccircle cx='17' cy='9' r='2.5'/%3E%3Cpath d='M16 14c2.8.4 5 2.8 5 6'/%3E%3C/svg%3E");
+}
+
+
+/* ========================================
+   GASTOS
+======================================== */
+
+.icono-gastos {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='3' width='16' height='18' rx='2'/%3E%3Cpath d='M8 7h8M8 11h8M8 15h4'/%3E%3Cpath d='m15 15 2 2 3-3'/%3E%3C/svg%3E");
+}
+
+
+/* ========================================
+   INFORMES
+======================================== */
+
+.icono-informes {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2'/%3E%3Cpath d='M7 17v-4M12 17V8M17 17v-7'/%3E%3C/svg%3E");
+}
+
+
+/* ========================================
+   CONFIGURACIÓN
+======================================== */
+
+.icono-configuracion {
+    width: 22px;
+    height: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-image: none;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 20px;
+    font-weight: 400;
+
+    line-height: 1;
+
+    color: #ffffff;
+
+    opacity: 0.92;
+}
+
+
+/* ========================================
+   SEPARADOR
+======================================== */
+
+.separador-menu {
+    width: calc(100% - 12px);
+
+    height: 1px;
+
+    margin: 9px auto 0;
+
+    background: #46515b;
+}
+
+
+/* ========================================
+   PARTE INFERIOR
+======================================== */
+
+.barra-inferior {
+    margin-top: auto;
+
+    width: 100%;
+
+    text-align: center;
+
+    padding-bottom: 2px;
+}
+
+
+.barra-inferior h2 {
+    margin-bottom: 5px;
+
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    letter-spacing: 2px;
+
+    color: #ffffff;
+}
+
+
+.categorias {
+    margin-bottom: 9px;
+
+    font-size: 7px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.1px;
+
+    color: #7e8993;
+}
+
+
+.eslogan {
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 9px;
+
+    color: #68747f;
+}
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 700px) {
+
+    .barra-lateral {
+        width: 180px;
+    }
+
+
+    .item-menu {
+        height: 40px;
+
+        font-size: 13px;
+    }
+
+
+    .barra-logo img {
+        width: 85px;
+        height: 85px;
+    }
+
+}

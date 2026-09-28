@@ -1,0 +1,123 @@
+<div
+    class="modal-cliente"
+    id="modal-cliente"
+>
+    <div class="contenido-modal-cliente">
+
+        <div class="encabezado-modal-cliente">
+
+            <div>
+                <h2>Nuevo cliente</h2>
+                <p>Registrá los datos del cliente</p>
+            </div>
+
+            <button
+                type="button"
+                class="cerrar-modal-cliente"
+                id="cerrar-modal-cliente"
+                aria-label="Cerrar"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="formulario-nuevo-cliente">
+
+            <div class="campos-cliente">
+
+                <div class="campo-cliente">
+                    <label for="nuevo-cliente-nombre">
+                        Nombre <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nuevo-cliente-nombre"
+                        placeholder="Ej. Juan"
+                        autocomplete="off"
+                        required
+                    >
+                </div>
+
+
+                <div class="campo-cliente">
+                    <label for="nuevo-cliente-apellido">
+                        Apellido <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nuevo-cliente-apellido"
+                        placeholder="Ej. Pérez"
+                        autocomplete="off"
+                        required
+                    >
+                </div>
+
+
+                <div class="campo-cliente">
+                    <label for="nuevo-cliente-dni">
+                        DNI <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nuevo-cliente-dni"
+                        placeholder="Ej. 31245678"
+                        inputmode="numeric"
+                        autocomplete="off"
+                        required
+                    >
+                </div>
+
+
+                <div class="campo-cliente">
+                    <label for="nuevo-cliente-telefono">
+                        Teléfono <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nuevo-cliente-telefono"
+                        placeholder="Ej. 3511234567"
+                        inputmode="tel"
+                        autocomplete="off"
+                        required
+                    >
+                </div>
+
+            </div>
+
+
+            <div
+                class="mensaje-modal-cliente"
+                id="mensaje-modal-cliente"
+            ></div>
+
+
+            <div class="acciones-modal-cliente">
+
+                <button
+                    type="button"
+                    class="boton-cancelar-cliente"
+                    id="cancelar-nuevo-cliente"
+                >
+                    Cancelar
+                </button>
+
+                <button
+                    type="submit"
+                    class="boton-guardar-cliente"
+                    id="guardar-nuevo-cliente"
+                >
+                    Guardar cliente
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>

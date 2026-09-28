@@ -1,0 +1,68 @@
+<div class="modal-nueva-categoria" id="modal-nueva-categoria">
+
+    <div class="modal-nueva-categoria-contenido">
+
+        <div class="modal-nueva-categoria-encabezado">
+
+            <div>
+                <h2>Nueva categoría</h2>
+                <p>Agrega una categoría para organizar tus productos.</p>
+            </div>
+
+            <button
+                type="button"
+                class="cerrar-modal-nueva-categoria"
+                id="cerrar-modal-nueva-categoria"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="formulario-nueva-categoria">
+
+            <div class="campo-nueva-categoria">
+
+                <label for="nombre-nueva-categoria">
+                    Nombre de la categoría
+                </label>
+
+                <input
+                    type="text"
+                    id="nombre-nueva-categoria"
+                    placeholder="Ej. Calzado deportivo"
+                    maxlength="40"
+                    autocomplete="off"
+                    required
+                >
+
+                <small id="error-nueva-categoria"></small>
+
+            </div>
+
+
+            <div class="acciones-nueva-categoria">
+
+                <button
+                    type="button"
+                    class="boton-cancelar-categoria"
+                    id="cancelar-nueva-categoria"
+                >
+                    Cancelar
+                </button>
+
+                <button
+                    type="submit"
+                    class="boton-guardar-categoria"
+                >
+                    Crear categoría
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>

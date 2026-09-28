@@ -1,0 +1,177 @@
+<div
+    class="modal-registrar-ingresos"
+    id="modal-registrar-ingresos"
+>
+
+    <div class="modal-ingresos-contenido">
+
+        <!-- ========================================
+             ENCABEZADO
+        ======================================== -->
+
+        <div class="modal-ingresos-encabezado">
+
+            <div class="titulo-ingresos">
+
+                <div class="icono-ingresos-modal">
+                    ↓
+                </div>
+
+                <div>
+
+                    <h2>Registrar ingresos</h2>
+
+                    <p>
+                        Agregá al inventario los productos que recibiste
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="cerrar-modal-ingresos"
+                id="cerrar-modal-ingresos"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <!-- ========================================
+             CUERPO
+        ======================================== -->
+
+        <div class="modal-ingresos-cuerpo">
+
+            <!-- ========================================
+                 BUSCADOR
+            ======================================== -->
+
+            <section class="panel-busqueda-ingresos">
+
+                <h3>Buscar productos</h3>
+
+                <div class="buscador-ingresos">
+
+                    <span>⌕</span>
+
+                    <input
+                        type="text"
+                        id="busqueda-ingresos"
+                        placeholder="Buscar por nombre o categoría..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <div
+                    class="lista-productos-ingresos"
+                    id="lista-productos-ingresos"
+                ></div>
+
+            </section>
+
+
+            <!-- ========================================
+                 PRODUCTOS A REGISTRAR
+            ======================================== -->
+
+            <section class="panel-productos-ingresos">
+
+                <div class="encabezado-productos-ingresos">
+
+                    <h3>
+                        Productos a registrar
+                        <span id="cantidad-productos-ingresos">
+                            (0)
+                        </span>
+                    </h3>
+
+                    <button
+                        type="button"
+                        class="boton-vaciar-ingresos"
+                        id="vaciar-lista-ingresos"
+                    >
+                        🗑 Vaciar lista
+                    </button>
+
+                </div>
+
+
+                <div class="tabla-ingresos">
+
+                    <div class="cabecera-tabla-ingresos">
+
+                        <span>Producto</span>
+                        <span>Talle / Medida</span>
+                        <span>Cantidad</span>
+                        <span>Acciones</span>
+
+                    </div>
+
+
+                    <div
+                        id="lista-ingresos-seleccionados"
+                        class="lista-ingresos-seleccionados"
+                    ></div>
+
+
+                    <div
+                        id="sin-productos-ingresos"
+                        class="sin-productos-ingresos"
+                    >
+
+                        <div class="icono-sin-ingresos">
+                            +
+                        </div>
+
+                        <strong>
+                            No hay productos agregados
+                        </strong>
+
+                        <span>
+                            Seleccioná un producto de la lista
+                            para comenzar.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- ========================================
+             PIE
+        ======================================== -->
+
+        <div class="modal-ingresos-pie">
+
+            <button
+                type="button"
+                class="boton-cancelar-ingresos"
+                id="cancelar-ingresos"
+            >
+                Cancelar
+            </button>
+
+            <button
+                type="button"
+                class="boton-registrar-ingreso"
+                id="registrar-ingreso"
+            >
+                Registrar ingreso
+            </button>
+
+        </div>
+
+    </div>
+
+</div>

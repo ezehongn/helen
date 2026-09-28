@@ -1,0 +1,888 @@
+/* ========================================
+   GASTOS
+======================================== */
+
+.pantalla-gastos {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px 20px 24px;
+  background: #f7f8fa;
+  color: #24344d;
+}
+
+/* ========================================
+   ENCABEZADO
+======================================== */
+
+.encabezado-gastos {
+  margin-bottom: 12px;
+}
+
+.encabezado-gastos h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.1;
+  color: #1f2f4a;
+}
+
+.encabezado-gastos p {
+  margin: 3px 0 0;
+  font-size: 14px;
+  color: #66758b;
+}
+
+/* ========================================
+   ESTADÍSTICAS
+======================================== */
+
+.estadisticas-gastos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.tarjeta-estadistica-gasto {
+  min-height: 78px;
+  padding: 12px;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  background: #ffffff;
+  border: 1px solid #edf0f5;
+  border-radius: 7px;
+}
+
+.icono-estadistica-gasto {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 7px;
+  font-size: 23px;
+  font-weight: 600;
+}
+
+.icono-estadistica-gasto.rojo {
+  background: #fff0f1;
+  color: #e53935;
+}
+
+.icono-estadistica-gasto.azul {
+  background: #edf4ff;
+  color: #1976d2;
+}
+
+.icono-estadistica-gasto.amarillo {
+  background: #fff7e5;
+  color: #d99a00;
+}
+
+.icono-estadistica-gasto.violeta {
+  background: #f2eaff;
+  color: #7c3aed;
+}
+
+.contenido-estadistica-gasto {
+  min-width: 0;
+  flex: 1;
+}
+
+.contenido-estadistica-gasto span {
+  display: block;
+  font-size: 11px;
+  color: #65748a;
+  margin-bottom: 3px;
+}
+
+.contenido-estadistica-gasto strong {
+  display: block;
+  font-size: 19px;
+  color: #1f2f4a;
+}
+
+.icono-estadistica-gasto.rojo + .contenido-estadistica-gasto strong {
+  color: #e53935;
+}
+
+.variacion-estadistica-gasto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.variacion-estadistica-gasto span {
+  padding: 3px 6px;
+  border-radius: 5px;
+  background: #eaf8ef;
+  color: #20a05a;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.variacion-estadistica-gasto small {
+  font-size: 9px;
+  color: #8996a6;
+  white-space: nowrap;
+}
+
+.pendiente-estadistica-gasto {
+  margin-left: auto;
+}
+
+.pendiente-estadistica-gasto span {
+  color: #e53935;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+/* ========================================
+   FILTROS
+======================================== */
+
+.filtros-gastos {
+  display: grid;
+  grid-template-columns:
+    minmax(230px, 1.1fr)
+    minmax(150px, 0.7fr)
+    minmax(150px, 0.7fr)
+    minmax(250px, 1.5fr)
+    auto;
+
+  gap: 10px;
+
+  padding: 10px 12px;
+  margin-bottom: 12px;
+
+  background: #ffffff;
+  border: 1px solid #edf0f5;
+  border-radius: 7px;
+}
+
+.valor-pendiente-gasto {
+  color: #e53935 !important;
+}
+
+.item-categoria-gasto {
+  cursor: pointer;
+}
+
+.item-categoria-gasto:hover {
+  background: #f8fafc;
+}
+
+.boton-limpiar-filtros-gastos {
+  align-self: end;
+
+  height: 38px;
+  padding: 0 12px;
+
+  border: 1px solid #d3dce7;
+  border-radius: 6px;
+
+  background: #ffffff;
+  color: #5f6e84;
+
+  font-family: inherit;
+  font-size: 11px;
+
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.boton-limpiar-filtros-gastos:hover {
+  background: #f5f7fa;
+  color: #24344d;
+}
+
+.campo-filtro-gasto {
+  min-width: 0;
+}
+
+.campo-filtro-gasto label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 11px;
+  color: #617189;
+}
+
+.input-icono-gasto,
+.contenedor-busqueda-gasto {
+  height: 38px;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+
+  border: 1px solid #d7dfe9;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.input-icono-gasto {
+  padding: 0 8px;
+  gap: 7px;
+}
+
+.input-icono-gasto > span:first-child,
+.contenedor-busqueda-gasto > span {
+  color: #718096;
+  font-size: 14px;
+}
+
+.input-icono-gasto input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #30415c;
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.separador-fechas-gasto {
+  color: #8996a6;
+}
+
+.campo-filtro-gasto select {
+  width: 100%;
+  height: 38px;
+
+  padding: 0 9px;
+
+  border: 1px solid #d7dfe9;
+  border-radius: 6px;
+
+  background: #ffffff;
+  color: #30415c;
+
+  outline: 0;
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.contenedor-busqueda-gasto {
+  padding: 0 10px;
+  gap: 7px;
+}
+
+.contenedor-busqueda-gasto input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+
+  font-family: inherit;
+  font-size: 11px;
+  color: #30415c;
+}
+
+/* ========================================
+   CONTENIDO
+======================================== */
+
+.contenido-gastos {
+  display: grid;
+  grid-template-columns: minmax(0, 2.1fr) minmax(330px, 0.9fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.panel-gastos {
+  background: #ffffff;
+  border: 1px solid #edf0f5;
+  border-radius: 7px;
+  box-sizing: border-box;
+}
+
+.encabezado-panel-gastos {
+  padding: 11px 13px;
+  border-bottom: 1px solid #edf0f5;
+}
+
+.encabezado-panel-gastos h2 {
+  margin: 0;
+  font-size: 14px;
+  color: #1f2f4a;
+}
+
+/* ========================================
+   LISTADO
+======================================== */
+
+.panel-listado-gastos {
+  overflow: hidden;
+}
+
+.tabla-gastos {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/*
+   Las columnas del encabezado y de cada fila
+   deben ser exactamente iguales.
+*/
+
+.cabecera-tabla-gastos,
+.fila-gasto {
+  display: grid;
+
+  grid-template-columns:
+    80px
+    minmax(130px, 1.2fr)
+    100px
+    110px
+    minmax(130px, 1.2fr)
+    110px
+    90px
+    70px;
+
+  min-width: 800px;
+}
+
+.cabecera-tabla-gastos {
+  padding: 8px 12px;
+  background: #fafbfd;
+
+  color: #6c7a90;
+  font-size: 10px;
+}
+
+.fila-gasto {
+  min-height: 45px;
+  padding: 7px 12px;
+  box-sizing: border-box;
+
+  align-items: center;
+
+  border-top: 1px solid #f0f2f6;
+  color: #33445f;
+  font-size: 11px;
+}
+
+.fila-gasto:hover {
+  background: #fbfcfe;
+}
+
+.fecha-gasto-tabla {
+  color: #62718a;
+  min-width: 0;
+}
+
+.descripcion-gasto-tabla,
+.proveedor-gasto-tabla,
+.notas-gasto-tabla {
+  min-width: 0;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.descripcion-gasto-tabla {
+  font-weight: 500;
+}
+
+.categoria-gasto-tabla {
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+
+  padding: 4px 8px;
+  border-radius: 5px;
+
+  background: #edf4ff;
+  color: #1769d1;
+
+  font-size: 10px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.proveedor-gasto-tabla {
+  color: #596a82;
+}
+
+.notas-gasto-tabla {
+  color: #596a82;
+}
+
+/*
+   Monto alineado a la derecha.
+*/
+
+.monto-gasto-tabla {
+  min-width: 0;
+
+  font-weight: 600;
+  text-align: right;
+  padding-right: 8px;
+}
+
+/*
+   El encabezado de Monto también se alinea
+   a la derecha para coincidir con los valores.
+*/
+
+.cabecera-tabla-gastos > :nth-child(6) {
+  text-align: right;
+  padding-right: 8px;
+}
+
+.estado-gasto-tabla {
+  display: inline-flex;
+  width: fit-content;
+
+  padding: 4px 8px;
+  border-radius: 5px;
+
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.estado-gasto-tabla.pagado {
+  background: #e6f8ef;
+  color: #23965a;
+}
+
+.estado-gasto-tabla.pendiente {
+  background: #fff4dc;
+  color: #b17b00;
+}
+
+.acciones-gasto-tabla {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.acciones-gasto-tabla button {
+  border: 0;
+  background: transparent;
+  padding: 0;
+
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.boton-editar-gasto {
+  color: #1671f3;
+}
+
+.boton-eliminar-gasto {
+  color: #ef4444;
+}
+
+/* ========================================
+   PIE DEL LISTADO
+======================================== */
+
+.pie-listado-gastos {
+  min-height: 48px;
+  padding: 0 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-top: 1px solid #edf0f5;
+}
+
+.pie-listado-gastos > span {
+  color: #738197;
+  font-size: 10px;
+}
+
+.paginacion-gastos {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.paginacion-gastos button,
+.pagina-activa-gastos {
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #e1e6ed;
+  border-radius: 5px;
+
+  background: #ffffff;
+  color: #637189;
+
+  font-size: 11px;
+}
+
+.paginacion-gastos button {
+  cursor: pointer;
+}
+
+.pagina-activa-gastos {
+  background: #17243a;
+  border-color: #17243a;
+  color: #ffffff;
+}
+
+/* ========================================
+   COLUMNA DERECHA
+======================================== */
+
+.columna-derecha-gastos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ========================================
+   FORMULARIO
+======================================== */
+
+.formulario-gasto {
+  padding: 11px 13px 13px;
+}
+
+.fila-formulario-gasto {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-bottom: 9px;
+}
+
+.campo-gasto label {
+  display: block;
+  margin-bottom: 5px;
+
+  font-size: 10px;
+  color: #5f6e84;
+}
+
+.campo-gasto label span {
+  color: #8996a6;
+}
+
+.campo-gasto input,
+.campo-gasto select,
+.campo-gasto textarea {
+  width: 100%;
+  box-sizing: border-box;
+
+  border: 1px solid #d7dfe9;
+  border-radius: 6px;
+
+  background: #ffffff;
+  color: #30415c;
+
+  outline: 0;
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.campo-gasto input,
+.campo-gasto select {
+  height: 38px;
+  padding: 0 9px;
+}
+
+.campo-gasto textarea {
+  min-height: 58px;
+  padding: 9px;
+  resize: vertical;
+}
+
+.campo-gasto input:focus,
+.campo-gasto select:focus,
+.campo-gasto textarea:focus {
+  border-color: #8ba9d2;
+}
+
+.campo-notas-gasto {
+  margin-bottom: 10px;
+}
+
+.boton-guardar-gasto {
+  width: 100%;
+  height: 38px;
+
+  border: 0;
+  border-radius: 6px;
+
+  background: #1268e8;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.boton-guardar-gasto:hover {
+  background: #0d5dce;
+}
+
+/* ========================================
+   CATEGORÍAS
+======================================== */
+
+.encabezado-categorias-gastos {
+  padding: 11px 13px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #edf0f5;
+}
+
+.encabezado-categorias-gastos h2 {
+  margin: 0;
+  font-size: 14px;
+  color: #1f2f4a;
+}
+
+.boton-nueva-categoria-gasto {
+  height: 30px;
+
+  padding: 0 10px;
+
+  border: 1px solid #1268e8;
+  border-radius: 5px;
+
+  background: #ffffff;
+  color: #1268e8;
+
+  font-family: inherit;
+  font-size: 10px;
+
+  cursor: pointer;
+}
+
+.boton-nueva-categoria-gasto:hover {
+  background: #f1f6ff;
+}
+
+.lista-categorias-gastos {
+  padding: 4px 13px 8px;
+}
+
+.item-categoria-gasto {
+  min-height: 35px;
+
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) 65px 85px 20px;
+  gap: 6px;
+
+  align-items: center;
+
+  border-bottom: 1px solid #f0f2f6;
+
+  font-size: 10px;
+}
+
+.item-categoria-gasto:last-child {
+  border-bottom: 0;
+}
+
+.punto-categoria-gasto {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+}
+
+.nombre-categoria-gasto {
+  color: #34445d;
+}
+
+.cantidad-categoria-gasto {
+  color: #8793a4;
+  text-align: right;
+}
+
+.total-categoria-gasto {
+  color: #53637b;
+  text-align: right;
+}
+
+.boton-eliminar-categoria-gasto {
+  border: 0;
+  background: transparent;
+
+  color: #ef4444;
+
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 1100px) {
+  .estadisticas-gastos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filtros-gastos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .contenido-gastos {
+    grid-template-columns: 1fr;
+  }
+
+  .columna-derecha-gastos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .pantalla-gastos {
+    padding: 12px;
+  }
+
+  .estadisticas-gastos,
+  .filtros-gastos,
+  .columna-derecha-gastos {
+    grid-template-columns: 1fr;
+  }
+
+  .fila-formulario-gasto {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========================================
+   MODAL NUEVA CATEGORÍA
+======================================== */
+
+.modal-categoria-gasto {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(0, 0, 0, 0.35);
+
+  z-index: 1000;
+}
+
+.modal-categoria-gasto[hidden] {
+  display: none;
+}
+
+.contenido-modal-categoria-gasto {
+  width: 380px;
+  max-width: calc(100vw - 40px);
+
+  background: #ffffff;
+
+  border-radius: 12px;
+
+  padding: 24px;
+
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18);
+}
+
+.encabezado-modal-categoria-gasto {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 22px;
+}
+
+.encabezado-modal-categoria-gasto h3 {
+  margin: 0;
+
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.cerrar-modal-categoria-gasto {
+  border: none;
+  background: transparent;
+
+  font-size: 26px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  color: #64748b;
+}
+
+.campo-modal-categoria-gasto {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.campo-modal-categoria-gasto label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.campo-modal-categoria-gasto input {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 11px 12px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+
+  font-size: 14px;
+
+  outline: none;
+}
+
+.campo-modal-categoria-gasto input:focus {
+  border-color: #94a3b8;
+}
+
+.acciones-modal-categoria-gasto {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  margin-top: 24px;
+}
+
+.acciones-modal-categoria-gasto button {
+  border: none;
+  border-radius: 8px;
+
+  padding: 10px 16px;
+
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.boton-cancelar-categoria-gasto {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.boton-guardar-categoria-gasto {
+  background: #111827;
+  color: #ffffff;
+}

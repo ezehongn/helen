@@ -1,0 +1,1152 @@
+/* ========================================
+   MODAL HISTORIAL CLIENTE
+======================================== */
+
+.modal-historial-cliente {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 4000;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 25px;
+
+    box-sizing: border-box;
+
+    background: rgba(15, 27, 43, 0.48);
+
+}
+
+
+.modal-historial-cliente.visible {
+
+    display: flex;
+
+}
+
+
+/* ========================================
+   CONTENIDO
+======================================== */
+
+.contenido-modal-historial-cliente {
+
+    width: min(
+        1050px,
+        calc(100vw - 50px)
+    );
+
+    height: min(
+        760px,
+        calc(100vh - 50px)
+    );
+
+    display: flex;
+
+    flex-direction: column;
+
+    background: #ffffff;
+
+    border: 1px solid #dce4ed;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 20px 60px rgba(20, 35, 55, 0.25);
+
+    overflow: hidden;
+
+}
+
+
+/* ========================================
+   ENCABEZADO
+======================================== */
+
+.encabezado-historial-cliente {
+
+    min-height: 78px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 14px 22px;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid #e3e8ee;
+
+}
+
+
+.informacion-historial-cliente {
+
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+
+.avatar-historial-cliente {
+
+    width: 48px;
+
+    height: 48px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #edf0f3;
+
+    color: #20252d;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+}
+
+
+.informacion-historial-cliente h2 {
+
+    margin: 0;
+
+    color: #142b50;
+
+    font-size: 20px;
+
+    font-weight: 700;
+
+}
+
+
+.informacion-historial-cliente p {
+
+    margin: 4px 0 0;
+
+    color: #7a8798;
+
+    font-size: 12px;
+
+}
+
+
+.cerrar-modal-historial-cliente {
+
+    width: 35px;
+
+    height: 35px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+
+    border-radius: 5px;
+
+    background: transparent;
+
+    color: #64748b;
+
+    font-size: 26px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+}
+
+
+.cerrar-modal-historial-cliente:hover {
+
+    background: #f1f4f7;
+
+    color: #24344d;
+
+}
+
+
+/* ========================================
+   RESUMEN
+======================================== */
+
+.resumen-historial-cliente {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 10px;
+
+    padding: 13px 22px;
+
+    border-bottom: 1px solid #e5eaf0;
+
+    background: #fafbfd;
+
+}
+
+
+.dato-resumen-historial {
+
+    min-height: 58px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    padding: 8px 12px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #e1e7ee;
+
+    border-radius: 6px;
+
+    background: #ffffff;
+
+}
+
+
+.dato-resumen-historial span {
+
+    margin-bottom: 4px;
+
+    color: #7b8798;
+
+    font-size: 10px;
+
+}
+
+
+.dato-resumen-historial strong {
+
+    color: #142b50;
+
+    font-size: 17px;
+
+    line-height: 1;
+
+}
+
+
+.dato-resumen-historial strong.verde {
+
+    color: #15945e;
+
+}
+
+
+.dato-resumen-historial strong.rojo {
+
+    color: #ef2638;
+
+}
+
+
+/* ========================================
+   CONTROLES
+======================================== */
+
+.controles-historial-cliente {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 13px 22px;
+
+    border-bottom: 1px solid #e5eaf0;
+
+}
+
+
+.buscador-historial-cliente {
+
+    height: 38px;
+
+    flex: 1;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 0 10px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d3dce7;
+
+    border-radius: 5px;
+
+    background: #ffffff;
+
+}
+
+
+.buscador-historial-cliente span {
+
+    color: #65748a;
+
+    font-size: 18px;
+
+}
+
+
+.buscador-historial-cliente input {
+
+    width: 100%;
+
+    height: 100%;
+
+    padding: 0;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: #263b5b;
+
+    font-family: inherit;
+
+    font-size: 11px;
+
+}
+
+
+.buscador-historial-cliente input::placeholder {
+
+    color: #8b98aa;
+
+}
+
+
+.filtro-historial-cliente,
+.orden-historial-cliente {
+
+    height: 38px;
+
+    min-width: 155px;
+
+    padding: 0 9px;
+
+    border: 1px solid #d3dce7;
+
+    border-radius: 5px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #334b6e;
+
+    font-family: inherit;
+
+    font-size: 11px;
+
+}
+
+
+/* ========================================
+   LISTA
+======================================== */
+
+.lista-historial-cliente {
+
+    flex: 1;
+
+    min-height: 0;
+
+    overflow-y: auto;
+
+    background: #ffffff;
+
+}
+
+
+.estado-historial-cliente {
+
+    min-height: 250px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 30px;
+
+    box-sizing: border-box;
+
+    color: #8190a4;
+
+    font-size: 12px;
+
+    text-align: center;
+
+}
+
+
+.estado-historial-cliente.error {
+
+    color: #ef2638;
+
+}
+
+
+/* ========================================
+   MOVIMIENTO
+======================================== */
+
+.movimiento-historial {
+
+    border-bottom: 1px solid #e8edf2;
+
+}
+
+
+.movimiento-historial:last-child {
+
+    border-bottom: none;
+
+}
+
+
+.cabecera-movimiento-historial {
+
+    width: 100%;
+
+    min-height: 70px;
+
+    display: grid;
+
+    grid-template-columns:
+        42px
+        minmax(180px, 1fr)
+        145px
+        130px
+        25px;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 10px 22px;
+
+    box-sizing: border-box;
+
+    border: none;
+
+    background: #ffffff;
+
+    color: inherit;
+
+    font-family: inherit;
+
+    text-align: left;
+
+    cursor: pointer;
+
+}
+
+
+.cabecera-movimiento-historial:hover {
+
+    background: #f8fbff;
+
+}
+
+
+/* ========================================
+   ICONO
+======================================== */
+
+.icono-movimiento-historial {
+
+    width: 38px;
+
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 6px;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+}
+
+
+.icono-movimiento-historial.venta {
+
+    background: #e9f3ff;
+
+    color: #1268e8;
+
+}
+
+
+.icono-movimiento-historial.pago {
+
+    background: #e7f9f0;
+
+    color: #15945e;
+
+}
+
+
+.icono-movimiento-historial.interes {
+
+    background: #fff0f1;
+
+    color: #ef2638;
+
+}
+
+
+/* ========================================
+   INFORMACIÓN
+======================================== */
+
+.info-movimiento-historial {
+
+    min-width: 0;
+
+}
+
+
+.titulo-movimiento-historial {
+
+    display: block;
+
+    overflow: hidden;
+
+    color: #1b3155;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+}
+
+
+.descripcion-movimiento-historial {
+
+    display: block;
+
+    margin-top: 3px;
+
+    overflow: hidden;
+
+    color: #7d899a;
+
+    font-size: 10px;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+}
+
+
+/* ========================================
+   FECHA
+======================================== */
+
+.fecha-movimiento-historial {
+
+    color: #66778f;
+
+    font-size: 10px;
+
+    text-align: left;
+
+}
+
+
+.fecha-movimiento-historial strong {
+
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #344a69;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+}
+
+
+/* ========================================
+   MONTO
+======================================== */
+
+.monto-movimiento-historial {
+
+    text-align: right;
+
+}
+
+
+.monto-movimiento-historial strong {
+
+    display: block;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+}
+
+
+.monto-movimiento-historial span {
+
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 9px;
+
+}
+
+
+.monto-movimiento-historial.venta strong {
+
+    color: #1268e8;
+
+}
+
+
+.monto-movimiento-historial.pago strong {
+
+    color: #15945e;
+
+}
+
+
+.monto-movimiento-historial.interes strong {
+
+    color: #ef2638;
+
+}
+
+
+/* ========================================
+   FLECHA
+======================================== */
+
+.flecha-movimiento-historial {
+
+    color: #8390a3;
+
+    font-size: 13px;
+
+    transition:
+        transform 0.15s ease;
+
+}
+
+
+.movimiento-historial.abierto
+.flecha-movimiento-historial {
+
+    transform: rotate(180deg);
+
+}
+
+
+/* ========================================
+   DETALLE EXPANDIDO
+======================================== */
+
+.detalle-movimiento-historial {
+
+    display: none;
+
+    padding: 0 22px 15px 76px;
+
+    box-sizing: border-box;
+
+}
+
+
+.movimiento-historial.abierto
+.detalle-movimiento-historial {
+
+    display: block;
+
+}
+
+
+.detalle-grid-historial {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 8px;
+
+}
+
+
+.dato-detalle-historial {
+
+    padding: 9px 11px;
+
+    border: 1px solid #e2e8ef;
+
+    border-radius: 5px;
+
+    background: #fafbfd;
+
+}
+
+
+.dato-detalle-historial span {
+
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #7d899a;
+
+    font-size: 9px;
+
+}
+
+
+.dato-detalle-historial strong {
+
+    color: #263d5e;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+}
+
+
+/* ========================================
+   PRODUCTOS
+======================================== */
+
+.productos-detalle-historial {
+
+    margin-top: 9px;
+
+    border: 1px solid #e2e8ef;
+
+    border-radius: 5px;
+
+    overflow: hidden;
+
+}
+
+
+.titulo-productos-historial {
+
+    padding: 8px 11px;
+
+    border-bottom: 1px solid #e2e8ef;
+
+    background: #f5f7fa;
+
+    color: #65748a;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+}
+
+
+.producto-detalle-historial {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(150px, 1fr)
+        60px
+        90px
+        100px;
+
+    align-items: center;
+
+    gap: 8px;
+
+    min-height: 35px;
+
+    padding: 6px 11px;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid #edf1f5;
+
+}
+
+
+.producto-detalle-historial:last-child {
+
+    border-bottom: none;
+
+}
+
+
+.nombre-producto-historial {
+
+    color: #334b6e;
+
+    font-size: 10px;
+
+}
+
+
+.talle-producto-historial {
+
+    color: #7b8798;
+
+    font-size: 9px;
+
+}
+
+
+.cantidad-producto-historial {
+
+    color: #596b84;
+
+    font-size: 9px;
+
+    text-align: center;
+
+}
+
+
+.subtotal-producto-historial {
+
+    color: #334b6e;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    text-align: right;
+
+}
+
+
+/* ========================================
+   INFORMACIÓN EXTRA
+======================================== */
+
+.texto-extra-historial {
+
+    margin-top: 9px;
+
+    padding: 9px 11px;
+
+    border-radius: 5px;
+
+    background: #f5f7fa;
+
+    color: #65748a;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+
+}
+
+
+.texto-extra-historial strong {
+
+    color: #334b6e;
+
+}
+
+
+/* ========================================
+   SIN RESULTADOS
+======================================== */
+
+.sin-resultados-historial {
+
+    min-height: 180px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 30px;
+
+    color: #8190a4;
+
+    font-size: 11px;
+
+}
+
+
+/* ========================================
+   PIE
+======================================== */
+
+.pie-historial-cliente {
+
+    min-height: 45px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    padding: 8px 22px;
+
+    box-sizing: border-box;
+
+    border-top: 1px solid #e5eaf0;
+
+    background: #fafbfd;
+
+    color: #718096;
+
+    font-size: 10px;
+
+}
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 800px) {
+
+    .contenido-modal-historial-cliente {
+
+        width: calc(100vw - 25px);
+
+        height: calc(100vh - 25px);
+
+    }
+
+
+    .resumen-historial-cliente {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+
+    .controles-historial-cliente {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+
+    .filtro-historial-cliente,
+    .orden-historial-cliente {
+
+        width: 100%;
+
+    }
+
+
+    .cabecera-movimiento-historial {
+
+        grid-template-columns:
+            38px
+            minmax(0, 1fr)
+            100px
+            22px;
+
+    }
+
+
+    .cabecera-movimiento-historial
+    .fecha-movimiento-historial {
+
+        display: none;
+
+    }
+
+
+    .detalle-movimiento-historial {
+
+        padding-left: 22px;
+
+    }
+
+
+    .detalle-grid-historial {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+}
+
+
+@media (max-width: 550px) {
+
+    .modal-historial-cliente {
+
+        padding: 8px;
+
+    }
+
+
+    .contenido-modal-historial-cliente {
+
+        width: 100%;
+
+        height: 100%;
+
+        border-radius: 7px;
+
+    }
+
+
+    .encabezado-historial-cliente,
+    .controles-historial-cliente,
+    .pie-historial-cliente {
+
+        padding-left: 13px;
+
+        padding-right: 13px;
+
+    }
+
+
+    .resumen-historial-cliente {
+
+        padding: 10px 13px;
+
+    }
+
+
+    .dato-resumen-historial {
+
+        min-height: 50px;
+
+    }
+
+
+    .dato-resumen-historial strong {
+
+        font-size: 14px;
+
+    }
+
+
+    .cabecera-movimiento-historial {
+
+        padding-left: 13px;
+
+        padding-right: 13px;
+
+        grid-template-columns:
+            35px
+            minmax(0, 1fr)
+            20px;
+
+    }
+
+
+    .monto-movimiento-historial {
+
+        display: none;
+
+    }
+
+
+    .detalle-movimiento-historial {
+
+        padding-left: 13px;
+
+        padding-right: 13px;
+
+    }
+
+
+    .detalle-grid-historial {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .producto-detalle-historial {
+
+        grid-template-columns:
+            minmax(100px, 1fr)
+            45px
+            75px;
+
+    }
+
+
+    .cantidad-producto-historial {
+
+        display: none;
+
+    }
+
+}

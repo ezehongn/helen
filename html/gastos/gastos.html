@@ -1,0 +1,441 @@
+<section class="pantalla-gastos">
+
+    <!-- ENCABEZADO -->
+    <header class="encabezado-gastos">
+        <div>
+            <h1>Gastos</h1>
+            <p>Registrá y controlá los gastos de tu negocio</p>
+        </div>
+    </header>
+
+
+    <!-- ESTADÍSTICAS -->
+    <section class="estadisticas-gastos">
+
+        <div class="tarjeta-estadistica-gasto">
+            <div class="icono-estadistica-gasto rojo">
+                $
+            </div>
+
+            <div class="contenido-estadistica-gasto">
+                <span>Total de gastos (mes)</span>
+                <strong id="total-gastos-mes">$ 0</strong>
+            </div>
+
+            <div class="variacion-estadistica-gasto">
+                <span id="variacion-gastos">▲ 0%</span>
+                <small>vs. mes anterior</small>
+            </div>
+        </div>
+
+
+        <div class="tarjeta-estadistica-gasto">
+            <div class="icono-estadistica-gasto azul">
+                ▤
+            </div>
+
+            <div class="contenido-estadistica-gasto">
+                <span>Cantidad de gastos</span>
+                <strong id="cantidad-gastos">0</strong>
+            </div>
+
+            <div class="variacion-estadistica-gasto">
+                <span id="variacion-cantidad">▲ 0%</span>
+                <small>vs. mes anterior</small>
+            </div>
+        </div>
+
+
+        <div class="tarjeta-estadistica-gasto">
+            <div class="icono-estadistica-gasto amarillo">
+                ◔
+            </div>
+
+            <div class="contenido-estadistica-gasto">
+                <span>Gasto promedio</span>
+                <strong id="gasto-promedio">$ 0</strong>
+            </div>
+        </div>
+
+
+        <div class="tarjeta-estadistica-gasto">
+            <div class="icono-estadistica-gasto violeta">
+                ▣
+            </div>
+
+            <div class="contenido-estadistica-gasto">
+    <span>Gastos pendientes</span>
+    <strong id="resumen-gastos-pendientes">$ 0 (0)</strong>
+</div>
+        </div>
+
+    </section>
+
+
+    <!-- FILTROS -->
+    <section class="filtros-gastos">
+
+        <div class="campo-filtro-gasto">
+            <label for="filtro-periodo-gastos">
+                Período
+            </label>
+
+            <div class="input-icono-gasto">
+                <span>▣</span>
+
+                <input
+                    type="date"
+                    id="filtro-periodo-desde"
+                >
+
+                <span class="separador-fechas-gasto">
+                    →
+                </span>
+
+                <input
+                    type="date"
+                    id="filtro-periodo-hasta"
+                >
+            </div>
+        </div>
+
+
+        <div class="campo-filtro-gasto">
+            <label for="filtro-categoria-gastos">
+                Categoría
+            </label>
+
+            <select id="filtro-categoria-gastos">
+                <option value="">Todas</option>
+            </select>
+        </div>
+
+
+        <div class="campo-filtro-gasto">
+            <label for="filtro-estado-gastos">
+                Estado
+            </label>
+
+            <select id="filtro-estado-gastos">
+                <option value="">Todos</option>
+                <option value="pagado">Pagado</option>
+                <option value="pendiente">Pendiente</option>
+            </select>
+        </div>
+
+
+        <div class="campo-filtro-gasto buscador-filtro-gasto">
+            <label for="busqueda-gastos">
+                Buscar
+            </label>
+
+            <div class="contenedor-busqueda-gasto">
+                <span>⌕</span>
+
+                <input
+                    type="text"
+                    id="busqueda-gastos"
+                    placeholder="Buscar por descripción, proveedor..."
+                >
+            </div>
+        </div>
+
+        <button
+    type="button"
+    id="limpiar-filtros-gastos"
+    class="boton-limpiar-filtros-gastos"
+>
+    Limpiar filtros
+</button>
+
+    </section>
+
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="contenido-gastos">
+
+
+        <!-- LISTADO -->
+        <section class="panel-gastos panel-listado-gastos">
+
+            <div class="encabezado-panel-gastos">
+                <h2>Listado de gastos</h2>
+            </div>
+
+
+            <div class="tabla-gastos">
+
+                <div class="cabecera-tabla-gastos">
+                    <span>Fecha</span>
+<span>Descripción</span>
+<span>Categoría</span>
+<span>Proveedor</span>
+<span>Notas</span>
+<span>Monto</span>
+<span>Estado</span>
+<span>Acciones</span>
+                </div>
+
+
+                <div
+                    id="lista-gastos"
+                    class="lista-gastos"
+                ></div>
+
+            </div>
+
+
+            <div class="pie-listado-gastos">
+
+                <span id="texto-paginacion-gastos">
+                    Mostrando 0 gastos
+                </span>
+
+                <div class="paginacion-gastos">
+
+                    <button
+                        type="button"
+                        id="pagina-anterior-gastos"
+                    >
+                        ‹
+                    </button>
+
+                    <span
+                        id="pagina-actual-gastos"
+                        class="pagina-activa-gastos"
+                    >
+                        1
+                    </span>
+
+                    <button
+                        type="button"
+                        id="pagina-siguiente-gastos"
+                    >
+                        ›
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- COLUMNA DERECHA -->
+        <aside class="columna-derecha-gastos">
+
+
+            <!-- REGISTRAR GASTO -->
+            <section class="panel-gastos panel-registrar-gasto">
+
+                <div class="encabezado-panel-gastos">
+                    <h2>Registrar gasto</h2>
+                </div>
+
+
+                <div class="formulario-gasto">
+
+                    <div class="fila-formulario-gasto">
+
+                        <div class="campo-gasto">
+                            <label for="fecha-gasto">
+                                Fecha
+                            </label>
+
+                            <input
+                                type="date"
+                                id="fecha-gasto"
+                            >
+                        </div>
+
+                        <div class="campo-gasto">
+                            <label for="descripcion-gasto">
+                                Descripción
+                            </label>
+
+                            <input
+                                type="text"
+                                id="descripcion-gasto"
+                                placeholder="Ej. Alquiler del local"
+                            >
+                        </div>
+
+                    </div>
+
+
+                    <div class="fila-formulario-gasto">
+
+                        <div class="campo-gasto">
+                            <label for="categoria-gasto">
+                                Categoría
+                            </label>
+
+                            <select id="categoria-gasto">
+                                <option value="">
+                                    Seleccionar categoría
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="campo-gasto">
+                            <label for="proveedor-gasto">
+                                Proveedor
+                            </label>
+
+                            <input
+                                type="text"
+                                id="proveedor-gasto"
+                                placeholder="Ej. Nombre del proveedor"
+                            >
+                        </div>
+
+                    </div>
+
+
+                    <div class="fila-formulario-gasto">
+
+                        <div class="campo-gasto">
+                            <label for="monto-gasto">
+                                Monto
+                            </label>
+
+                            <input
+                                type="text"
+                                id="monto-gasto"
+                                inputmode="decimal"
+                                placeholder="$ 0,00"
+                            >
+                        </div>
+
+                        <div class="campo-gasto">
+                            <label for="estado-gasto">
+                                Estado
+                            </label>
+
+                            <select id="estado-gasto">
+                                <option value="pagado">
+                                    Pagado
+                                </option>
+
+                                <option value="pendiente">
+                                    Pendiente
+                                </option>
+                            </select>
+                        </div>
+
+                    </div>
+
+
+                    <div class="campo-gasto campo-notas-gasto">
+
+                        <label for="notas-gasto">
+                            Notas <span>(opcional)</span>
+                        </label>
+
+                        <textarea
+                            id="notas-gasto"
+                            rows="3"
+                            placeholder="Agregar notas..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        id="guardar-gasto"
+                        class="boton-guardar-gasto"
+                    >
+                        ▣
+                        Guardar gasto
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- CATEGORÍAS -->
+            <section class="panel-gastos panel-categorias-gastos">
+
+                <div class="encabezado-categorias-gastos">
+
+                    <h2>Categorías de gastos</h2>
+
+                    <button
+                        type="button"
+                        id="nueva-categoria-gasto"
+                        class="boton-nueva-categoria-gasto"
+                    >
+                        +
+                        Nueva categoría
+                    </button>
+
+                </div>
+
+                <div
+    id="modal-categoria-gasto"
+    class="modal-categoria-gasto"
+    hidden
+>
+    <div class="contenido-modal-categoria-gasto">
+
+        <div class="encabezado-modal-categoria-gasto">
+            <h3>Nueva categoría</h3>
+
+            <button
+                type="button"
+                id="cerrar-modal-categoria-gasto"
+                class="cerrar-modal-categoria-gasto"
+            >
+                ×
+            </button>
+        </div>
+
+        <div class="campo-modal-categoria-gasto">
+            <label for="nombre-nueva-categoria-gasto">
+                Nombre
+            </label>
+
+            <input
+                type="text"
+                id="nombre-nueva-categoria-gasto"
+                placeholder="Ej. Transporte"
+                autocomplete="off"
+            >
+        </div>
+
+        <div class="acciones-modal-categoria-gasto">
+            <button
+                type="button"
+                id="cancelar-modal-categoria-gasto"
+                class="boton-cancelar-categoria-gasto"
+            >
+                Cancelar
+            </button>
+
+            <button
+                type="button"
+                id="guardar-categoria-gasto"
+                class="boton-guardar-categoria-gasto"
+            >
+                Crear categoría
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+                <div
+                    id="lista-categorias-gastos"
+                    class="lista-categorias-gastos"
+                ></div>
+
+            </section>
+
+        </aside>
+
+    </div>
+
+</section>

@@ -1,0 +1,1149 @@
+/* ========================================
+   MODAL
+======================================== */
+
+.modal-registrar-ingresos {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 5000;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(15, 23, 42, 0.48);
+
+}
+
+
+.modal-registrar-ingresos.visible {
+
+    display: flex;
+
+}
+
+
+/* ========================================
+   CONTENIDO
+======================================== */
+
+.modal-ingresos-contenido {
+
+    width: min(1100px, calc(100vw - 40px));
+
+    height: min(680px, calc(100vh - 40px));
+
+    min-height: 560px;
+
+    max-height: calc(100vh - 40px);
+
+    display: flex;
+
+    flex-direction: column;
+
+    background: #ffffff;
+
+    border-radius: 9px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 20px 60px rgba(15, 23, 42, 0.20);
+
+}
+
+
+/* ========================================
+   ENCABEZADO
+======================================== */
+
+.modal-ingresos-encabezado {
+
+    min-height: 76px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 15px 22px;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid #e5e9ef;
+
+}
+
+
+.titulo-ingresos {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+
+.icono-ingresos-modal {
+
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid #0d2c55;
+
+    border-radius: 7px;
+
+    color: #0d2c55;
+
+    font-size: 27px;
+
+    font-weight: 600;
+
+}
+
+
+.titulo-ingresos h2 {
+
+    margin: 0;
+
+    color: #172b4d;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+}
+
+
+.titulo-ingresos p {
+
+    margin: 2px 0 0;
+
+    color: #7a8798;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 12px;
+
+}
+
+
+.cerrar-modal-ingresos {
+
+    width: 32px;
+    height: 32px;
+
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #64748b;
+
+    font-size: 25px;
+
+    cursor: pointer;
+
+}
+
+
+.cerrar-modal-ingresos:hover {
+
+    color: #172b4d;
+
+}
+
+
+/* ========================================
+   CUERPO
+======================================== */
+
+.modal-ingresos-cuerpo {
+
+    min-height: 0;
+
+    flex: 1;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(300px, 385px)
+        minmax(0, 1fr);
+
+    gap: 20px;
+
+    padding: 16px;
+
+    overflow: hidden;
+
+    background: #ffffff;
+
+}
+
+
+/* ========================================
+   PANEL IZQUIERDO
+======================================== */
+
+.panel-busqueda-ingresos {
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    padding: 10px;
+
+    background: #f7f9fb;
+
+    border: 1px solid #e1e7ef;
+
+    border-radius: 6px;
+
+}
+
+
+.panel-busqueda-ingresos h3,
+.panel-productos-ingresos h3 {
+
+    margin: 0 0 9px;
+
+    color: #172b4d;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+}
+
+
+/* ========================================
+   BUSCADOR
+======================================== */
+
+.buscador-ingresos {
+
+    height: 39px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 0 10px;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border: 1px solid #ccd7e4;
+
+    border-radius: 5px;
+
+}
+
+
+.buscador-ingresos > span {
+
+    color: #172b4d;
+
+    font-size: 21px;
+
+}
+
+
+.buscador-ingresos input {
+
+    width: 100%;
+
+    min-width: 0;
+
+    border: none;
+
+    outline: none;
+
+    color: #24344d;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 11px;
+
+}
+
+
+.lista-productos-ingresos {
+
+    min-height: 0;
+
+    margin-top: 8px;
+
+    overflow-y: auto;
+
+}
+
+
+/* ========================================
+   PRODUCTO DISPONIBLE
+======================================== */
+
+.producto-disponible-ingreso {
+
+    min-height: 68px;
+
+    display: grid;
+
+    grid-template-columns:
+        58px
+        minmax(0, 1fr)
+        76px;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 7px;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid #e5e9ef;
+
+}
+
+
+.producto-disponible-ingreso:last-child {
+
+    border-bottom: none;
+
+}
+
+
+.imagen-producto-ingreso {
+
+    width: 58px;
+    height: 58px;
+
+    overflow: hidden;
+
+    border-radius: 5px;
+
+    background: #eef1f5;
+
+}
+
+
+.imagen-producto-ingreso img {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+}
+
+
+.info-producto-ingreso {
+
+    min-width: 0;
+
+}
+
+
+.info-producto-ingreso strong {
+
+    display: block;
+
+    overflow: hidden;
+
+    color: #24344d;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+
+}
+
+
+.info-producto-ingreso span {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: #7a8798;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 9px;
+
+}
+
+
+.boton-agregar-ingreso {
+
+    height: 35px;
+
+    padding: 0 10px;
+
+    border: 1px solid #2587e8;
+
+    border-radius: 5px;
+
+    background: #ffffff;
+
+    color: #2587e8;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+
+    cursor: pointer;
+
+}
+
+
+.boton-agregar-ingreso:hover {
+
+    background: #eef7ff;
+
+}
+
+
+.boton-agregar-ingreso:disabled {
+
+    opacity: 0.5;
+
+    cursor: default;
+
+}
+
+
+/* ========================================
+   PANEL DERECHO
+======================================== */
+
+.panel-productos-ingresos {
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    border: 1px solid #e1e7ef;
+
+    border-radius: 6px;
+
+    overflow: hidden;
+
+}
+
+
+.encabezado-productos-ingresos {
+
+    min-height: 47px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 10px;
+
+    border-bottom: 1px solid #e1e7ef;
+
+}
+
+
+.encabezado-productos-ingresos h3 {
+
+    margin: 0;
+
+}
+
+
+.boton-vaciar-ingresos {
+
+    height: 31px;
+
+    padding: 0 10px;
+
+    border: 1px solid #d3dce7;
+
+    border-radius: 5px;
+
+    background: #ffffff;
+
+    color: #64748b;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 9px;
+
+    cursor: pointer;
+
+}
+
+
+.boton-vaciar-ingresos:hover {
+
+    background: #f8fafc;
+
+    color: #dc3545;
+
+}
+
+
+/* ========================================
+   TABLA
+======================================== */
+
+.tabla-ingresos {
+
+    min-height: 0;
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+.cabecera-tabla-ingresos {
+
+    min-height: 36px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(180px, 1.2fr)
+        minmax(120px, 0.9fr)
+        minmax(90px, 0.7fr)
+        55px;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 0 10px;
+
+    box-sizing: border-box;
+
+    background: #f4f6f8;
+
+    color: #6c7b8e;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 9px;
+
+}
+
+
+.lista-ingresos-seleccionados {
+
+    min-height: 0;
+
+    overflow-y: auto;
+
+}
+
+
+/* ========================================
+   FILA PRODUCTO SELECCIONADO
+======================================== */
+
+.fila-ingreso {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(180px, 1.2fr)
+        minmax(120px, 0.9fr)
+        minmax(90px, 0.7fr)
+        55px;
+
+    gap: 8px;
+
+    padding: 9px 10px;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid #edf1f5;
+
+}
+
+
+.producto-ingreso-seleccionado {
+
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+}
+
+
+.producto-ingreso-seleccionado img {
+
+    width: 50px;
+    height: 50px;
+
+    flex: 0 0 50px;
+
+    object-fit: cover;
+
+    border-radius: 4px;
+
+}
+
+
+.producto-ingreso-seleccionado strong {
+
+    display: block;
+
+    overflow: hidden;
+
+    color: #24344d;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+
+}
+
+
+/* ========================================
+   TALLES
+======================================== */
+
+.talles-ingreso {
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+}
+
+
+.fila-talle-ingreso {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        25px;
+
+    gap: 5px;
+
+    box-sizing: border-box;
+
+}
+
+
+.fila-talle-ingreso select {
+
+    width: 100%;
+    min-width: 0;
+
+    height: 29px;
+
+    box-sizing: border-box;
+
+    padding: 0 7px;
+
+    border: 1px solid #d3dce7;
+
+    border-radius: 4px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #24344d;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 9px;
+
+}
+
+
+.fila-talle-ingreso select:focus {
+
+    border-color: #2587e8;
+
+}
+
+
+/* ========================================
+   BOTÓN ELIMINAR TALLE
+======================================== */
+
+.boton-eliminar-talle-ingreso {
+
+    width: 25px;
+    height: 29px;
+
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+}
+
+
+.boton-eliminar-talle-ingreso:hover {
+
+    color: #dc3545;
+
+}
+
+
+/* ========================================
+   AGREGAR TALLE
+======================================== */
+
+.boton-agregar-talle-ingreso {
+
+    align-self: flex-start;
+
+    padding: 2px 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #2587e8;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+
+    cursor: pointer;
+
+}
+
+
+/* ========================================
+   CANTIDADES
+======================================== */
+
+.cantidades-ingreso {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+}
+
+
+.cantidad-ingreso {
+
+    width: 100%;
+    min-width: 0;
+
+    height: 29px;
+
+    box-sizing: border-box;
+
+    padding: 0 8px;
+
+    border: 1px solid #d3dce7;
+
+    border-radius: 4px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #24344d;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+
+}
+
+
+.cantidad-ingreso:focus {
+
+    border-color: #2587e8;
+
+}
+
+
+/* ========================================
+   ACCIONES
+======================================== */
+
+.acciones-ingreso {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: flex-start;
+
+}
+
+
+/* ========================================
+   ACCIÓN: ELIMINAR PRODUCTO COMPLETO
+======================================== */
+
+.acciones-ingreso {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: center;
+
+}
+
+
+.boton-eliminar-ingreso {
+
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+
+    border-radius: 5px;
+
+    background: transparent;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+}
+
+
+.boton-eliminar-ingreso:hover {
+
+    background: #fff0f1;
+
+    color: #dc3545;
+
+}
+
+
+.boton-eliminar-ingreso:hover {
+
+    color: #dc3545;
+
+}
+
+
+/* ========================================
+   SIN PRODUCTOS
+======================================== */
+
+.sin-productos-ingresos {
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 5px;
+
+    color: #7a8798;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+}
+
+
+.sin-productos-ingresos strong {
+
+    color: #526174;
+
+    font-size: 11px;
+
+}
+
+
+.sin-productos-ingresos span {
+
+    font-size: 9px;
+
+}
+
+
+.icono-sin-ingresos {
+
+    width: 35px;
+    height: 35px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 4px;
+
+    border: 1px dashed #b9c5d3;
+
+    border-radius: 6px;
+
+    color: #8b99aa;
+
+    font-size: 20px;
+
+}
+
+
+/* ========================================
+   PIE
+======================================== */
+
+.modal-ingresos-pie {
+
+    min-height: 67px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    padding: 10px 22px;
+
+    box-sizing: border-box;
+
+    border-top: 1px solid #e5e9ef;
+
+}
+
+
+.boton-cancelar-ingresos,
+.boton-registrar-ingreso {
+
+    height: 38px;
+
+    padding: 0 18px;
+
+    border-radius: 5px;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+}
+
+
+.boton-cancelar-ingresos {
+
+    border: 1px solid #d2dbe6;
+
+    background: #ffffff;
+
+    color: #475467;
+
+}
+
+
+.boton-registrar-ingreso {
+
+    border: 1px solid #172b4d;
+
+    background: #172b4d;
+
+    color: #ffffff;
+
+}
+
+
+.boton-registrar-ingreso:hover {
+
+    background: #0e213d;
+
+}
+
+
+.boton-registrar-ingreso:disabled {
+
+    opacity: 0.5;
+
+    cursor: not-allowed;
+
+}
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 850px) {
+
+    .modal-ingresos-cuerpo {
+
+        grid-template-columns: 1fr;
+
+        overflow-y: auto;
+
+    }
+
+
+    .panel-busqueda-ingresos {
+
+        max-height: 260px;
+
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .modal-registrar-ingresos {
+
+        padding: 8px;
+
+    }
+
+
+    .modal-ingresos-contenido {
+
+        width: 100%;
+
+        max-height: calc(100vh - 16px);
+
+    }
+
+
+    .cabecera-tabla-ingresos {
+
+        display: none;
+
+    }
+
+
+    .fila-ingreso {
+
+        grid-template-columns: 1fr 35px;
+
+    }
+
+}

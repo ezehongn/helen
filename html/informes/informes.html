@@ -1,0 +1,598 @@
+<div class="pantalla-informes">
+
+    <!-- ========================================
+         ENCABEZADO
+    ======================================== -->
+
+    <div class="encabezado-informes">
+
+        <div>
+            <h1>Informes</h1>
+
+            <p>
+                Analizá el desempeño de tu negocio
+            </p>
+        </div>
+
+
+        <div class="filtros-informes">
+
+            <div class="filtro-fechas-informes">
+
+                <input
+                    type="date"
+                    id="fecha-desde-informes"
+                >
+
+                <span>→</span>
+
+                <input
+                    type="date"
+                    id="fecha-hasta-informes"
+                >
+
+            </div>
+
+
+            <select id="filtro-usuario-informes">
+
+                <option value="general">
+                    General
+                </option>
+
+                <option value="Gon">
+                    Gon
+                </option>
+
+                <option value="Matias">
+                    Matias
+                </option>
+
+            </select>
+
+
+            <button
+                type="button"
+                id="limpiar-filtros-informes"
+                class="boton-limpiar-informes"
+            >
+                Limpiar
+            </button>
+
+            <button
+    type="button"
+    id="exportar-informes"
+    class="boton-exportar-informes"
+>
+    Exportar
+</button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================
+         ESTADÍSTICAS PRINCIPALES
+    ======================================== -->
+
+    <section class="estadisticas-informes">
+
+        <div class="tarjeta-informe">
+
+            <div class="icono-informe verde">
+                $
+            </div>
+
+            <div>
+                <span>Ventas totales</span>
+
+                <strong id="total-ventas-informes">
+                    $ 0
+                </strong>
+
+                <small id="comparacion-ventas-informes">
+                    vs. período anterior
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="tarjeta-informe">
+
+            <div class="icono-informe azul">
+                #
+            </div>
+
+            <div>
+                <span>Cantidad de ventas</span>
+
+                <strong id="cantidad-ventas-informes">
+                    0
+                </strong>
+
+                <small id="comparacion-cantidad-informes">
+                    vs. período anterior
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="tarjeta-informe">
+
+            <div class="icono-informe violeta">
+                □
+            </div>
+
+            <div>
+                <span>Productos vendidos</span>
+
+                <strong id="productos-vendidos-informes">
+                    0
+                </strong>
+
+                <small id="comparacion-productos-informes">
+                    vs. período anterior
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="tarjeta-informe">
+
+            <div class="icono-informe naranja">
+                ♙
+            </div>
+
+            <div>
+                <span>Clientes</span>
+
+                <strong id="clientes-informes">
+                    0
+                </strong>
+
+                <small id="comparacion-clientes-informes">
+                    vs. período anterior
+                </small>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================================
+         FILA 1
+    ======================================== -->
+
+    <div class="grid-informes">
+
+        <section class="panel-informe grande">
+
+            <div class="encabezado-panel-informe">
+
+                <div>
+                    <h2>Ventas por día</h2>
+
+                    <p>
+                        Total de ventas en el período seleccionado
+                    </p>
+                </div>
+
+            </div>
+
+            <div
+                id="grafico-ventas-dia"
+                class="grafico-informe"
+            ></div>
+
+        </section>
+
+
+        <section class="panel-informe">
+
+            <div class="encabezado-panel-informe">
+
+                <div>
+                    <h2>Ventas por cuenta</h2>
+
+                    <p>
+                        Distribución de los montos vendidos por usuario
+                    </p>
+                </div>
+
+            </div>
+
+            <div
+                id="grafico-ventas-cuenta"
+                class="grafico-donut-informe"
+            ></div>
+
+        </section>
+
+
+        <!-- ========================================
+             FILA 2
+        ======================================== -->
+
+        <section class="panel-informe">
+
+            <div class="encabezado-panel-informe">
+
+                <div>
+                    <h2>Ventas por medio de pago</h2>
+
+                    <p>
+                        Distribución de los montos cobrados
+                    </p>
+                </div>
+
+            </div>
+
+            <div
+                id="grafico-medios-pago"
+                class="grafico-donut-informe"
+            ></div>
+
+        </section>
+
+
+        <section class="panel-informe">
+
+            <div class="encabezado-panel-informe">
+
+                <div>
+                    <h2>Ventas por categoría</h2>
+
+                    <p>
+                        Distribución de las ventas por categoría
+                    </p>
+                </div>
+
+            </div>
+
+            <div
+                id="grafico-ventas-categoria"
+                class="grafico-donut-informe"
+            ></div>
+
+        </section>
+
+
+        <!-- ========================================
+             FILA 3
+        ======================================== -->
+
+        <section class="panel-informe">
+
+            <div class="encabezado-panel-informe">
+
+                <div>
+                    <h2>Productos más vendidos</h2>
+
+                    <p>
+                        Top 10 de productos por cantidad vendida
+                    </p>
+                </div>
+
+            </div>
+
+            <div
+                id="lista-productos-mas-vendidos"
+                class="lista-ranking-informe"
+            ></div>
+
+        </section>
+
+
+        <section class="panel-informe">
+
+            <div class="encabezado-panel-informe">
+
+                <div>
+                    <h2>Categorías más vendidas</h2>
+
+                    <p>
+                        Cantidad de productos vendidos
+                    </p>
+                </div>
+
+            </div>
+
+            <div
+                id="grafico-categorias-vendidas"
+                class="grafico-donut-informe"
+            ></div>
+
+        </section>
+
+
+        <!-- ========================================
+             FILA 4
+        ======================================== -->
+
+        <section class="panel-informe">
+
+            <div class="encabezado-panel-informe">
+
+                <div>
+                    <h2>Estado de cobros</h2>
+
+                    <p>
+                        Ventas cobradas y ventas con deuda
+                    </p>
+                </div>
+
+            </div>
+
+            <div
+                id="grafico-estado-cobros"
+                class="grafico-donut-informe"
+            ></div>
+
+        </section>
+
+
+        <section class="panel-informe">
+
+            <div class="encabezado-panel-informe">
+
+                <div>
+                    <h2>Clientes con mayor deuda</h2>
+
+                    <p>
+                        Top 5 de clientes con saldo pendiente
+                    </p>
+                </div>
+
+            </div>
+
+            <div
+                id="tabla-clientes-mayor-deuda"
+                class="tabla-informe"
+            ></div>
+
+        </section>
+
+
+        <!-- ========================================
+             FILA 5
+        ======================================== -->
+
+        <section class="panel-informe">
+
+            <div class="encabezado-panel-informe">
+
+                <div>
+                    <h2>Deudas más antiguas</h2>
+
+                    <p>
+                        Clientes con mayor antigüedad de deuda
+                    </p>
+                </div>
+
+            </div>
+
+            <div
+                id="tabla-deudas-antiguas"
+                class="tabla-informe"
+            ></div>
+
+        </section>
+
+
+        <section class="panel-informe">
+
+            <div class="encabezado-panel-informe">
+
+                <div>
+                    <h2>Comparativa ventas vs. período anterior</h2>
+
+                    <p>
+                        Comparación de ventas diarias
+                    </p>
+                </div>
+
+            </div>
+
+            <div
+                id="grafico-comparativa-ventas"
+                class="grafico-informe"
+            ></div>
+
+        </section>
+
+
+        <!-- ========================================
+             FILA 6
+        ======================================== -->
+
+        <section class="panel-informe">
+
+            <div class="encabezado-panel-informe">
+
+                <div>
+                    <h2>Ticket promedio</h2>
+
+                    <p>
+                        Evolución del ticket promedio
+                    </p>
+                </div>
+
+            </div>
+
+            <div
+                id="grafico-ticket-promedio"
+                class="grafico-informe"
+            ></div>
+
+        </section>
+
+
+        <section class="panel-informe">
+
+            <div class="encabezado-panel-informe">
+
+                <div>
+                    <h2>Nuevos clientes</h2>
+
+                    <p>
+                        Cantidad de nuevos clientes por día
+                    </p>
+                </div>
+
+            </div>
+
+            <div
+                id="grafico-nuevos-clientes"
+                class="grafico-informe"
+            ></div>
+
+        </section>
+
+
+        <!-- ========================================
+             FILA 7
+        ======================================== -->
+
+        <section class="panel-informe">
+
+            <div class="encabezado-panel-informe">
+
+                <div>
+                    <h2>Gastos por día</h2>
+
+                    <p>
+                        Total de gastos en el período seleccionado
+                    </p>
+                </div>
+
+            </div>
+
+            <div
+                id="grafico-gastos-dia"
+                class="grafico-informe"
+            ></div>
+
+        </section>
+
+
+        <section class="panel-informe">
+
+            <div class="encabezado-panel-informe">
+
+                <div>
+                    <h2>Gastos por categoría</h2>
+
+                    <p>
+                        Distribución de los gastos
+                    </p>
+                </div>
+
+            </div>
+
+            <div
+                id="grafico-gastos-categoria"
+                class="grafico-donut-informe"
+            ></div>
+
+        </section>
+
+    </div>
+
+
+    <!-- ========================================
+         RESUMEN FINAL
+    ======================================== -->
+
+    <section class="panel-informe resumen-informe">
+
+        <div class="encabezado-panel-informe">
+
+            <div>
+                <h2>Resumen del período</h2>
+
+                <p>
+                    Principales indicadores del período seleccionado
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="resumen-grid-informe">
+
+            <div>
+                <span>Ventas totales</span>
+                <strong id="resumen-total-ventas">$ 0</strong>
+            </div>
+
+            <div>
+                <span>Costo de productos</span>
+                <strong id="resumen-costo-productos">$ 0</strong>
+            </div>
+
+            <div>
+                <span>Ganancia estimada</span>
+                <strong id="resumen-resultado">$ 0</strong>
+            </div>
+
+            <div>
+                <span>Productos vendidos</span>
+                <strong id="resumen-cantidad-productos">0</strong>
+            </div>
+
+            <div>
+                <span>Clientes que compraron</span>
+                <strong id="resumen-clientes">0</strong>
+            </div>
+
+            <div>
+                <span>Nuevos clientes</span>
+                <strong id="resumen-nuevos-clientes">0</strong>
+            </div>
+
+            <div>
+                <span>Ventas con deuda</span>
+                <strong id="resumen-ventas-deuda">0</strong>
+            </div>
+
+            <div>
+                <span>Ticket promedio</span>
+                <strong id="resumen-ticket-promedio">$ 0</strong>
+            </div>
+
+            <div>
+                <span>Total de gastos</span>
+                <strong id="resumen-total-gastos">$ 0</strong>
+            </div>
+
+            <div>
+                <span>Promedio diario de ventas</span>
+                <strong id="resumen-promedio-diario">
+                    $ 0
+                </strong>
+            </div>
+
+            <div>
+                <span>Producto más vendido</span>
+                <strong id="resumen-producto-mas-vendido">
+                    —
+                </strong>
+            </div>
+
+            <div>
+                <span>Categoría más vendida</span>
+                <strong id="resumen-categoria-mas-vendida">
+                    —
+                </strong>
+            </div>
+
+        </div>
+
+    </section>
+
+</div>

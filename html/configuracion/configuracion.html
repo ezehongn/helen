@@ -1,0 +1,421 @@
+<div class="pantalla-configuracion">
+
+    <div class="encabezado-configuracion">
+        <div>
+            <h1>Configuración</h1>
+            <p>Configura el funcionamiento general de Helen</p>
+        </div>
+    </div>
+
+    <div class="contenido-configuracion">
+
+        <!-- SEGURIDAD -->
+        <section class="seccion-configuracion">
+
+            <div class="encabezado-seccion-configuracion">
+                <div class="icono-seccion-configuracion">🔐</div>
+
+                <p>
+    Administra la contraseña de acceso al sistema para el correo:
+    <strong id="usuario-seguridad-configuracion"></strong>
+</p>
+            </div>
+
+            <div class="formulario-configuracion">
+
+                <div class="campo-configuracion">
+                    <label for="contrasena-actual-configuracion">
+                        Contraseña actual
+                    </label>
+
+                    <input
+                        type="password"
+                        id="contrasena-actual-configuracion"
+                    >
+                </div>
+
+                <div class="campo-configuracion">
+                    <label for="nueva-contrasena-configuracion">
+                        Nueva contraseña
+                    </label>
+
+                    <input
+                        type="password"
+                        id="nueva-contrasena-configuracion"
+                    >
+                </div>
+
+                <div class="campo-configuracion">
+                    <label for="confirmar-contrasena-configuracion">
+                        Confirmar nueva contraseña
+                    </label>
+
+                    <input
+                        type="password"
+                        id="confirmar-contrasena-configuracion"
+                    >
+                </div>
+
+                <div class="acciones-configuracion">
+                    <button
+                        type="button"
+                        class="boton-principal-configuracion"
+                        id="cambiar-contrasena-configuracion"
+                    >
+                        Cambiar contraseña
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- STOCK -->
+        <section class="seccion-configuracion">
+
+            <div class="encabezado-seccion-configuracion">
+                <div class="icono-seccion-configuracion">📦</div>
+
+                <div>
+                    <h2>Stock</h2>
+                    <p>
+                        Define el límite de bajo stock para cada categoría.
+                    </p>
+                </div>
+            </div>
+
+            <div class="tabla-configuracion">
+
+                <div class="cabecera-tabla-configuracion">
+                    <span>Categoría</span>
+                    <span>Límite de bajo stock</span>
+                </div>
+
+                <div id="lista-limites-stock-configuracion">
+
+                    <div class="fila-vacia-configuracion">
+                        No hay categorías configuradas.
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="acciones-configuracion">
+
+                <button
+                    type="button"
+                    class="boton-principal-configuracion"
+                    id="guardar-limites-stock-configuracion"
+                >
+                    Guardar cambios
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- MEDIOS DE PAGO -->
+        <section class="seccion-configuracion">
+
+            <div class="encabezado-seccion-configuracion">
+                <div class="icono-seccion-configuracion">💳</div>
+
+                <div>
+                    <h2>Medios de pago</h2>
+
+                    <p>
+                        Configura los recargos de las ventas con tarjeta
+                        de crédito.
+                    </p>
+                </div>
+            </div>
+
+            <div class="formulario-dos-columnas">
+
+                <div class="campo-configuracion">
+
+                    <label for="recargo-3-cuotas-configuracion">
+                        Recargo por 3 cuotas
+                    </label>
+
+                    <div class="campo-porcentaje-configuracion">
+
+                        <input
+                            type="number"
+                            id="recargo-3-cuotas-configuracion"
+                            min="0"
+                            step="0.01"
+                            value="10"
+                        >
+
+                        <span>%</span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="campo-configuracion">
+
+                    <label for="recargo-6-cuotas-configuracion">
+                        Recargo por 6 cuotas
+                    </label>
+
+                    <div class="campo-porcentaje-configuracion">
+
+                        <input
+                            type="number"
+                            id="recargo-6-cuotas-configuracion"
+                            min="0"
+                            step="0.01"
+                            value="15"
+                        >
+
+                        <span>%</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="acciones-configuracion">
+
+                <button
+                    type="button"
+                    class="boton-principal-configuracion"
+                    id="guardar-recargos-configuracion"
+                >
+                    Guardar cambios
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- DATOS DEL NEGOCIO -->
+        <section class="seccion-configuracion">
+
+            <div class="encabezado-seccion-configuracion">
+                <div class="icono-seccion-configuracion">🏪</div>
+
+                <div>
+                    <h2>Datos del negocio</h2>
+
+                    <p>
+                        Información general del negocio.
+                    </p>
+                </div>
+            </div>
+
+
+            <div class="formulario-dos-columnas">
+
+                <div class="campo-configuracion">
+
+                    <label for="nombre-negocio-configuracion">
+                        Nombre del negocio
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nombre-negocio-configuracion"
+                        placeholder="Helen"
+                    >
+
+                </div>
+
+
+                <div class="campo-configuracion">
+
+                    <label for="telefono-negocio-configuracion">
+                        Teléfono
+                    </label>
+
+                    <input
+                        type="text"
+                        id="telefono-negocio-configuracion"
+                    >
+
+                </div>
+
+
+                <div class="campo-configuracion">
+
+                    <label for="direccion-negocio-configuracion">
+                        Dirección
+                    </label>
+
+                    <input
+                        type="text"
+                        id="direccion-negocio-configuracion"
+                    >
+
+                </div>
+
+
+                <div class="campo-configuracion">
+
+                    <label for="instagram-negocio-configuracion">
+                        Instagram / redes sociales
+                    </label>
+
+                    <input
+                        type="text"
+                        id="instagram-negocio-configuracion"
+                        placeholder="@usuario"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="acciones-configuracion">
+
+                <button
+                    type="button"
+                    class="boton-principal-configuracion"
+                    id="guardar-datos-negocio-configuracion"
+                >
+                    Guardar cambios
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ZONA PELIGROSA -->
+        <section class="seccion-configuracion seccion-peligro-configuracion">
+
+            <div class="encabezado-seccion-configuracion">
+
+                <div class="icono-seccion-configuracion">
+                    ⚠️
+                </div>
+
+                <div>
+
+                    <h2>Zona peligrosa</h2>
+
+                    <p>
+                        Estas acciones pueden eliminar información
+                        permanentemente.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="bloque-restablecer-configuracion">
+
+                <div>
+
+                    <h3>
+                        Restablecer datos del sistema
+                    </h3>
+
+                    <p>
+                        Elimina productos, ventas, clientes, movimientos,
+                        gastos y categorías. Las configuraciones no se
+                        modifican.
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="boton-peligro-configuracion"
+                    id="restablecer-datos-configuracion"
+                >
+                    🗑 Restablecer todos los datos
+                </button>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+
+<!-- MODAL RESTABLECER -->
+
+<div
+    id="modal-restablecer-configuracion"
+    class="modal-configuracion"
+    hidden
+>
+
+    <div class="contenido-modal-configuracion">
+
+        <button
+            type="button"
+            class="cerrar-modal-configuracion"
+            id="cerrar-modal-restablecer-configuracion"
+        >
+            ×
+        </button>
+
+
+        <div class="icono-modal-peligro-configuracion">
+            ⚠️
+        </div>
+
+
+        <h2>
+            Restablecer datos del sistema
+        </h2>
+
+
+        <p>
+            Esta acción eliminará todos los datos registrados
+            y no se puede deshacer.
+        </p>
+
+
+        <p>
+            Escribí <strong>ELIMINAR</strong> para confirmar.
+        </p>
+
+
+        <input
+            type="text"
+            id="confirmacion-restablecer-configuracion"
+            placeholder="Escribí ELIMINAR"
+            autocomplete="off"
+        >
+
+
+        <div class="acciones-modal-configuracion">
+
+            <button
+                type="button"
+                class="boton-secundario-configuracion"
+                id="cancelar-restablecer-configuracion"
+            >
+                Cancelar
+            </button>
+
+
+            <button
+                type="button"
+                class="boton-peligro-configuracion"
+                id="confirmar-restablecer-configuracion"
+            >
+                Restablecer datos
+            </button>
+
+        </div>
+
+    </div>
+
+</div>

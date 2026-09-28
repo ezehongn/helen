@@ -1,0 +1,415 @@
+<div
+    class="modal-producto"
+    id="modal-producto"
+>
+
+    <div class="modal-producto-contenido">
+
+        <div class="modal-producto-encabezado">
+
+            <h2>
+                Agregar producto
+            </h2>
+
+
+            <button
+                type="button"
+                class="cerrar-modal"
+                id="cerrar-modal-producto"
+                aria-label="Cerrar"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form
+            id="formulario-registrar-producto"
+        >
+
+            <div class="modal-producto-cuerpo">
+
+
+                <!-- ========================================
+                     COLUMNA IZQUIERDA
+                ======================================== -->
+
+                <div class="modal-columna-izquierda">
+
+
+                    <!-- IMAGEN -->
+
+                    <div class="campo-producto">
+
+                        <label>
+                            Imagen del producto
+                        </label>
+
+
+                        <label
+                            class="selector-imagen"
+                            for="imagen-producto"
+                        >
+
+                            <span class="icono-imagen">
+                                ▧
+                            </span>
+
+
+                            <strong>
+                                Seleccioná una imagen
+                            </strong>
+
+
+                            <span>
+                                Hacé clic para subir una imagen
+                            </span>
+
+
+                            <small>
+                                JPG, PNG o WEBP (máx. 5 MB)
+                            </small>
+
+                        </label>
+
+
+                        <input
+                            type="file"
+                            id="imagen-producto"
+                            accept="image/jpeg,image/png,image/webp"
+                            hidden
+                        >
+
+                    </div>
+
+
+                    <!-- NOMBRE -->
+
+                    <div class="campo-producto">
+
+                        <label
+                            for="nombre-producto"
+                        >
+                            Nombre del producto
+                            <span class="campo-obligatorio">
+                                *
+                            </span>
+                        </label>
+
+
+                        <input
+                            type="text"
+                            id="nombre-producto"
+                            placeholder="Ej. Zapatilla Urbana"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- PRECIOS -->
+
+                    <div class="fila-precios">
+
+
+                        <div class="campo-producto">
+
+                            <label
+                                for="precio-compra"
+                            >
+                                Precio de compra
+                                <span class="campo-obligatorio">
+                                    *
+                                </span>
+                            </label>
+
+
+                            <div class="input-precio">
+
+                                <span>
+                                    $
+                                </span>
+
+
+                                <input
+    type="text"
+    id="precio-compra"
+    inputmode="decimal"
+    placeholder="0,00"
+    autocomplete="off"
+    required
+>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="campo-producto">
+
+                            <label
+                                for="precio-lista"
+                            >
+                                Precio de lista
+                                <span class="campo-obligatorio">
+                                    *
+                                </span>
+                            </label>
+
+
+                            <div class="input-precio">
+
+                                <span>
+                                    $
+                                </span>
+
+
+                                <input
+    type="text"
+    id="precio-lista"
+    inputmode="decimal"
+    placeholder="0,00"
+    autocomplete="off"
+    required
+>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="ganancia-producto">
+
+                            <span class="ganancia-titulo">
+                                Ganancia por unidad
+                            </span>
+
+
+                            <strong
+                                id="ganancia-producto"
+                            >
+                                $ 0,00
+                            </strong>
+
+
+                            <span
+                                id="porcentaje-ganancia"
+                            >
+                                (0%)
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CATEGORÍA / ESTADO -->
+
+                    <div class="fila-producto">
+
+
+                        <div class="campo-producto">
+
+                            <label
+                                for="categoria-producto"
+                            >
+                                Categoría
+                                <span class="campo-obligatorio">
+                                    *
+                                </span>
+                            </label>
+
+
+                            <select
+                                id="categoria-producto"
+                                required
+                            >
+
+                                <option value="">
+                                    Seleccioná una categoría
+                                </option>
+
+                                <option value="Ropa">
+                                    Ropa
+                                </option>
+
+                                <option value="Calzado">
+                                    Calzado
+                                </option>
+
+                                <option value="Accesorios">
+                                    Accesorios
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="campo-producto">
+
+                            <label
+                                for="estado-producto"
+                            >
+                                Estado
+                                <span class="campo-obligatorio">
+                                    *
+                                </span>
+                            </label>
+
+
+                            <select
+                                id="estado-producto"
+                            >
+
+                                <option value="activo">
+                                    Activo
+                                </option>
+
+                                <option value="inactivo">
+                                    Inactivo
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DESCRIPCIÓN -->
+
+                    <div class="campo-producto">
+
+                        <label
+                            for="descripcion-producto"
+                        >
+                            Descripción
+                        </label>
+
+
+                        <textarea
+                            id="descripcion-producto"
+                            placeholder="Describe el producto..."
+                            rows="4"
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ========================================
+                     COLUMNA DERECHA
+                ======================================== -->
+
+                <div class="modal-columna-derecha">
+
+                    <div class="talles-contenedor">
+
+                        <h3>
+                            Talles y stock
+                        </h3>
+
+
+                        <div class="tabla-talles">
+
+                            <div class="tabla-talles-cabecera">
+
+                                <span>
+                                    Talle
+                                </span>
+
+                                <span>
+                                    Stock
+                                </span>
+
+                                <span>
+                                    Acciones
+                                </span>
+
+                            </div>
+
+
+                            <div
+                                id="lista-talles"
+                                class="lista-talles"
+                            ></div>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="boton-agregar-talle"
+                            id="agregar-talle"
+                        >
+
+                            <span>
+                                +
+                            </span>
+
+                            Agregar talle
+
+                        </button>
+
+
+                        <div class="info-talles">
+
+                            <span class="icono-info">
+                                i
+                            </span>
+
+
+                            <div>
+
+                                <strong>
+                                    Agregá todos los talles que tenga este producto.
+                                </strong>
+
+
+                                <p>
+                                    Si el producto no tiene talles, podés dejar esta sección vacía.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ========================================
+                 ACCIONES
+            ======================================== -->
+
+            <div class="acciones-modal-producto">
+
+                <button
+                    type="button"
+                    class="boton-cancelar"
+                    id="cancelar-producto"
+                >
+                    Cancelar
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="boton-guardar"
+                >
+                    Guardar producto
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>

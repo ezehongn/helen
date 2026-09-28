@@ -1,0 +1,458 @@
+/* ========================================
+   PANTALLA
+======================================== */
+
+.pantalla-informes {
+    width: 100%;
+    padding: 32px;
+    box-sizing: border-box;
+}
+
+
+/* ========================================
+   ENCABEZADO
+======================================== */
+
+.encabezado-informes {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.encabezado-informes h1 {
+    margin: 0;
+    color: #24344d;
+    font-size: 28px;
+}
+
+.encabezado-informes p {
+    margin: 5px 0 0;
+    color: #718096;
+    font-size: 13px;
+}
+
+
+/* ========================================
+   FILTROS
+======================================== */
+
+.filtros-informes {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filtro-fechas-informes {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+    border: 1px solid #dce3eb;
+    border-radius: 6px;
+    background: #fff;
+}
+
+.filtro-fechas-informes input {
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: #34445d;
+    font-family: inherit;
+    font-size: 12px;
+}
+
+.filtros-informes select {
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid #dce3eb;
+    border-radius: 6px;
+    background: #fff;
+    color: #34445d;
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.boton-limpiar-informes {
+    height: 38px;
+    padding: 0 14px;
+    border: 1px solid #dce3eb;
+    border-radius: 6px;
+    background: #fff;
+    color: #34445d;
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.boton-limpiar-informes:hover {
+    background: #f5f8fc;
+}
+
+
+/* ========================================
+   ESTADÍSTICAS
+======================================== */
+
+.estadisticas-informes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.tarjeta-informe {
+    min-height: 90px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    box-sizing: border-box;
+    border: 1px solid #e0e6ed;
+    border-radius: 9px;
+    background: #fff;
+}
+
+.icono-informe {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.icono-informe.verde {
+    background: #e5f7ef;
+    color: #16a56c;
+}
+
+.icono-informe.azul {
+    background: #e8f2ff;
+    color: #2587e8;
+}
+
+.icono-informe.violeta {
+    background: #f0e8ff;
+    color: #8a3ffc;
+}
+
+.icono-informe.naranja {
+    background: #fff2df;
+    color: #f39a22;
+}
+
+.tarjeta-informe span {
+    display: block;
+    color: #718096;
+    font-size: 12px;
+}
+
+.tarjeta-informe strong {
+    display: block;
+    margin-top: 3px;
+    color: #24344d;
+    font-size: 20px;
+}
+
+.tarjeta-informe small {
+    display: block;
+    margin-top: 4px;
+    color: #16a56c;
+    font-size: 10px;
+}
+
+
+/* ========================================
+   GRID
+======================================== */
+
+.grid-informes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+
+/* ========================================
+   PANELES
+======================================== */
+
+.panel-informe {
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid #e0e6ed;
+    border-radius: 9px;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+.panel-informe.grande {
+    min-height: 330px;
+}
+
+.encabezado-panel-informe {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.encabezado-panel-informe h2 {
+    margin: 0;
+    color: #24344d;
+    font-size: 15px;
+}
+
+.encabezado-panel-informe p {
+    margin: 4px 0 0;
+    color: #718096;
+    font-size: 11px;
+}
+
+
+/* ========================================
+   GRÁFICOS
+======================================== */
+
+.grafico-informe {
+    width: 100%;
+    height: 250px;
+}
+
+.grafico-donut-informe {
+    width: 100%;
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* ========================================
+   RANKINGS
+======================================== */
+
+.lista-ranking-informe {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.item-ranking-informe {
+    display: grid;
+    grid-template-columns: 24px 1fr 45px;
+    align-items: center;
+    gap: 8px;
+}
+
+.numero-ranking-informe {
+    color: #718096;
+    font-size: 11px;
+}
+
+.nombre-ranking-informe {
+    min-width: 0;
+    color: #34445d;
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.barra-ranking-informe {
+    height: 7px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #edf2f7;
+}
+
+.barra-ranking-informe span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #2587e8;
+}
+
+.valor-ranking-informe {
+    color: #53657d;
+    font-size: 10px;
+    text-align: right;
+}
+
+
+/* ========================================
+   TABLAS
+======================================== */
+
+.tabla-informe {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tabla-informe table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+.tabla-informe th {
+    padding: 7px;
+    border-bottom: 1px solid #e4e9ef;
+    color: #718096;
+    font-weight: 500;
+    text-align: left;
+}
+
+.tabla-informe td {
+    padding: 8px 7px;
+    border-bottom: 1px solid #edf1f5;
+    color: #34445d;
+}
+
+.tabla-informe .deuda {
+    color: #e53935;
+    font-weight: 600;
+}
+
+.tabla-informe .dias {
+    color: #e53935;
+    font-weight: 600;
+}
+
+
+/* ========================================
+   RESUMEN
+======================================== */
+
+.resumen-informe {
+    margin-top: 14px;
+}
+
+.resumen-grid-informe {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    overflow: hidden;
+    border: 1px solid #e3e8ef;
+    border-radius: 7px;
+}
+
+.resumen-grid-informe > div {
+    min-height: 75px;
+    padding: 13px;
+    background: #fafbfd;
+}
+
+.resumen-grid-informe span {
+    display: block;
+    color: #718096;
+    font-size: 10px;
+}
+
+.resumen-grid-informe strong {
+    display: block;
+    margin-top: 7px;
+    color: #24344d;
+    font-size: 14px;
+}
+
+
+/* ========================================
+   VACÍOS
+======================================== */
+
+.sin-datos-informe {
+    width: 100%;
+    height: 100%;
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9aa6b5;
+    font-size: 12px;
+}
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 1100px) {
+
+    .estadisticas-informes {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .resumen-grid-informe {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 800px) {
+
+    .pantalla-informes {
+        padding: 20px;
+    }
+
+    .encabezado-informes {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filtros-informes {
+        flex-wrap: wrap;
+    }
+
+    .grid-informes {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 550px) {
+
+    .estadisticas-informes {
+        grid-template-columns: 1fr;
+    }
+
+    .resumen-grid-informe {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+.boton-exportar-informes {
+    border: none;
+    background: #2563eb;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.boton-exportar-informes:hover {
+    background: #1d4ed8;
+}
+
+.boton-exportar-informes:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+.exportando-informes-pdf
+.boton-exportar-informes {
+    display: none !important;
+}

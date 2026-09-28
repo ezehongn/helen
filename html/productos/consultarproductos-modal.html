@@ -1,0 +1,375 @@
+<div
+    class="modal-consultar-producto"
+    id="modal-consultar-producto"
+>
+
+    <div class="modal-consultar-contenido">
+
+        <!-- ========================================
+             ENCABEZADO
+        ======================================== -->
+
+        <div class="modal-consultar-encabezado">
+
+            <h2>
+                Editar producto
+            </h2>
+
+            <button
+                type="button"
+                class="cerrar-modal-consultar"
+                id="cerrar-modal-consultar"
+                aria-label="Cerrar"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <!-- ========================================
+             CUERPO
+        ======================================== -->
+
+        <form
+            id="formulario-consultar-producto"
+        >
+
+            <div class="modal-consultar-cuerpo">
+
+
+                <!-- ========================================
+                     COLUMNA IZQUIERDA
+                ======================================== -->
+
+                <div class="consultar-columna-izquierda">
+
+
+                    <!-- IMAGEN -->
+
+                    <div class="consultar-imagen-contenedor">
+
+                        <label>
+                            Imagen del producto
+                        </label>
+
+                        <label
+                            class="consultar-selector-imagen"
+                            for="consultar-imagen-producto"
+                            id="consultar-selector-imagen"
+                        >
+
+                            <span
+                                class="consultar-placeholder-imagen"
+                                id="consultar-placeholder-imagen"
+                            >
+                                ▧
+                            </span>
+
+                        </label>
+
+                        <input
+                            type="file"
+                            id="consultar-imagen-producto"
+                            accept="image/jpeg,image/png,image/webp"
+                            hidden
+                        >
+
+                        <small>
+                            JPG, PNG o WEBP
+                        </small>
+
+                    </div>
+
+
+                    <!-- NOMBRE -->
+
+                    <div class="campo-consultar">
+
+                        <label
+                            for="consultar-nombre"
+                        >
+                            Nombre del producto
+                            <span class="campo-obligatorio">
+                                *
+                            </span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="consultar-nombre"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- PRECIOS -->
+
+                    <div class="fila-precios-consultar">
+
+                        <div class="campo-consultar">
+
+                            <label
+                                for="consultar-precio-compra"
+                            >
+                                Precio de compra
+                                <span class="campo-obligatorio">
+                                    *
+                                </span>
+                            </label>
+
+                            <div class="input-precio-consultar">
+
+                                <span>
+                                    $
+                                </span>
+
+                                <input
+                                    type="text"
+                                    id="consultar-precio-compra"
+                                    inputmode="decimal"
+                                    autocomplete="off"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="campo-consultar">
+
+                            <label
+                                for="consultar-precio-lista"
+                            >
+                                Precio de lista
+                                <span class="campo-obligatorio">
+                                    *
+                                </span>
+                            </label>
+
+                            <div class="input-precio-consultar">
+
+                                <span>
+                                    $
+                                </span>
+
+                                <input
+                                    type="text"
+                                    id="consultar-precio-lista"
+                                    inputmode="decimal"
+                                    autocomplete="off"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- GANANCIA -->
+
+                        <div
+                            class="ganancia-consultar"
+                            id="ganancia-consultar"
+                        >
+
+                            <span>
+                                Ganancia por unidad
+                            </span>
+
+                            <strong
+                                id="consultar-ganancia"
+                            >
+                                $ 0,00
+                            </strong>
+
+                            <small
+                                id="consultar-porcentaje"
+                            >
+                                (0%)
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ESTADO / CATEGORÍA -->
+
+                    <div class="fila-consultar">
+
+                        <div class="campo-consultar">
+
+                            <label
+                                for="consultar-categoria"
+                            >
+                                Categoría
+                            </label>
+
+                            <select
+                                id="consultar-categoria"
+                            >
+
+                                <option value="Ropa">
+                                    Ropa
+                                </option>
+
+                                <option value="Calzado">
+                                    Calzado
+                                </option>
+
+                                <option value="Accesorios">
+                                    Accesorios
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="campo-consultar">
+
+                            <label
+                                for="consultar-estado"
+                            >
+                                Estado
+                            </label>
+
+                            <select
+                                id="consultar-estado"
+                            >
+
+                                <option value="activo">
+                                    Activo
+                                </option>
+
+                                <option value="inactivo">
+                                    Inactivo
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DESCRIPCIÓN -->
+
+                    <div class="campo-consultar">
+
+                        <label
+                            for="consultar-descripcion"
+                        >
+                            Descripción
+                        </label>
+
+                        <textarea
+                            id="consultar-descripcion"
+                            rows="4"
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ========================================
+                     COLUMNA DERECHA
+                ======================================== -->
+
+                <div class="consultar-columna-derecha">
+
+                    <div class="consultar-talles-contenedor">
+
+                        <div class="consultar-talles-encabezado">
+
+                            <h3>
+                                Talles y stock
+                            </h3>
+
+                            <button
+                                type="button"
+                                id="consultar-agregar-talle"
+                                class="boton-agregar-talle-consultar"
+                            >
+                                <span>
+                                    +
+                                </span>
+
+                                Agregar talle
+                            </button>
+
+                        </div>
+
+
+                        <!-- TABLA -->
+
+                        <div class="tabla-talles-consultar">
+
+                            <div class="tabla-talles-consultar-cabecera">
+
+                                <span>
+                                    Talle
+                                </span>
+
+                                <span>
+                                    Stock
+                                </span>
+
+                                <span>
+                                    Estado
+                                </span>
+
+                                <span>
+                                    Acciones
+                                </span>
+
+                            </div>
+
+
+                            <div
+                                id="consultar-lista-talles"
+                                class="consultar-lista-talles"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ========================================
+                 ACCIONES
+            ======================================== -->
+
+            <div class="acciones-consultar-modal">
+
+                <button
+                    type="button"
+                    class="boton-cancelar-consultar"
+                    id="cancelar-consultar"
+                >
+                    Cancelar
+                </button>
+
+                <button
+                    type="submit"
+                    class="boton-guardar-consultar"
+                    id="guardar-cambios-producto"
+                >
+                    Guardar cambios
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>

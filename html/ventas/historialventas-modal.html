@@ -1,0 +1,113 @@
+<div
+    class="modal-historial-ventas"
+    id="modal-historial-ventas"
+>
+
+    <div class="contenido-modal-historial-ventas">
+
+        <div class="encabezado-historial-ventas">
+
+            <div>
+                <h2>Historial de ventas</h2>
+                <p>Consultá las ventas registradas por este usuario</p>
+            </div>
+
+            <button
+                type="button"
+                class="cerrar-modal-historial"
+                id="cerrar-modal-historial"
+                aria-label="Cerrar"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="controles-historial-ventas">
+
+    <div class="buscador-historial-ventas">
+
+        <span>⌕</span>
+
+        <input
+            type="text"
+            id="busqueda-historial-ventas"
+            placeholder="Buscar por número o cliente..."
+            autocomplete="off"
+        >
+
+    </div>
+
+
+    <select
+        id="filtro-estado-historial"
+        class="filtro-historial-ventas"
+    >
+        <option value="">Todas las ventas</option>
+        <option value="pagada">Pagadas</option>
+        <option value="con_deuda">Con deuda</option>
+    </select>
+
+
+    <div class="fecha-historial-ventas">
+
+        <label for="fecha-desde-historial">
+            Desde
+        </label>
+
+        <input
+            type="date"
+            id="fecha-desde-historial"
+        >
+
+    </div>
+
+
+    <div class="fecha-historial-ventas">
+
+        <label for="fecha-hasta-historial">
+            Hasta
+        </label>
+
+        <input
+            type="date"
+            id="fecha-hasta-historial"
+        >
+
+    </div>
+
+</div>
+
+
+        <div
+            class="lista-historial-completo"
+            id="lista-historial-completo"
+        >
+
+            <div class="historial-cargando">
+                Cargando ventas...
+            </div>
+
+        </div>
+
+
+        <div class="pie-historial-ventas">
+
+            <span id="cantidad-historial-ventas">
+                0 ventas
+            </span>
+
+            <button
+                type="button"
+                class="boton-cerrar-historial"
+                id="boton-cerrar-historial"
+            >
+                Cerrar
+            </button>
+
+        </div>
+
+    </div>
+
+</div>

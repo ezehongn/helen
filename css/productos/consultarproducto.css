@@ -1,0 +1,1158 @@
+/* ========================================
+   MODAL CONSULTAR / EDITAR PRODUCTO
+======================================== */
+
+.modal-consultar-producto {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 3000;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 25px;
+
+    box-sizing: border-box;
+
+    background: rgba(
+        15,
+        25,
+        38,
+        0.52
+    );
+
+}
+
+
+.modal-consultar-producto.visible {
+
+    display: flex;
+
+}
+
+
+/* ========================================
+   CONTENIDO
+======================================== */
+
+.modal-consultar-contenido {
+
+    width: min(
+        740px,
+        calc(100vw - 50px)
+    );
+
+    max-height: calc(
+        100vh - 50px
+    );
+
+    overflow-y: auto;
+
+    background: #ffffff;
+
+    border-radius: 9px;
+
+    box-shadow:
+        0 18px 50px rgba(
+            0,
+            0,
+            0,
+            0.20
+        );
+
+}
+
+
+/* ========================================
+   ENCABEZADO
+======================================== */
+
+.modal-consultar-encabezado {
+
+    height: 68px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 25px;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid #edf0f4;
+
+}
+
+
+.modal-consultar-encabezado h2 {
+
+    margin: 0;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 23px;
+
+    font-weight: 700;
+
+    color: #1d2b43;
+
+}
+
+
+.cerrar-modal-consultar {
+
+    width: 32px;
+
+    height: 32px;
+
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #344256;
+
+    font-size: 25px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+}
+
+
+.cerrar-modal-consultar:hover {
+
+    color: #111c2c;
+
+}
+
+
+/* ========================================
+   CUERPO
+======================================== */
+
+.modal-consultar-cuerpo {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        300px;
+
+    gap: 24px;
+
+    padding: 20px 25px;
+
+}
+
+
+/* ========================================
+   COLUMNA IZQUIERDA
+======================================== */
+
+.consultar-columna-izquierda {
+
+    min-width: 0;
+
+}
+
+
+/* ========================================
+   IMAGEN
+======================================== */
+
+.consultar-imagen-contenedor {
+
+    margin-bottom: 16px;
+
+}
+
+
+.consultar-imagen-contenedor > label:first-child {
+
+    display: block;
+
+    margin-bottom: 6px;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    color: #31435d;
+
+}
+
+
+.consultar-selector-imagen {
+
+    width: 100%;
+
+    height: 205px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    box-sizing: border-box;
+
+    border-radius: 6px;
+
+    background: #f1f4f7;
+
+    border: 1px dashed #ccd6e1;
+
+    background-repeat: no-repeat;
+
+    background-position: center;
+
+    background-size: cover;
+
+    cursor: pointer;
+
+    overflow: hidden;
+
+}
+
+
+.consultar-selector-imagen:hover {
+
+    border-color: #2587e8;
+
+}
+
+
+.consultar-placeholder-imagen {
+
+    color: #9aa8b8;
+
+    font-size: 30px;
+
+}
+
+
+.consultar-imagen-contenedor small {
+
+    display: block;
+
+    margin-top: 5px;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 9px;
+
+    color: #8b98a8;
+
+}
+
+
+/* ========================================
+   CAMPOS
+======================================== */
+
+.campo-consultar {
+
+    min-width: 0;
+
+    margin-bottom: 13px;
+
+}
+
+
+.campo-consultar label {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    color: #31435d;
+
+}
+
+
+.campo-obligatorio {
+
+    color: #e23c4b;
+
+}
+
+
+.campo-consultar input,
+.campo-consultar select,
+.campo-consultar textarea {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d3dce7;
+
+    border-radius: 5px;
+
+    background: #ffffff;
+
+    color: #34445a;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 12px;
+
+    outline: none;
+
+}
+
+
+.campo-consultar input,
+.campo-consultar select {
+
+    height: 39px;
+
+    padding: 0 11px;
+
+}
+
+
+.campo-consultar textarea {
+
+    min-height: 88px;
+
+    padding: 9px 11px;
+
+    resize: vertical;
+
+}
+
+
+.campo-consultar input:focus,
+.campo-consultar select:focus,
+.campo-consultar textarea:focus {
+
+    border-color: #2587e8;
+
+    box-shadow:
+        0 0 0 2px rgba(
+            37,
+            135,
+            232,
+            0.08
+        );
+
+}
+
+
+/* ========================================
+   FILAS
+======================================== */
+
+.fila-precios-consultar {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1fr
+        1fr;
+
+    gap: 9px;
+
+    align-items: end;
+
+}
+
+
+.fila-consultar {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    gap: 12px;
+
+}
+
+
+/* ========================================
+   PRECIOS
+======================================== */
+
+.input-precio-consultar {
+
+    height: 39px;
+
+    display: flex;
+
+    align-items: center;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d3dce7;
+
+    border-radius: 5px;
+
+    background: #ffffff;
+
+}
+
+
+.input-precio-consultar:focus-within {
+
+    border-color: #2587e8;
+
+}
+
+
+.input-precio-consultar span {
+
+    padding-left: 11px;
+
+    color: #69788a;
+
+    font-size: 12px;
+
+}
+
+
+.input-precio-consultar input {
+
+    height: 37px;
+
+    padding: 0 8px;
+
+    border: none;
+
+    outline: none;
+
+}
+
+
+/* ========================================
+   GANANCIA
+======================================== */
+
+.ganancia-consultar {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: #f1f3f5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.ganancia-consultar span {
+    font-size: 10px;
+    color: #667085;
+    white-space: nowrap;
+}
+
+.ganancia-consultar strong {
+    display: block;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: clamp(12px, 1.2vw, 17px);
+    line-height: 1.2;
+}
+
+.ganancia-consultar small {
+    font-size: 9px;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.ganancia-consultar > span {
+
+    font-size: 9px;
+
+    color: #778394;
+
+}
+
+
+#consultar-ganancia {
+
+    margin-top: 2px;
+
+    font-size: 16px;
+
+    line-height: 1.15;
+
+    white-space: nowrap;
+
+}
+
+
+#consultar-porcentaje {
+
+    margin-top: 1px;
+
+    font-size: 9px;
+
+    white-space: nowrap;
+
+}
+
+
+.ganancia-consultar.neutral {
+
+    background: #f0f2f5;
+
+}
+
+
+.ganancia-consultar.positiva {
+
+    background: #e6f7ef;
+
+}
+
+
+.ganancia-consultar.negativa {
+
+    background: #fde9eb;
+
+}
+
+
+.ganancia-consultar.neutral
+#consultar-ganancia,
+.ganancia-consultar.neutral
+#consultar-porcentaje {
+
+    color: #727e8d;
+
+}
+
+
+.ganancia-consultar.positiva
+#consultar-ganancia,
+.ganancia-consultar.positiva
+#consultar-porcentaje {
+
+    color: #11965b;
+
+}
+
+
+.ganancia-consultar.negativa
+#consultar-ganancia,
+.ganancia-consultar.negativa
+#consultar-porcentaje {
+
+    color: #dc3545;
+
+}
+
+
+/* ========================================
+   Talles
+======================================== */
+
+.consultar-columna-derecha {
+
+    min-width: 0;
+
+}
+
+
+.consultar-talles-contenedor {
+
+    width: 100%;
+
+}
+
+
+.consultar-talles-encabezado {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    margin-bottom: 9px;
+
+}
+
+
+.consultar-talles-encabezado h3 {
+
+    margin: 0;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 14px;
+
+    color: #263851;
+
+}
+
+
+.boton-agregar-talle-consultar {
+
+    height: 34px;
+
+    padding: 0 11px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    border: 1px solid #2587e8;
+
+    border-radius: 5px;
+
+    background: #ffffff;
+
+    color: #1672d1;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+
+    cursor: pointer;
+
+}
+
+
+.boton-agregar-talle-consultar:hover {
+
+    background: #f3f8ff;
+
+}
+
+
+/* ========================================
+   TABLA
+======================================== */
+
+.tabla-talles-consultar {
+
+    width: 100%;
+    min-width: 0;
+
+    border: 1px solid #d7dee8;
+    border-radius: 6px;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+
+}
+
+
+/* ================================
+   ENCABEZADO DE LA TABLA
+   ================================ */
+
+.tabla-talles-consultar-cabecera {
+
+    width: 100%;
+    min-height: 35px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr)
+        minmax(0, 1.25fr)
+        65px;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 0 9px;
+
+    box-sizing: border-box;
+
+    background: #f3f6f9;
+
+    color: #6c7b8e;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 9px;
+
+}
+
+
+/* ================================
+   LISTA DE TALLES
+   ================================ */
+
+.consultar-lista-talles {
+
+    width: 100%;
+    min-width: 0;
+
+}
+
+
+/* ================================
+   FILA DE CADA TALLE
+   ================================ */
+
+.fila-talle-consultar {
+
+    width: 100%;
+    min-height: 44px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr)
+        minmax(0, 1.25fr)
+        65px;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 4px 9px;
+
+    box-sizing: border-box;
+
+    border-top: 1px solid #edf1f5;
+
+}
+
+
+/* ================================
+   CELDAS
+   ================================ */
+
+.tabla-talles-consultar-cabecera > *,
+.fila-talle-consultar > * {
+
+    min-width: 0;
+
+}
+
+
+/* ================================
+   INPUTS DE TALLE Y STOCK
+   ================================ */
+
+.fila-talle-consultar input {
+
+    display: block;
+
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+
+    height: 32px;
+
+    box-sizing: border-box;
+
+    padding: 0 7px;
+
+    border: 1px solid #d3dce7;
+
+    border-radius: 4px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #24344d;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+
+}
+
+
+.fila-talle-consultar input:focus {
+
+    border-color: #2587e8;
+
+}
+
+
+/* ================================
+   ESTADO
+   ================================ */
+
+.estado-talle-consultar {
+
+    display: flex;
+
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    overflow: hidden;
+
+}
+
+
+/* El cartel de estado no puede
+   agrandar la columna */
+
+.estado-talle-consultar {
+
+    box-sizing: border-box;
+
+    padding: 4px 7px;
+
+    border-radius: 999px;
+
+    font-size: 8px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+/* Punto del estado */
+
+.estado-talle-consultar::before {
+
+    content: "";
+
+    flex: 0 0 auto;
+
+    width: 5px;
+    height: 5px;
+
+    margin-right: 4px;
+
+    border-radius: 50%;
+
+    background: currentColor;
+
+}
+
+
+/* ================================
+   ESTADO DISPONIBLE
+   ================================ */
+
+.estado-talle-consultar.disponible {
+
+    color: #15945e;
+
+    background: #e6f8ef;
+
+}
+
+
+/* ================================
+   ESTADO BAJO STOCK
+   ================================ */
+
+.estado-talle-consultar.bajo {
+
+    color: #d69200;
+
+    background: #fff3d9;
+
+}
+
+
+/* ================================
+   ESTADO AGOTADO
+   ================================ */
+
+.estado-talle-consultar.agotado {
+
+    color: #e63950;
+
+    background: #ffe5e8;
+
+}
+
+
+/* ================================
+   ACCIONES
+   ================================ */
+
+.acciones-talle-consultar {
+
+    width: 100%;
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 3px;
+
+}
+
+
+/* ================================
+   BOTÓN ELIMINAR
+   ================================ */
+
+.boton-eliminar-talle-consultar {
+
+    width: 27px;
+    height: 27px;
+
+    flex: 0 0 27px;
+
+    padding: 0;
+
+    border: none;
+
+    border-radius: 4px;
+
+    background: transparent;
+
+    color: #64748b;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+}
+
+
+.boton-eliminar-talle-consultar:hover {
+
+    background: #fff0f1;
+
+    color: #dc3545;
+
+}
+
+
+/* ========================================
+   ACCIONES MODAL
+======================================== */
+
+.acciones-consultar-modal {
+
+    min-height: 67px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 9px;
+
+    padding: 0 25px;
+
+    box-sizing: border-box;
+
+    border-top: 1px solid #edf0f4;
+
+}
+
+
+.boton-cancelar-consultar,
+.boton-guardar-consultar {
+
+    height: 38px;
+
+    padding: 0 17px;
+
+    border-radius: 5px;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+}
+
+
+.boton-cancelar-consultar {
+
+    border: 1px solid #d5dde6;
+
+    background: #ffffff;
+
+    color: #4c5c70;
+
+}
+
+
+.boton-cancelar-consultar:hover {
+
+    background: #f6f8fa;
+
+}
+
+
+.boton-guardar-consultar {
+
+    border: 1px solid #142c54;
+
+    background: #142c54;
+
+    color: #ffffff;
+
+}
+
+
+.boton-guardar-consultar:hover {
+
+    background: #1b3969;
+
+}
+
+
+.boton-guardar-consultar:disabled {
+
+    opacity: 0.55;
+
+    cursor: default;
+
+}
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (
+    max-width: 760px
+) {
+
+    .modal-consultar-cuerpo {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .fila-precios-consultar {
+
+        grid-template-columns:
+            1fr
+            1fr;
+
+    }
+
+
+    .ganancia-consultar {
+
+        grid-column: 1 / -1;
+
+    }
+
+}
+
+
+@media (
+    max-width: 520px
+) {
+
+    .modal-consultar-producto {
+
+        padding: 10px;
+
+    }
+
+
+    .modal-consultar-contenido {
+
+        width: 100%;
+
+        max-height: calc(
+            100vh - 20px
+        );
+
+    }
+
+
+    .modal-consultar-cuerpo {
+
+        padding: 16px;
+
+    }
+
+
+    .acciones-consultar-modal {
+
+        padding: 0 16px;
+
+    }
+
+}

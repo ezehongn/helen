@@ -1,0 +1,215 @@
+<div
+    class="modal-historial-cliente"
+    id="modal-historial-cliente"
+    aria-hidden="true"
+>
+
+    <div
+        class="contenido-modal-historial-cliente"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="titulo-historial-cliente"
+    >
+
+        <!-- ======================================== -->
+        <!-- ENCABEZADO -->
+        <!-- ======================================== -->
+
+        <div class="encabezado-historial-cliente">
+
+            <div class="informacion-historial-cliente">
+
+                <div
+                    class="avatar-historial-cliente"
+                    id="avatar-historial-cliente"
+                >
+                    --
+                </div>
+
+                <div>
+
+                    <h2 id="titulo-historial-cliente">
+                        Historial de movimientos
+                    </h2>
+
+                    <p id="subtitulo-historial-cliente">
+                        --
+                    </p>
+
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="cerrar-modal-historial-cliente"
+                id="cerrar-modal-historial-cliente"
+                aria-label="Cerrar"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <!-- ======================================== -->
+        <!-- RESUMEN -->
+        <!-- ======================================== -->
+
+        <div class="resumen-historial-cliente">
+
+            <div class="dato-resumen-historial">
+
+                <span>
+                    Movimientos
+                </span>
+
+                <strong id="historial-total-movimientos">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="dato-resumen-historial">
+
+                <span>
+                    Compras
+                </span>
+
+                <strong id="historial-total-compras">
+                    $0
+                </strong>
+
+            </div>
+
+
+            <div class="dato-resumen-historial">
+
+                <span>
+                    Pagos
+                </span>
+
+                <strong
+                    class="verde"
+                    id="historial-total-pagos"
+                >
+                    $0
+                </strong>
+
+            </div>
+
+
+            <div class="dato-resumen-historial">
+
+                <span>
+                    Intereses
+                </span>
+
+                <strong
+                    class="rojo"
+                    id="historial-total-intereses"
+                >
+                    $0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- ======================================== -->
+        <!-- CONTROLES -->
+        <!-- ======================================== -->
+
+        <div class="controles-historial-cliente">
+
+            <div class="buscador-historial-cliente">
+
+                <span>
+                    ⌕
+                </span>
+
+                <input
+                    type="text"
+                    id="busqueda-historial-cliente"
+                    placeholder="Buscar movimiento..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <select
+                id="filtro-historial-cliente"
+                class="filtro-historial-cliente"
+            >
+
+                <option value="todos">
+                    Todos los movimientos
+                </option>
+
+                <option value="venta">
+                    Ventas
+                </option>
+
+                <option value="pago">
+                    Pagos
+                </option>
+
+                <option value="interes">
+                    Intereses
+                </option>
+
+            </select>
+
+
+            <select
+                id="orden-historial-cliente"
+                class="orden-historial-cliente"
+            >
+
+                <option value="reciente">
+                    Más recientes
+                </option>
+
+                <option value="antiguo">
+                    Más antiguos
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- ======================================== -->
+        <!-- LISTADO -->
+        <!-- ======================================== -->
+
+        <div
+            class="lista-historial-cliente"
+            id="lista-historial-cliente"
+        >
+
+            <div class="estado-historial-cliente">
+                Cargando movimientos...
+            </div>
+
+        </div>
+
+
+        <!-- ======================================== -->
+        <!-- PIE -->
+        <!-- ======================================== -->
+
+        <div class="pie-historial-cliente">
+
+            <span id="texto-paginacion-historial">
+                --
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
