@@ -593,55 +593,6 @@ function limpiarFormulario() {
 
   porcentajeGanancia.classList.add("ganancia-neutral");
 }
-function limpiarFormulario() {
-  // ========================================
-  // CAMPOS DEL FORMULARIO
-  // ========================================
-
-  formularioRegistrarProducto.reset();
-
-  // ========================================
-  // TALLES
-  // ========================================
-
-  listaTalles.innerHTML = "";
-
-  // ========================================
-  // IMAGEN
-  // ========================================
-
-  imagenProducto.value = "";
-
-  selectorImagen.style.backgroundImage = "";
-
-  selectorImagen.style.backgroundSize = "";
-
-  selectorImagen.style.backgroundPosition = "";
-
-  selectorImagen.classList.remove("imagen-seleccionada");
-
-  const elementos = selectorImagen.querySelectorAll("span, strong, small");
-
-  elementos.forEach((elemento) => {
-    elemento.style.visibility = "";
-  });
-
-  // ========================================
-  // GANANCIA
-  // ========================================
-
-  gananciaProducto.textContent = "$ 0,00";
-
-  porcentajeGanancia.textContent = "(0%)";
-
-  gananciaProducto.classList.remove("ganancia-positiva", "ganancia-negativa");
-
-  gananciaProducto.classList.add("ganancia-neutral");
-
-  porcentajeGanancia.classList.remove("ganancia-positiva", "ganancia-negativa");
-
-  porcentajeGanancia.classList.add("ganancia-neutral");
-}
 
 // ========================================
 // FORMATEAR PRECIO

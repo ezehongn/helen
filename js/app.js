@@ -13,26 +13,31 @@ const contenido = document.getElementById("contenido");
 // ========================================
 
 function cargarCSS(ruta, identificador) {
-  if (document.querySelector(`link[data-css="${identificador}"]`)) {
-    return;
+  const existente = document.querySelector(`link[data-css="${identificador}"]`);
+
+  if (existente) {
+    return Promise.resolve();
   }
 
-  const link = document.createElement("link");
+  return new Promise((resolve, reject) => {
+    const link = document.createElement("link");
 
-  link.rel = "stylesheet";
+    link.rel = "stylesheet";
+    link.href = ruta;
+    link.dataset.css = identificador;
 
-  link.href = ruta;
+    link.onload = resolve;
+    link.onerror = reject;
 
-  link.dataset.css = identificador;
-
-  document.head.appendChild(link);
+    document.head.appendChild(link);
+  });
 }
 
 // ========================================
 // CARGAR PANTALLA
 // ========================================
 
-async function cargarPantalla(ruta, script = null) {
+async function cargarPantalla(ruta, script = null, css = null) {
   try {
     const respuesta = await fetch(ruta);
 
@@ -52,6 +57,14 @@ async function cargarPantalla(ruta, script = null) {
     // ELIMINAR SCRIPT ANTERIOR
     // --------------------------------
 
+    if (typeof window.limpiarProductos === "function") {
+      window.limpiarProductos();
+    }
+
+    if (typeof window.limpiarClientes === "function") {
+      window.limpiarClientes();
+    }
+
     const scriptAnterior = document.querySelector("script[data-pantalla]");
 
     if (scriptAnterior) {
@@ -61,6 +74,9 @@ async function cargarPantalla(ruta, script = null) {
     // --------------------------------
     // INSERTAR HTML
     // --------------------------------
+    if (css) {
+      await cargarCSS(css.ruta, css.id);
+    }
 
     contenedor.innerHTML = html;
 
@@ -138,7 +154,7 @@ async function cargarBarraLateral() {
     // CARGAR CSS BARRA
     // --------------------------------
 
-    cargarCSS("css/barra-lateral/barra-lateral.css", "barra-lateral");
+    await cargarCSS("css/barra-lateral/barra-lateral.css", "barra-lateral");
 
     // --------------------------------
     // CARGAR JS BARRA
@@ -174,7 +190,7 @@ async function cargarAplicacion() {
     // CARGAR CSS APLICACIÓN
     // --------------------------------
 
-    cargarCSS("css/aplicacion/aplicacion.css", "aplicacion");
+    await cargarCSS("css/aplicacion/aplicacion.css", "aplicacion");
 
     // --------------------------------
     // CARGAR ESTRUCTURA
@@ -204,7 +220,10 @@ async function cargarAplicacion() {
     // CARGAR INICIO
     // --------------------------------
 
-    await cargarPantalla("html/inicio/inicio.html", "js/inicio/inicio.js");
+    await cargarPantalla("html/inicio/inicio.html", "js/inicio/inicio.js", {
+      ruta: "css/inicio/inicio.css",
+      id: "inicio",
+    });
   } catch (error) {
     console.error("Error al cargar aplicación:", error);
 
@@ -256,7 +275,7 @@ onAuthStateChanged(window.auth, (usuario) => {
 
 async function cargarPantallaLogin() {
   try {
-    cargarCSS("css/inicio-sesion/inicio-sesion.css", "inicio-sesion");
+    await cargarCSS("css/inicio-sesion/inicio-sesion.css", "inicio-sesion");
 
     const respuesta = await fetch("html/inicio-sesion/inicio-sesion.html");
 
@@ -330,7 +349,7 @@ async function cargarBarraSuperior() {
     // CARGAR CSS
     // --------------------------------
 
-    cargarCSS("css/barra-superior/barra-superior.css", "barra-superior");
+    await cargarCSS("css/barra-superior/barra-superior.css", "barra-superior");
 
     // --------------------------------
     // ELIMINAR SCRIPT ANTERIOR

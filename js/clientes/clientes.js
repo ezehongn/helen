@@ -68,6 +68,9 @@ async function inicializarClientes() {
 
   await cargarScriptHistorialCliente();
 
+  await cargarModalEditarCliente();
+  await cargarScriptEditarCliente();
+
   configurarEventosClientes();
 
   establecerFechaPago();
@@ -139,28 +142,6 @@ function configurarEventosClientes() {
   });
 
   /* ================================
-       NUEVO CLIENTE
-  ================================ */
-
-  document
-    .getElementById("boton-nuevo-cliente")
-    ?.addEventListener("click", () => {
-      if (window.abrirModalNuevoClienteClientes) {
-        window.abrirModalNuevoClienteClientes(async () => {
-          await cargarClientes();
-
-          renderizarClientes();
-
-          actualizarEstadisticasClientes();
-        });
-
-        return;
-      }
-
-      console.log("El modal de nuevo cliente todavía no está conectado.");
-    });
-
-  /* ================================
        MONTO DE PAGO
   ================================ */
 
@@ -190,47 +171,26 @@ function configurarEventosClientes() {
        ACTIVAR INTERÉS
   ================================ */
 
-  document.addEventListener("click", (evento) => {
-    const boton = evento.target.closest("#activar-interes-cliente");
+  const botonInteres = document.getElementById("activar-interes-cliente");
 
-    if (!boton) {
-      return;
-    }
-
+  botonInteres?.addEventListener("click", () => {
     const campos = document.getElementById("campos-interes");
 
     if (!campos) {
       console.error("No se encontró #campos-interes");
-
       return;
     }
 
     const estaOculto = campos.hasAttribute("hidden");
 
     if (estaOculto) {
-      /*
-       * MOSTRAR INTERÉS
-       */
       campos.removeAttribute("hidden");
-
-      boton.textContent = "− Quitar interés";
-
-      /*
-       * Actualizar inmediatamente
-       * el cálculo.
-       */
+      botonInteres.textContent = "− Quitar interés";
       actualizarInteresCliente();
     } else {
-      /*
-       * OCULTAR INTERÉS
-       */
       campos.setAttribute("hidden", "");
+      botonInteres.textContent = "+ Agregar interés";
 
-      boton.textContent = "+ Agregar interés";
-
-      /*
-       * Limpiar valor.
-       */
       const valor = document.getElementById("valor-interes-cliente");
 
       if (valor) {
@@ -1469,7 +1429,8 @@ async function registrarPagoCliente() {
   const medioPago =
     document.getElementById("medio-pago-cliente")?.value || "efectivo";
 
-  const fechaPago = document.getElementById("fecha-pago-cliente")?.value || "";
+  const fechaPago =
+    document.getElementById("fecha-pago-cliente")?.value || "";
 
   const usuario =
     sessionStorage.getItem("usuarioOperativo") ||
@@ -1481,7 +1442,7 @@ async function registrarPagoCliente() {
   ======================================== */
 
   const productosSeleccionados = document.querySelectorAll(
-    ".checkbox-producto-deuda:checked",
+    ".checkbox-producto-deuda:checked"
   );
 
   const hayProductosSeleccionados = productosSeleccionados.length > 0;
@@ -1557,7 +1518,7 @@ async function registrarPagoCliente() {
    */
   if (ventasSeleccionadas.size > 0) {
     ventasConDeuda = ventasConDeuda.filter((venta) =>
-      ventasSeleccionadas.has(venta.id),
+      ventasSeleccionadas.has(venta.id)
     );
   }
 
@@ -1566,7 +1527,7 @@ async function registrarPagoCliente() {
   ======================================== */
 
   ventasConDeuda.sort(
-    (a, b) => obtenerFechaCliente(a.fecha) - obtenerFechaCliente(b.fecha),
+    (a, b) => obtenerFechaCliente(a.fecha) - obtenerFechaCliente(b.fecha)
   );
 
   /* ========================================
@@ -1579,7 +1540,10 @@ async function registrarPagoCliente() {
    *
    * El resto se aplica a las ventas.
    */
-  const montoParaVentas = Math.max(0, Math.min(montoRealPago, baseOperacion));
+  const montoParaVentas = Math.max(
+    0,
+    Math.min(montoRealPago, baseOperacion)
+  );
 
   let restante = montoParaVentas;
 
@@ -1609,25 +1573,49 @@ async function registrarPagoCliente() {
 
   const totalAplicadoVentas = aplicaciones.reduce(
     (total, aplicacion) => total + (Number(aplicacion.monto) || 0),
-    0,
+    0
   );
 
   /*
    * Si el pago debía aplicarse a una venta
    * y no pudimos aplicar nada, detener.
    */
-  if (totalAplicadoVentas <= 0 && baseOperacion > 0 && montoRealPago > 0) {
+  if (
+    totalAplicadoVentas <= 0 &&
+    baseOperacion > 0 &&
+    montoRealPago > 0
+  ) {
     alert("No se pudo determinar a qué venta aplicar el pago.");
     return;
   }
+
+  /* ========================================
+       BLOQUEAR BOTÓN
+  ======================================== */
+
+  const botonRegistrar = document.getElementById("boton-registrar-pago");
+
+  if (!botonRegistrar || botonRegistrar.disabled) {
+    return;
+  }
+
+  botonRegistrar.disabled = true;
+  botonRegistrar.textContent = "Registrando...";
 
   /* ========================================
        FIREBASE
   ======================================== */
 
   try {
-    const { doc, writeBatch, addDoc, collection, serverTimestamp } =
-      await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
+    const {
+      doc,
+      writeBatch,
+      addDoc,
+      collection,
+      serverTimestamp,
+    } = await import(
+      "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js"
+    );
 
     /*
      * Usamos un batch para que las modificaciones
@@ -1641,7 +1629,7 @@ async function registrarPagoCliente() {
 
     for (const aplicacion of aplicaciones) {
       const venta = ventasCliente.find(
-        (item) => item.id === aplicacion.ventaId,
+        (item) => item.id === aplicacion.ventaId
       );
 
       if (!venta) {
@@ -1656,9 +1644,11 @@ async function registrarPagoCliente() {
 
       const nuevoSaldo = Math.max(0, saldoAnterior - montoAplicado);
 
-      const nuevoTotalEntregado = entregadoAnterior + montoAplicado;
+      const nuevoTotalEntregado =
+        entregadoAnterior + montoAplicado;
 
-      const nuevoEstado = nuevoSaldo <= 0 ? "pagada" : "con_deuda";
+      const nuevoEstado =
+        nuevoSaldo <= 0 ? "pagada" : "con_deuda";
 
       const ventaRef = doc(window.db, "ventas", venta.id);
 
@@ -1674,16 +1664,23 @@ async function registrarPagoCliente() {
            ACTUALIZAR CLIENTE
     ======================================== */
 
-    const nuevaDeudaVentas = Math.max(0, deudaCliente - totalAplicadoVentas);
+    const nuevaDeudaVentas = Math.max(
+      0,
+      deudaCliente - totalAplicadoVentas
+    );
 
     const nuevaDeuda = Math.max(
       0,
       nuevaDeudaVentas +
         interes -
-        Math.max(0, montoRealPago - totalAplicadoVentas),
+        Math.max(0, montoRealPago - totalAplicadoVentas)
     );
 
-    const clienteRef = doc(window.db, "clientes", clienteSeleccionado.id);
+    const clienteRef = doc(
+      window.db,
+      "clientes",
+      clienteSeleccionado.id
+    );
 
     batch.update(clienteRef, {
       deudaTotal: nuevaDeuda,
@@ -1696,7 +1693,12 @@ async function registrarPagoCliente() {
     ======================================== */
 
     const movimientoRef = doc(
-      collection(window.db, "clientes", clienteSeleccionado.id, "movimientos"),
+      collection(
+        window.db,
+        "clientes",
+        clienteSeleccionado.id,
+        "movimientos"
+      )
     );
 
     batch.set(movimientoRef, {
@@ -1717,10 +1719,11 @@ async function registrarPagoCliente() {
 
     if (interes > 0) {
       const tipoInteres =
-        document.getElementById("tipo-interes-cliente")?.value || "porcentaje";
+        document.getElementById("tipo-interes-cliente")?.value ||
+        "porcentaje";
 
       const valorInteres = convertirNumeroCliente(
-        document.getElementById("valor-interes-cliente")?.value,
+        document.getElementById("valor-interes-cliente")?.value
       );
 
       /*
@@ -1736,14 +1739,15 @@ async function registrarPagoCliente() {
 
       if (ventasSeleccionadas.size > 0) {
         ventasParaInteres = ventasParaInteres.filter((venta) =>
-          ventasSeleccionadas.has(venta.id),
+          ventasSeleccionadas.has(venta.id)
         );
       }
 
       if (ventasParaInteres.length > 0) {
         const ventaInteres = ventasParaInteres[0];
 
-        const saldoAnteriorInteres = Number(ventaInteres.saldoAdeber) || 0;
+        const saldoAnteriorInteres =
+          Number(ventaInteres.saldoAdeber) || 0;
 
         batch.update(doc(window.db, "ventas", ventaInteres.id), {
           saldoAdeber: saldoAnteriorInteres + interes,
@@ -1761,8 +1765,8 @@ async function registrarPagoCliente() {
           window.db,
           "clientes",
           clienteSeleccionado.id,
-          "movimientos",
-        ),
+          "movimientos"
+        )
       );
 
       batch.set(interesRef, {
@@ -1803,9 +1807,16 @@ async function registrarPagoCliente() {
     }
 
     // Reiniciar interés
-    const valorInteres = document.getElementById("valor-interes-cliente");
-    const camposInteres = document.getElementById("campos-interes");
-    const botonInteres = document.getElementById("activar-interes-cliente");
+    const valorInteres = document.getElementById(
+      "valor-interes-cliente"
+    );
+
+    const camposInteres =
+      document.getElementById("campos-interes");
+
+    const botonInteres = document.getElementById(
+      "activar-interes-cliente"
+    );
 
     if (valorInteres) {
       valorInteres.value = "";
@@ -1832,7 +1843,7 @@ async function registrarPagoCliente() {
     await cargarClientes();
 
     const clienteActual = clientes.find(
-      (cliente) => cliente.id === clienteSeleccionado.id,
+      (cliente) => cliente.id === clienteSeleccionado.id
     );
 
     if (clienteActual) {
@@ -1845,17 +1856,34 @@ async function registrarPagoCliente() {
 
     actualizarEstadisticasClientes();
 
-    await cargarProductosPendientesCliente(clienteSeleccionado);
+    await cargarProductosPendientesCliente(
+      clienteSeleccionado
+    );
 
     renderizarProductosPendientes();
 
     // Actualizar el resumen sin volver a cargar
     // el último interés guardado.
     actualizarInteresCliente();
+
   } catch (error) {
     console.error("Error registrando pago:", error);
 
     alert("No se pudo registrar el pago.");
+
+  } finally {
+    /* ========================================
+           DESBLOQUEAR BOTÓN
+    ======================================== */
+
+    const botonRegistrar = document.getElementById(
+      "boton-registrar-pago"
+    );
+
+    if (botonRegistrar) {
+      botonRegistrar.disabled = false;
+      botonRegistrar.textContent = "Registrar pago";
+    }
   }
 }
 
@@ -2256,25 +2284,22 @@ async function cargarModalHistorialCliente() {
 ======================================== */
 
 function cargarScriptHistorialCliente() {
-  if (document.getElementById("js-historial-cliente")) {
-    if (typeof inicializarHistorialCliente === "function") {
+  return new Promise((resolve, reject) => {
+    const scriptExistente = document.getElementById("js-historial-cliente");
+
+    if (scriptExistente) {
       inicializarHistorialCliente();
+      resolve();
+      return;
     }
 
-    return Promise.resolve();
-  }
-
-  return new Promise((resolve, reject) => {
     const script = document.createElement("script");
 
     script.id = "js-historial-cliente";
     script.src = `js/clientes/historial-modal.js?t=${Date.now()}`;
 
     script.onload = () => {
-      if (typeof inicializarHistorialCliente === "function") {
-        inicializarHistorialCliente();
-      }
-
+      inicializarHistorialCliente();
       resolve();
     };
 
@@ -2293,3 +2318,88 @@ if (document.readyState === "loading") {
 } else {
   inicializarClientes();
 }
+
+/* ========================================
+   CARGAR MODAL EDITAR CLIENTE
+======================================== */
+
+async function cargarModalEditarCliente() {
+  const respuesta = await fetch("html/clientes/editar-cliente.html");
+
+  if (!respuesta.ok) {
+    throw new Error("No se pudo cargar el modal de editar cliente.");
+  }
+
+  const html = await respuesta.text();
+
+  const contenedor = document.getElementById("modales-clientes");
+
+  if (!contenedor) {
+    throw new Error("No existe #modales-clientes.");
+  }
+
+  const div = document.createElement("div");
+
+  div.id = "modal-editar-cliente-wrapper";
+
+  div.innerHTML = html;
+
+  contenedor.appendChild(div);
+
+  const linkExistente = document.getElementById("css-editar-cliente");
+
+  if (!linkExistente) {
+    const link = document.createElement("link");
+
+    link.id = "css-editar-cliente";
+    link.rel = "stylesheet";
+    link.href = "css/clientes/editar-cliente.css";
+
+    document.head.appendChild(link);
+  }
+}
+
+/* ========================================
+   CARGAR JS EDITAR CLIENTE
+======================================== */
+
+function cargarScriptEditarCliente() {
+  if (document.getElementById("js-editar-cliente")) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+
+    script.id = "js-editar-cliente";
+    script.src = `js/clientes/editar-cliente.js?t=${Date.now()}`;
+    script.type = "module";
+
+    script.onload = resolve;
+    script.onerror = reject;
+
+    document.body.appendChild(script);
+  });
+}
+
+window.limpiarClientes = function () {
+  const modal = document.getElementById("modal-historial-cliente");
+
+  if (modal) {
+    modal.classList.remove("visible");
+    modal.setAttribute("hidden", "");
+  }
+
+  const modalEditar = document.getElementById("modal-editar-cliente");
+
+  if (modalEditar) {
+    modalEditar.classList.remove("visible");
+    modalEditar.setAttribute("hidden", "");
+  }
+
+  document.body.style.overflow = "";
+
+  document.getElementById("js-editar-cliente")?.remove();
+
+  delete window.abrirModalEditarCliente;
+};

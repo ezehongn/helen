@@ -8,985 +8,501 @@ let movimientosHistorialCliente = [];
 
 let movimientosHistorialFiltrados = [];
 
-
 /* ========================================
    INICIALIZACIÓN
 ======================================== */
 
 function inicializarHistorialCliente() {
+  const modal = document.getElementById("modal-historial-cliente");
 
-    const modal = document.getElementById(
-        "modal-historial-cliente"
-    );
+  if (!modal) {
+    console.error("No se encontró el modal de historial del cliente.");
 
-    if (!modal) {
+    return;
+  }
 
-        console.error(
-            "No se encontró el modal de historial del cliente."
-        );
-
-        return;
-    }
-
-
-    /* ====================================
+  /* ====================================
        CERRAR CON LA X
     ==================================== */
 
-    const botonCerrar = document.getElementById(
-        "cerrar-modal-historial-cliente"
-    );
+  const botonCerrar = document.getElementById("cerrar-modal-historial-cliente");
 
+  if (botonCerrar) {
+    botonCerrar.onclick = function (evento) {
+      evento.preventDefault();
 
-    if (botonCerrar) {
+      evento.stopPropagation();
 
-        botonCerrar.onclick = function (evento) {
+      cerrarHistorialCliente();
+    };
+  }
 
-            evento.preventDefault();
-
-            evento.stopPropagation();
-
-            cerrarHistorialCliente();
-
-        };
-
-    }
-
-
-    /* ====================================
+  /* ====================================
        CERRAR HACIENDO CLICK AFUERA
     ==================================== */
 
-    modal.onclick = function (evento) {
+  modal.onclick = function (evento) {
+    if (evento.target === modal) {
+      cerrarHistorialCliente();
+    }
+  };
 
-        if (evento.target === modal) {
-
-            cerrarHistorialCliente();
-
-        }
-
-    };
-
-
-    /* ====================================
+  /* ====================================
        BUSCADOR
     ==================================== */
 
-    document
-        .getElementById("busqueda-historial-cliente")
-        ?.addEventListener(
-            "input",
-            aplicarFiltrosHistorialCliente
-        );
+  document
+    .getElementById("busqueda-historial-cliente")
+    ?.addEventListener("input", aplicarFiltrosHistorialCliente);
 
-
-    /* ====================================
+  /* ====================================
        FILTRO
     ==================================== */
 
-    document
-        .getElementById("filtro-historial-cliente")
-        ?.addEventListener(
-            "change",
-            aplicarFiltrosHistorialCliente
-        );
+  document
+    .getElementById("filtro-historial-cliente")
+    ?.addEventListener("change", aplicarFiltrosHistorialCliente);
 
-
-    /* ====================================
+  /* ====================================
        ORDEN
     ==================================== */
 
-    document
-        .getElementById("orden-historial-cliente")
-        ?.addEventListener(
-            "change",
-            aplicarFiltrosHistorialCliente
-        );
+  document
+    .getElementById("orden-historial-cliente")
+    ?.addEventListener("change", aplicarFiltrosHistorialCliente);
 
-
-    /* ====================================
+  /* ====================================
        TECLA ESC
     ==================================== */
 
-    document.addEventListener(
-        "keydown",
-        manejarTeclaHistorialCliente
-    );
+  document.removeEventListener("keydown", manejarTeclaHistorialCliente);
 
+  document.addEventListener("keydown", manejarTeclaHistorialCliente);
 }
-
 
 /* ========================================
    ABRIR HISTORIAL
 ======================================== */
 
-window.abrirHistorialCliente = async function (
-    cliente
-) {
+window.abrirHistorialCliente = async function (cliente) {
+  if (!cliente) {
+    return;
+  }
 
-    if (!cliente) {
-        return;
-    }
+  const modal = document.getElementById("modal-historial-cliente");
 
+  if (!modal) {
+    console.error("No se encontró el modal de historial.");
 
-    const modal = document.getElementById(
-        "modal-historial-cliente"
-    );
+    return;
+  }
 
+  clienteHistorialActual = cliente;
 
-    if (!modal) {
+  prepararEncabezadoHistorial(cliente);
 
-        console.error(
-            "No se encontró el modal de historial."
-        );
+  modal.classList.add("visible");
 
-        return;
-    }
+  modal.setAttribute("aria-hidden", "false");
 
+  document.body.style.overflow = "hidden";
 
-    clienteHistorialActual = cliente;
+  mostrarEstadoHistorial("Cargando movimientos...");
 
-
-    prepararEncabezadoHistorial(
-        cliente
-    );
-
-
-    modal.classList.add("visible");
-
-    modal.setAttribute(
-        "aria-hidden",
-        "false"
-    );
-
-
-    document.body.style.overflow = "hidden";
-
-
-    mostrarEstadoHistorial(
-        "Cargando movimientos..."
-    );
-
-
-    await cargarHistorialCliente(
-        cliente
-    );
-
+  await cargarHistorialCliente(cliente);
 };
-
 
 /* ========================================
    CERRAR HISTORIAL
 ======================================== */
 
 function cerrarHistorialCliente() {
+  const modal = document.getElementById("modal-historial-cliente");
 
-    const modal = document.getElementById(
-        "modal-historial-cliente"
-    );
+  if (!modal) {
+    return;
+  }
 
+  modal.classList.remove("visible");
 
-    if (!modal) {
-        return;
-    }
+  modal.setAttribute("aria-hidden", "true");
 
+  document.body.style.overflow = "";
 
-    modal.classList.remove(
-        "visible"
-    );
+  clienteHistorialActual = null;
 
+  movimientosHistorialCliente = [];
 
-    modal.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-
-
-    document.body.style.overflow = "";
-
-
-    clienteHistorialActual = null;
-
-    movimientosHistorialCliente = [];
-
-    movimientosHistorialFiltrados = [];
-
+  movimientosHistorialFiltrados = [];
 }
-
 
 /* ========================================
    ESC
 ======================================== */
 
-function manejarTeclaHistorialCliente(
-    evento
-) {
+function manejarTeclaHistorialCliente(evento) {
+  const modal = document.getElementById("modal-historial-cliente");
 
-    const modal = document.getElementById(
-        "modal-historial-cliente"
-    );
+  if (!modal || !modal.classList.contains("visible")) {
+    return;
+  }
 
-
-    if (
-        !modal ||
-        !modal.classList.contains("visible")
-    ) {
-
-        return;
-
-    }
-
-
-    if (evento.key === "Escape") {
-
-        cerrarHistorialCliente();
-
-    }
-
+  if (evento.key === "Escape") {
+    cerrarHistorialCliente();
+  }
 }
-
 
 /* ========================================
    ENCABEZADO
 ======================================== */
 
-function prepararEncabezadoHistorial(
-    cliente
-) {
+function prepararEncabezadoHistorial(cliente) {
+  const nombre =
+    `${cliente.nombre || ""} ${cliente.apellido || ""}`.trim() || "Sin nombre";
 
-    const nombre =
-        `${cliente.nombre || ""} ${
-            cliente.apellido || ""
-        }`
-            .trim() ||
-        "Sin nombre";
+  const avatar = document.getElementById("avatar-historial-cliente");
 
+  if (avatar) {
+    avatar.textContent = obtenerInicialesHistorial(cliente);
+  }
 
-    const avatar =
-        document.getElementById(
-            "avatar-historial-cliente"
-        );
+  const titulo = document.getElementById("titulo-historial-cliente");
 
+  if (titulo) {
+    titulo.textContent = `Historial de ${nombre}`;
+  }
 
-    if (avatar) {
+  const subtitulo = document.getElementById("subtitulo-historial-cliente");
 
-        avatar.textContent =
-            obtenerInicialesHistorial(
-                cliente
-            );
+  if (subtitulo) {
+    const datos = [];
 
+    if (cliente.dni) {
+      datos.push(`DNI ${cliente.dni}`);
     }
 
-
-    const titulo =
-        document.getElementById(
-            "titulo-historial-cliente"
-        );
-
-
-    if (titulo) {
-
-        titulo.textContent =
-            `Historial de ${nombre}`;
-
+    if (cliente.telefono) {
+      datos.push(`☎ ${cliente.telefono}`);
     }
 
-
-    const subtitulo =
-        document.getElementById(
-            "subtitulo-historial-cliente"
-        );
-
-
-    if (subtitulo) {
-
-        const datos = [];
-
-
-        if (cliente.dni) {
-
-            datos.push(
-                `DNI ${cliente.dni}`
-            );
-
-        }
-
-
-        if (cliente.telefono) {
-
-            datos.push(
-                `☎ ${cliente.telefono}`
-            );
-
-        }
-
-
-        subtitulo.textContent =
-            datos.length > 0
-                ? datos.join(" · ")
-                : "Todos los movimientos registrados";
-
-    }
-
+    subtitulo.textContent =
+      datos.length > 0
+        ? datos.join(" · ")
+        : "Todos los movimientos registrados";
+  }
 }
-
 
 /* ========================================
    CARGAR HISTORIAL
 ======================================== */
 
-async function cargarHistorialCliente(
-    cliente
-) {
+async function cargarHistorialCliente(cliente) {
+  try {
+    const { collection, getDocs } =
+      await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
 
-    try {
+    const movimientos = [];
 
-        const {
-            collection,
-            getDocs
-        } = await import(
-            "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js"
-        );
-
-
-        const movimientos = [];
-
-
-        /* ====================================
+    /* ====================================
            VENTAS
         ==================================== */
 
-        const ventasSnapshot =
-            await getDocs(
-                collection(
-                    window.db,
-                    "ventas"
-                )
-            );
+    const ventasSnapshot = await getDocs(collection(window.db, "ventas"));
 
+    ventasSnapshot.docs.forEach((documento) => {
+      const venta = documento.data();
 
-        ventasSnapshot.docs.forEach(
-            (documento) => {
+      if (!ventaCorrespondeClienteHistorial(venta, cliente)) {
+        return;
+      }
 
-                const venta =
-                    documento.data();
+      movimientos.push(crearMovimientoVenta(documento.id, venta));
+    });
 
-
-                if (
-                    !ventaCorrespondeClienteHistorial(
-                        venta,
-                        cliente
-                    )
-                ) {
-
-                    return;
-
-                }
-
-
-                movimientos.push(
-                    crearMovimientoVenta(
-                        documento.id,
-                        venta
-                    )
-                );
-
-            }
-        );
-
-
-        /* ====================================
+    /* ====================================
            MOVIMIENTOS DEL CLIENTE
         ==================================== */
 
-        const referenciaMovimientos =
-            collection(
-                window.db,
-                "clientes",
-                cliente.id,
-                "movimientos"
-            );
+    const referenciaMovimientos = collection(
+      window.db,
+      "clientes",
+      cliente.id,
+      "movimientos",
+    );
 
+    const movimientosSnapshot = await getDocs(referenciaMovimientos);
 
-        const movimientosSnapshot =
-            await getDocs(
-                referenciaMovimientos
-            );
+    movimientosSnapshot.docs.forEach((documento) => {
+      const movimiento = documento.data();
 
+      const tipo = normalizarTipoMovimiento(movimiento.tipo);
 
-        movimientosSnapshot.docs.forEach(
-            (documento) => {
+      if (tipo !== "pago" && tipo !== "interes") {
+        return;
+      }
 
-                const movimiento =
-                    documento.data();
+      movimientos.push(crearMovimientoCliente(documento.id, movimiento));
+    });
 
+    movimientosHistorialCliente = movimientos
+      .filter(Boolean)
+      .sort(
+        (a, b) =>
+          obtenerFechaMovimiento(b.fecha) - obtenerFechaMovimiento(a.fecha),
+      );
 
-                const tipo =
-                    normalizarTipoMovimiento(
-                        movimiento.tipo
-                    );
+    actualizarResumenHistorial();
 
+    aplicarFiltrosHistorialCliente();
+  } catch (error) {
+    console.error("Error cargando historial del cliente:", error);
 
-                if (
-                    tipo !== "pago" &&
-                    tipo !== "interes"
-                ) {
+    movimientosHistorialCliente = [];
 
-                    return;
+    movimientosHistorialFiltrados = [];
 
-                }
-
-
-                movimientos.push(
-                    crearMovimientoCliente(
-                        documento.id,
-                        movimiento
-                    )
-                );
-
-            }
-        );
-
-
-        movimientosHistorialCliente =
-            movimientos
-                .filter(Boolean)
-                .sort(
-                    (a, b) =>
-                        obtenerFechaMovimiento(
-                            b.fecha
-                        ) -
-                        obtenerFechaMovimiento(
-                            a.fecha
-                        )
-                );
-
-
-        actualizarResumenHistorial();
-
-        aplicarFiltrosHistorialCliente();
-
-
-    } catch (error) {
-
-        console.error(
-            "Error cargando historial del cliente:",
-            error
-        );
-
-
-        movimientosHistorialCliente = [];
-
-        movimientosHistorialFiltrados = [];
-
-
-        mostrarEstadoHistorial(
-            "No se pudieron cargar los movimientos.",
-            true
-        );
-
-    }
-
+    mostrarEstadoHistorial("No se pudieron cargar los movimientos.", true);
+  }
 }
-
 
 /* ========================================
    CREAR MOVIMIENTO DE VENTA
 ======================================== */
 
-function crearMovimientoVenta(
-    ventaId,
-    venta
-) {
+function crearMovimientoVenta(ventaId, venta) {
+  const fecha = obtenerFechaMovimiento(venta.fecha);
 
-    const fecha =
-        obtenerFechaMovimiento(
-            venta.fecha
-        );
+  const productos = Array.isArray(venta.productos) ? venta.productos : [];
 
+  const total = Number(venta.total) || 0;
 
-    const productos =
-        Array.isArray(
-            venta.productos
-        )
-            ? venta.productos
-            : [];
+  const saldoAdeber = Number(venta.saldoAdeber) || 0;
 
+  const numero = venta.numero || ventaId.slice(-6);
 
-    const total =
-        Number(
-            venta.total
-        ) || 0;
+  const usuario = venta.usuario || "Sin usuario";
 
+  return {
+    id: `venta_${ventaId}`,
 
-    const saldoAdeber =
-        Number(
-            venta.saldoAdeber
-        ) || 0;
+    tipo: "venta",
 
+    fecha: fecha,
 
-    const numero =
-        venta.numero ||
-        ventaId.slice(-6);
+    titulo: `Venta #${numero}`,
 
+    descripcion: `${productos.length} ${
+      productos.length === 1 ? "producto" : "productos"
+    } · ${venta.estado === "con_deuda" ? "Con deuda" : "Pagada"}`,
 
-    const usuario =
-        venta.usuario ||
-        "Sin usuario";
+    monto: total,
 
+    saldoAdeber: saldoAdeber,
 
-    return {
+    ventaId: ventaId,
 
-        id:
-            `venta_${ventaId}`,
+    numero: numero,
 
-        tipo:
-            "venta",
+    usuario: usuario,
 
-        fecha:
-            fecha,
+    productos: productos,
 
-        titulo:
-            `Venta #${numero}`,
+    mediosPago: Array.isArray(venta.mediosPago) ? venta.mediosPago : [],
 
-        descripcion:
-            `${productos.length} ${
-                productos.length === 1
-                    ? "producto"
-                    : "productos"
-            } · ${
-                venta.estado === "con_deuda"
-                    ? "Con deuda"
-                    : "Pagada"
-            }`,
+    totalEntregado: Number(venta.totalEntregado) || 0,
 
-        monto:
-            total,
+    vuelto: Number(venta.vuelto) || 0,
 
-        saldoAdeber:
-            saldoAdeber,
+    estado: venta.estado || (saldoAdeber > 0 ? "con_deuda" : "pagada"),
 
-        ventaId:
-            ventaId,
-
-        numero:
-            numero,
-
-        usuario:
-            usuario,
-
-        productos:
-            productos,
-
-        mediosPago:
-            Array.isArray(
-                venta.mediosPago
-            )
-                ? venta.mediosPago
-                : [],
-
-        totalEntregado:
-            Number(
-                venta.totalEntregado
-            ) || 0,
-
-        vuelto:
-            Number(
-                venta.vuelto
-            ) || 0,
-
-        estado:
-            venta.estado ||
-            (
-                saldoAdeber > 0
-                    ? "con_deuda"
-                    : "pagada"
-            ),
-
-        observaciones:
-            venta.observaciones ||
-            "",
-
-    };
-
+    observaciones: venta.observaciones || "",
+  };
 }
-
 
 /* ========================================
    CREAR MOVIMIENTO DE CLIENTE
 ======================================== */
 
-function crearMovimientoCliente(
-    movimientoId,
-    movimiento
-) {
+function crearMovimientoCliente(movimientoId, movimiento) {
+  const tipo = normalizarTipoMovimiento(movimiento.tipo);
 
-    const tipo =
-        normalizarTipoMovimiento(
-            movimiento.tipo
-        );
+  const fecha = obtenerFechaMovimiento(movimiento.fecha);
 
+  let monto = 0;
 
-    const fecha =
-        obtenerFechaMovimiento(
-            movimiento.fecha
-        );
+  if (tipo === "pago") {
+    monto = Number(movimiento.monto) || 0;
+  }
 
+  if (tipo === "interes") {
+    monto = Number(movimiento.monto) || 0;
+  }
 
-    let monto = 0;
+  let titulo = "Movimiento";
 
+  let descripcion = "";
 
-    if (tipo === "pago") {
+  if (tipo === "pago") {
+    titulo = "Pago de deuda";
 
-        monto =
-            Number(
-                movimiento.monto
-            ) || 0;
+    descripcion =
+      movimiento.descripcion ||
+      (movimiento.medioPago
+        ? `Medio de pago: ${movimiento.medioPago}`
+        : "Pago registrado");
+  }
 
-    }
+  if (tipo === "interes") {
+    titulo = "Interés agregado";
 
+    descripcion = movimiento.descripcion || "Se agregó un interés a la deuda";
+  }
 
-    if (tipo === "interes") {
+  return {
+    id: `${tipo}_${movimientoId}`,
 
-        monto =
-            Number(
-                movimiento.monto
-            ) || 0;
+    tipo: tipo,
 
-    }
+    fecha: fecha,
 
+    titulo: titulo,
 
-    let titulo =
-        "Movimiento";
+    descripcion: descripcion,
 
+    monto: monto,
 
-    let descripcion =
-        "";
+    movimientoId: movimientoId,
 
+    usuario: movimiento.usuario || "Sin usuario",
 
-    if (tipo === "pago") {
+    medioPago: movimiento.medioPago || "",
 
-        titulo =
-            "Pago de deuda";
+    descripcionOriginal: movimiento.descripcion || "",
 
-
-        descripcion =
-            movimiento.descripcion ||
-            (
-                movimiento.medioPago
-                    ? `Medio de pago: ${
-                        movimiento.medioPago
-                    }`
-                    : "Pago registrado"
-            );
-
-    }
-
-
-    if (tipo === "interes") {
-
-        titulo =
-            "Interés agregado";
-
-
-        descripcion =
-            movimiento.descripcion ||
-            "Se agregó un interés a la deuda";
-
-    }
-
-
-    return {
-
-        id:
-            `${tipo}_${movimientoId}`,
-
-        tipo:
-            tipo,
-
-        fecha:
-            fecha,
-
-        titulo:
-            titulo,
-
-        descripcion:
-            descripcion,
-
-        monto:
-            monto,
-
-        movimientoId:
-            movimientoId,
-
-        usuario:
-            movimiento.usuario ||
-            "Sin usuario",
-
-        medioPago:
-            movimiento.medioPago ||
-            "",
-
-        descripcionOriginal:
-            movimiento.descripcion ||
-            "",
-
-        montoAplicado:
-            Number(
-                movimiento.montoAplicado
-            ) || 0,
-
-    };
-
+    montoAplicado: Number(movimiento.montoAplicado) || 0,
+  };
 }
-
 
 /* ========================================
    VERIFICAR CLIENTE DE VENTA
 ======================================== */
 
-function ventaCorrespondeClienteHistorial(
-    venta,
-    cliente
-) {
+function ventaCorrespondeClienteHistorial(venta, cliente) {
+  if (venta.clienteId && venta.clienteId === cliente.id) {
+    return true;
+  }
 
-    if (
-        venta.clienteId &&
-        venta.clienteId === cliente.id
-    ) {
-
-        return true;
-
+  if (venta.cliente && typeof venta.cliente === "object") {
+    if (venta.cliente.id && venta.cliente.id === cliente.id) {
+      return true;
     }
 
-
     if (
-        venta.cliente &&
-        typeof venta.cliente === "object"
+      venta.cliente.dni &&
+      cliente.dni &&
+      String(venta.cliente.dni) === String(cliente.dni)
     ) {
-
-        if (
-            venta.cliente.id &&
-            venta.cliente.id === cliente.id
-        ) {
-
-            return true;
-
-        }
-
-
-        if (
-            venta.cliente.dni &&
-            cliente.dni &&
-            String(
-                venta.cliente.dni
-            ) === String(
-                cliente.dni
-            )
-        ) {
-
-            return true;
-
-        }
-
-
-        const nombreVenta =
-            `${venta.cliente.nombre || ""} ${
-                venta.cliente.apellido || ""
-            }`
-                .trim()
-                .toLowerCase();
-
-
-        const nombreCliente =
-            `${cliente.nombre || ""} ${
-                cliente.apellido || ""
-            }`
-                .trim()
-                .toLowerCase();
-
-
-        if (
-            nombreVenta &&
-            nombreCliente &&
-            nombreVenta === nombreCliente
-        ) {
-
-            return true;
-
-        }
-
+      return true;
     }
 
+    const nombreVenta = `${venta.cliente.nombre || ""} ${
+      venta.cliente.apellido || ""
+    }`
+      .trim()
+      .toLowerCase();
 
-    return false;
+    const nombreCliente = `${cliente.nombre || ""} ${cliente.apellido || ""}`
+      .trim()
+      .toLowerCase();
 
+    if (nombreVenta && nombreCliente && nombreVenta === nombreCliente) {
+      return true;
+    }
+  }
+
+  return false;
 }
-
 
 /* ========================================
    FILTROS
 ======================================== */
 
 function aplicarFiltrosHistorialCliente() {
+  let resultado = [...movimientosHistorialCliente];
 
-    let resultado =
-        [
-            ...movimientosHistorialCliente
-        ];
+  const busqueda =
+    document
+      .getElementById("busqueda-historial-cliente")
+      ?.value.trim()
+      .toLowerCase() || "";
 
+  if (busqueda) {
+    resultado = resultado.filter((movimiento) => {
+      const texto = [
+        movimiento.titulo,
 
-    const busqueda =
-        document
-            .getElementById(
-                "busqueda-historial-cliente"
-            )
-            ?.value
-            .trim()
-            .toLowerCase() || "";
+        movimiento.descripcion,
 
+        movimiento.usuario,
 
-    if (busqueda) {
+        movimiento.medioPago,
 
-        resultado =
-            resultado.filter(
-                (movimiento) => {
+        movimiento.numero,
 
-                    const texto = [
+        ...(Array.isArray(movimiento.productos)
+          ? movimiento.productos.map((producto) => producto.nombre)
+          : []),
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
 
-                        movimiento.titulo,
+      return texto.includes(busqueda);
+    });
+  }
 
-                        movimiento.descripcion,
+  const filtro =
+    document.getElementById("filtro-historial-cliente")?.value || "todos";
 
-                        movimiento.usuario,
+  if (filtro !== "todos") {
+    resultado = resultado.filter((movimiento) => movimiento.tipo === filtro);
+  }
 
-                        movimiento.medioPago,
+  const orden =
+    document.getElementById("orden-historial-cliente")?.value || "reciente";
 
-                        movimiento.numero,
+  resultado.sort((a, b) => {
+    const fechaA = obtenerFechaMovimiento(a.fecha);
 
-                        ...(
-                            Array.isArray(
-                                movimiento.productos
-                            )
-                                ? movimiento.productos.map(
-                                    (producto) =>
-                                        producto.nombre
-                                )
-                                : []
-                        ),
+    const fechaB = obtenerFechaMovimiento(b.fecha);
 
-                    ]
-                        .filter(Boolean)
-                        .join(" ")
-                        .toLowerCase();
-
-
-                    return texto.includes(
-                        busqueda
-                    );
-
-                }
-            );
-
+    if (orden === "antiguo") {
+      return fechaA - fechaB;
     }
 
+    return fechaB - fechaA;
+  });
 
-    const filtro =
-        document
-            .getElementById(
-                "filtro-historial-cliente"
-            )
-            ?.value ||
-        "todos";
+  movimientosHistorialFiltrados = resultado;
 
-
-    if (
-        filtro !== "todos"
-    ) {
-
-        resultado =
-            resultado.filter(
-                (movimiento) =>
-                    movimiento.tipo ===
-                    filtro
-            );
-
-    }
-
-
-    const orden =
-        document
-            .getElementById(
-                "orden-historial-cliente"
-            )
-            ?.value ||
-        "reciente";
-
-
-    resultado.sort(
-        (a, b) => {
-
-            const fechaA =
-                obtenerFechaMovimiento(
-                    a.fecha
-                );
-
-
-            const fechaB =
-                obtenerFechaMovimiento(
-                    b.fecha
-                );
-
-
-            if (
-                orden === "antiguo"
-            ) {
-
-                return fechaA - fechaB;
-
-            }
-
-
-            return fechaB - fechaA;
-
-        }
-    );
-
-
-    movimientosHistorialFiltrados =
-        resultado;
-
-
-    renderizarHistorialCliente();
-
+  renderizarHistorialCliente();
 }
-
 
 /* ========================================
    RENDERIZAR HISTORIAL
 ======================================== */
 
 function renderizarHistorialCliente() {
+  const lista = document.getElementById("lista-historial-cliente");
 
-    const lista =
-        document.getElementById(
-            "lista-historial-cliente"
-        );
+  if (!lista) {
+    return;
+  }
 
+  lista.innerHTML = "";
 
-    if (!lista) {
-        return;
-    }
-
-
-    lista.innerHTML = "";
-
-
-    if (
-        movimientosHistorialFiltrados.length === 0
-    ) {
-
-        lista.innerHTML = `
+  if (movimientosHistorialFiltrados.length === 0) {
+    lista.innerHTML = `
 
             <div class="sin-resultados-historial">
 
@@ -996,67 +512,34 @@ function renderizarHistorialCliente() {
 
         `;
 
+    actualizarPieHistorial(0);
 
-        actualizarPieHistorial(0);
+    return;
+  }
 
-        return;
+  movimientosHistorialFiltrados.forEach((movimiento) => {
+    lista.appendChild(crearElementoMovimiento(movimiento));
+  });
 
-    }
-
-
-    movimientosHistorialFiltrados.forEach(
-        (movimiento) => {
-
-            lista.appendChild(
-                crearElementoMovimiento(
-                    movimiento
-                )
-            );
-
-        }
-    );
-
-
-    actualizarPieHistorial(
-        movimientosHistorialFiltrados.length
-    );
-
+  actualizarPieHistorial(movimientosHistorialFiltrados.length);
 }
-
 
 /* ========================================
    CREAR ELEMENTO MOVIMIENTO
 ======================================== */
 
-function crearElementoMovimiento(
-    movimiento
-) {
+function crearElementoMovimiento(movimiento) {
+  const contenedor = document.createElement("div");
 
-    const contenedor =
-        document.createElement(
-            "div"
-        );
+  contenedor.className = "movimiento-historial";
 
+  const cabecera = document.createElement("button");
 
-    contenedor.className =
-        "movimiento-historial";
+  cabecera.type = "button";
 
+  cabecera.className = "cabecera-movimiento-historial";
 
-    const cabecera =
-        document.createElement(
-            "button"
-        );
-
-
-    cabecera.type =
-        "button";
-
-
-    cabecera.className =
-        "cabecera-movimiento-historial";
-
-
-    cabecera.innerHTML = `
+  cabecera.innerHTML = `
 
         <div
             class="
@@ -1064,9 +547,7 @@ function crearElementoMovimiento(
                 ${movimiento.tipo}
             "
         >
-            ${obtenerIconoMovimiento(
-                movimiento.tipo
-            )}
+            ${obtenerIconoMovimiento(movimiento.tipo)}
         </div>
 
 
@@ -1077,9 +558,7 @@ function crearElementoMovimiento(
             <span
                 class="titulo-movimiento-historial"
             >
-                ${escaparHTMLHistorial(
-                    movimiento.titulo
-                )}
+                ${escaparHTMLHistorial(movimiento.titulo)}
             </span>
 
 
@@ -1088,9 +567,7 @@ function crearElementoMovimiento(
                     descripcion-movimiento-historial
                 "
             >
-                ${escaparHTMLHistorial(
-                    movimiento.descripcion
-                )}
+                ${escaparHTMLHistorial(movimiento.descripcion)}
             </span>
 
         </div>
@@ -1101,14 +578,10 @@ function crearElementoMovimiento(
         >
 
             <strong>
-                ${formatearFechaHistorial(
-                    movimiento.fecha
-                )}
+                ${formatearFechaHistorial(movimiento.fecha)}
             </strong>
 
-            ${formatearHoraHistorial(
-                movimiento.fecha
-            )}
+            ${formatearHoraHistorial(movimiento.fecha)}
 
         </div>
 
@@ -1122,25 +595,15 @@ function crearElementoMovimiento(
 
             <strong>
 
-                ${
-                    movimiento.tipo === "pago"
-                        ? "-"
-                        : ""
-                }${
-                    movimiento.tipo === "interes"
-                        ? "+"
-                        : ""
-                }${formatearPrecioHistorial(
-                    movimiento.monto
-                )}
+                ${movimiento.tipo === "pago" ? "-" : ""}${
+                  movimiento.tipo === "interes" ? "+" : ""
+                }${formatearPrecioHistorial(movimiento.monto)}
 
             </strong>
 
 
             <span>
-                ${textoTipoMovimiento(
-                    movimiento.tipo
-                )}
+                ${textoTipoMovimiento(movimiento.tipo)}
             </span>
 
         </div>
@@ -1154,105 +617,49 @@ function crearElementoMovimiento(
 
     `;
 
+  const detalle = document.createElement("div");
 
-    const detalle =
-        document.createElement(
-            "div"
-        );
+  detalle.className = "detalle-movimiento-historial";
 
+  detalle.innerHTML = construirDetalleMovimiento(movimiento);
 
-    detalle.className =
-        "detalle-movimiento-historial";
+  cabecera.addEventListener("click", function () {
+    contenedor.classList.toggle("abierto");
+  });
 
+  contenedor.appendChild(cabecera);
 
-    detalle.innerHTML =
-        construirDetalleMovimiento(
-            movimiento
-        );
+  contenedor.appendChild(detalle);
 
-
-    cabecera.addEventListener(
-        "click",
-        function () {
-
-            contenedor.classList.toggle(
-                "abierto"
-            );
-
-        }
-    );
-
-
-    contenedor.appendChild(
-        cabecera
-    );
-
-
-    contenedor.appendChild(
-        detalle
-    );
-
-
-    return contenedor;
-
+  return contenedor;
 }
-
 
 /* ========================================
    DETALLE MOVIMIENTO
 ======================================== */
 
-function construirDetalleMovimiento(
-    movimiento
-) {
+function construirDetalleMovimiento(movimiento) {
+  if (movimiento.tipo === "venta") {
+    return construirDetalleVenta(movimiento);
+  }
 
-    if (
-        movimiento.tipo === "venta"
-    ) {
+  if (movimiento.tipo === "pago") {
+    return construirDetallePago(movimiento);
+  }
 
-        return construirDetalleVenta(
-            movimiento
-        );
+  if (movimiento.tipo === "interes") {
+    return construirDetalleInteres(movimiento);
+  }
 
-    }
-
-
-    if (
-        movimiento.tipo === "pago"
-    ) {
-
-        return construirDetallePago(
-            movimiento
-        );
-
-    }
-
-
-    if (
-        movimiento.tipo === "interes"
-    ) {
-
-        return construirDetalleInteres(
-            movimiento
-        );
-
-    }
-
-
-    return "";
-
+  return "";
 }
-
 
 /* ========================================
    DETALLE VENTA
 ======================================== */
 
-function construirDetalleVenta(
-    movimiento
-) {
-
-    let html = `
+function construirDetalleVenta(movimiento) {
+  let html = `
 
         <div class="detalle-grid-historial">
 
@@ -1263,9 +670,7 @@ function construirDetalleVenta(
                 </span>
 
                 <strong>
-                    #${escaparHTMLHistorial(
-                        movimiento.numero
-                    )}
+                    #${escaparHTMLHistorial(movimiento.numero)}
                 </strong>
 
             </div>
@@ -1278,9 +683,7 @@ function construirDetalleVenta(
                 </span>
 
                 <strong>
-                    ${formatearPrecioHistorial(
-                        movimiento.monto
-                    )}
+                    ${formatearPrecioHistorial(movimiento.monto)}
                 </strong>
 
             </div>
@@ -1294,10 +697,7 @@ function construirDetalleVenta(
 
                 <strong>
                     ${
-                        movimiento.estado ===
-                        "con_deuda"
-                            ? "Con deuda"
-                            : "Pagada"
+                      movimiento.estado === "con_deuda" ? "Con deuda" : "Pagada"
                     }
                 </strong>
 
@@ -1311,9 +711,7 @@ function construirDetalleVenta(
                 </span>
 
                 <strong>
-                    ${formatearPrecioHistorial(
-                        movimiento.totalEntregado
-                    )}
+                    ${formatearPrecioHistorial(movimiento.totalEntregado)}
                 </strong>
 
             </div>
@@ -1326,9 +724,7 @@ function construirDetalleVenta(
                 </span>
 
                 <strong>
-                    ${formatearPrecioHistorial(
-                        movimiento.saldoAdeber
-                    )}
+                    ${formatearPrecioHistorial(movimiento.saldoAdeber)}
                 </strong>
 
             </div>
@@ -1341,9 +737,7 @@ function construirDetalleVenta(
                 </span>
 
                 <strong>
-                    ${escaparHTMLHistorial(
-                        movimiento.usuario
-                    )}
+                    ${escaparHTMLHistorial(movimiento.usuario)}
                 </strong>
 
             </div>
@@ -1352,19 +746,12 @@ function construirDetalleVenta(
 
     `;
 
-
-    /* ====================================
+  /* ====================================
        PRODUCTOS
     ==================================== */
 
-    if (
-        Array.isArray(
-            movimiento.productos
-        ) &&
-        movimiento.productos.length > 0
-    ) {
-
-        html += `
+  if (Array.isArray(movimiento.productos) && movimiento.productos.length > 0) {
+    html += `
 
             <div
                 class="
@@ -1382,31 +769,14 @@ function construirDetalleVenta(
 
         `;
 
+    movimiento.productos.forEach((producto) => {
+      const cantidad = Number(producto.cantidad) || 0;
 
-        movimiento.productos.forEach(
-            (producto) => {
+      const precio = Number(producto.precioUnitario ?? producto.precio) || 0;
 
-                const cantidad =
-                    Number(
-                        producto.cantidad
-                    ) || 0;
+      const subtotal = Number(producto.subtotal) || precio * cantidad;
 
-
-                const precio =
-                    Number(
-                        producto.precioUnitario ??
-                        producto.precio
-                    ) || 0;
-
-
-                const subtotal =
-                    Number(
-                        producto.subtotal
-                    ) ||
-                    precio * cantidad;
-
-
-                html += `
+      html += `
 
                     <div
                         class="
@@ -1420,8 +790,7 @@ function construirDetalleVenta(
                             "
                         >
                             ${escaparHTMLHistorial(
-                                producto.nombre ||
-                                "Producto"
+                              producto.nombre || "Producto",
                             )}
                         </div>
 
@@ -1432,13 +801,11 @@ function construirDetalleVenta(
                             "
                         >
                             ${
-                                producto.talle
-                                    ? `Talle ${
-                                        escaparHTMLHistorial(
-                                            producto.talle
-                                        )
-                                    }`
-                                    : "Sin talle"
+                              producto.talle
+                                ? `Talle ${escaparHTMLHistorial(
+                                    producto.talle,
+                                  )}`
+                                : "Sin talle"
                             }
                         </div>
 
@@ -1457,76 +824,49 @@ function construirDetalleVenta(
                                 subtotal-producto-historial
                             "
                         >
-                            ${formatearPrecioHistorial(
-                                subtotal
-                            )}
+                            ${formatearPrecioHistorial(subtotal)}
                         </div>
 
                     </div>
 
                 `;
+    });
 
-            }
-        );
-
-
-        html += `
+    html += `
 
             </div>
 
         `;
+  }
 
-    }
-
-
-    /* ====================================
+  /* ====================================
        MEDIOS DE PAGO
     ==================================== */
 
-    if (
-        Array.isArray(
-            movimiento.mediosPago
-        ) &&
-        movimiento.mediosPago.length > 0
-    ) {
+  if (
+    Array.isArray(movimiento.mediosPago) &&
+    movimiento.mediosPago.length > 0
+  ) {
+    const medios = movimiento.mediosPago
+      .map((medio) => {
+        const nombre = medio.tipo || "Medio de pago";
 
-        const medios =
-            movimiento.mediosPago
-                .map(
-                    (medio) => {
+        /*
+         * IMPORTANTE:
+         *
+         * En ventas el campo
+         * se guarda como:
+         *
+         * medio.importe
+         */
 
-                        const nombre =
-                            medio.tipo ||
-                            "Medio de pago";
+        const importe = Number(medio.importe) || 0;
 
+        return `${nombre}: ${formatearPrecioHistorial(importe)}`;
+      })
+      .join(" · ");
 
-                        /*
-                         * IMPORTANTE:
-                         *
-                         * En ventas el campo
-                         * se guarda como:
-                         *
-                         * medio.importe
-                         */
-
-                        const importe =
-                            Number(
-                                medio.importe
-                            ) || 0;
-
-
-                        return `${nombre}: ${
-                            formatearPrecioHistorial(
-                                importe
-                            )
-                        }`;
-
-                    }
-                )
-                .join(" · ");
-
-
-        html += `
+    html += `
 
             <div
                 class="texto-extra-historial"
@@ -1536,22 +876,15 @@ function construirDetalleVenta(
                     Medios de pago:
                 </strong>
 
-                ${escaparHTMLHistorial(
-                    medios
-                )}
+                ${escaparHTMLHistorial(medios)}
 
             </div>
 
         `;
+  }
 
-    }
-
-
-    if (
-        movimiento.observaciones
-    ) {
-
-        html += `
+  if (movimiento.observaciones) {
+    html += `
 
             <div
                 class="texto-extra-historial"
@@ -1561,31 +894,22 @@ function construirDetalleVenta(
                     Observaciones:
                 </strong>
 
-                ${escaparHTMLHistorial(
-                    movimiento.observaciones
-                )}
+                ${escaparHTMLHistorial(movimiento.observaciones)}
 
             </div>
 
         `;
+  }
 
-    }
-
-
-    return html;
-
+  return html;
 }
-
 
 /* ========================================
    DETALLE PAGO
 ======================================== */
 
-function construirDetallePago(
-    movimiento
-) {
-
-    return `
+function construirDetallePago(movimiento) {
+  return `
 
         <div class="detalle-grid-historial">
 
@@ -1596,9 +920,7 @@ function construirDetallePago(
                 </span>
 
                 <strong>
-                    ${formatearPrecioHistorial(
-                        movimiento.monto
-                    )}
+                    ${formatearPrecioHistorial(movimiento.monto)}
                 </strong>
 
             </div>
@@ -1611,12 +933,9 @@ function construirDetallePago(
                 </span>
 
                 <strong>
-                    ${
-                        escaparHTMLHistorial(
-                            movimiento.medioPago ||
-                            "No especificado"
-                        )
-                    }
+                    ${escaparHTMLHistorial(
+                      movimiento.medioPago || "No especificado",
+                    )}
                 </strong>
 
             </div>
@@ -1629,9 +948,7 @@ function construirDetallePago(
                 </span>
 
                 <strong>
-                    ${escaparHTMLHistorial(
-                        movimiento.usuario
-                    )}
+                    ${escaparHTMLHistorial(movimiento.usuario)}
                 </strong>
 
             </div>
@@ -1640,8 +957,8 @@ function construirDetallePago(
 
 
         ${
-            movimiento.descripcionOriginal
-                ? `
+          movimiento.descripcionOriginal
+            ? `
                     <div
                         class="texto-extra-historial"
                     >
@@ -1650,29 +967,22 @@ function construirDetallePago(
                             Descripción:
                         </strong>
 
-                        ${escaparHTMLHistorial(
-                            movimiento.descripcionOriginal
-                        )}
+                        ${escaparHTMLHistorial(movimiento.descripcionOriginal)}
 
                     </div>
                 `
-                : ""
+            : ""
         }
 
     `;
-
 }
-
 
 /* ========================================
    DETALLE INTERÉS
 ======================================== */
 
-function construirDetalleInteres(
-    movimiento
-) {
-
-    return `
+function construirDetalleInteres(movimiento) {
+  return `
 
         <div class="detalle-grid-historial">
 
@@ -1683,9 +993,7 @@ function construirDetalleInteres(
                 </span>
 
                 <strong>
-                    ${formatearPrecioHistorial(
-                        movimiento.monto
-                    )}
+                    ${formatearPrecioHistorial(movimiento.monto)}
                 </strong>
 
             </div>
@@ -1698,9 +1006,7 @@ function construirDetalleInteres(
                 </span>
 
                 <strong>
-                    ${escaparHTMLHistorial(
-                        movimiento.usuario
-                    )}
+                    ${escaparHTMLHistorial(movimiento.usuario)}
                 </strong>
 
             </div>
@@ -1713,9 +1019,7 @@ function construirDetalleInteres(
                 </span>
 
                 <strong>
-                    ${formatearFechaHistorial(
-                        movimiento.fecha
-                    )}
+                    ${formatearFechaHistorial(movimiento.fecha)}
                 </strong>
 
             </div>
@@ -1724,8 +1028,8 @@ function construirDetalleInteres(
 
 
         ${
-            movimiento.descripcionOriginal
-                ? `
+          movimiento.descripcionOriginal
+            ? `
                     <div
                         class="texto-extra-historial"
                     >
@@ -1734,555 +1038,251 @@ function construirDetalleInteres(
                             Descripción:
                         </strong>
 
-                        ${escaparHTMLHistorial(
-                            movimiento.descripcionOriginal
-                        )}
+                        ${escaparHTMLHistorial(movimiento.descripcionOriginal)}
 
                     </div>
                 `
-                : ""
+            : ""
         }
 
     `;
-
 }
-
 
 /* ========================================
    RESUMEN
 ======================================== */
 
 function actualizarResumenHistorial() {
+  const total = movimientosHistorialCliente.length;
 
-    const total =
-        movimientosHistorialCliente.length;
+  const totalCompras = movimientosHistorialCliente
+    .filter((movimiento) => movimiento.tipo === "venta")
+    .reduce(
+      (acumulado, movimiento) => acumulado + (Number(movimiento.monto) || 0),
+      0,
+    );
 
+  const totalPagos = movimientosHistorialCliente
+    .filter((movimiento) => movimiento.tipo === "pago")
+    .reduce(
+      (acumulado, movimiento) => acumulado + (Number(movimiento.monto) || 0),
+      0,
+    );
 
-    const totalCompras =
-        movimientosHistorialCliente
-            .filter(
-                (movimiento) =>
-                    movimiento.tipo ===
-                    "venta"
-            )
-            .reduce(
-                (
-                    acumulado,
-                    movimiento
-                ) =>
-                    acumulado +
-                    (
-                        Number(
-                            movimiento.monto
-                        ) || 0
-                    ),
-                0
-            );
+  const totalIntereses = movimientosHistorialCliente
+    .filter((movimiento) => movimiento.tipo === "interes")
+    .reduce(
+      (acumulado, movimiento) => acumulado + (Number(movimiento.monto) || 0),
+      0,
+    );
 
+  const totalMovimientos = document.getElementById(
+    "historial-total-movimientos",
+  );
 
-    const totalPagos =
-        movimientosHistorialCliente
-            .filter(
-                (movimiento) =>
-                    movimiento.tipo ===
-                    "pago"
-            )
-            .reduce(
-                (
-                    acumulado,
-                    movimiento
-                ) =>
-                    acumulado +
-                    (
-                        Number(
-                            movimiento.monto
-                        ) || 0
-                    ),
-                0
-            );
+  const compras = document.getElementById("historial-total-compras");
 
+  const pagos = document.getElementById("historial-total-pagos");
 
-    const totalIntereses =
-        movimientosHistorialCliente
-            .filter(
-                (movimiento) =>
-                    movimiento.tipo ===
-                    "interes"
-            )
-            .reduce(
-                (
-                    acumulado,
-                    movimiento
-                ) =>
-                    acumulado +
-                    (
-                        Number(
-                            movimiento.monto
-                        ) || 0
-                    ),
-                0
-            );
+  const intereses = document.getElementById("historial-total-intereses");
 
+  if (totalMovimientos) {
+    totalMovimientos.textContent = String(total);
+  }
 
-    const totalMovimientos =
-        document.getElementById(
-            "historial-total-movimientos"
-        );
+  if (compras) {
+    compras.textContent = formatearPrecioHistorial(totalCompras);
+  }
 
+  if (pagos) {
+    pagos.textContent = formatearPrecioHistorial(totalPagos);
+  }
 
-    const compras =
-        document.getElementById(
-            "historial-total-compras"
-        );
-
-
-    const pagos =
-        document.getElementById(
-            "historial-total-pagos"
-        );
-
-
-    const intereses =
-        document.getElementById(
-            "historial-total-intereses"
-        );
-
-
-    if (totalMovimientos) {
-
-        totalMovimientos.textContent =
-            String(total);
-
-    }
-
-
-    if (compras) {
-
-        compras.textContent =
-            formatearPrecioHistorial(
-                totalCompras
-            );
-
-    }
-
-
-    if (pagos) {
-
-        pagos.textContent =
-            formatearPrecioHistorial(
-                totalPagos
-            );
-
-    }
-
-
-    if (intereses) {
-
-        intereses.textContent =
-            formatearPrecioHistorial(
-                totalIntereses
-            );
-
-    }
-
+  if (intereses) {
+    intereses.textContent = formatearPrecioHistorial(totalIntereses);
+  }
 }
-
 
 /* ========================================
    PIE
 ======================================== */
 
-function actualizarPieHistorial(
-    cantidad
-) {
+function actualizarPieHistorial(cantidad) {
+  const elemento = document.getElementById("texto-paginacion-historial");
 
-    const elemento =
-        document.getElementById(
-            "texto-paginacion-historial"
-        );
+  if (!elemento) {
+    return;
+  }
 
+  if (cantidad === 0) {
+    elemento.textContent = "0 movimientos";
 
-    if (!elemento) {
-        return;
-    }
+    return;
+  }
 
-
-    if (cantidad === 0) {
-
-        elemento.textContent =
-            "0 movimientos";
-
-        return;
-
-    }
-
-
-    elemento.textContent =
-        cantidad === 1
-            ? "1 movimiento"
-            : `${cantidad} movimientos`;
-
+  elemento.textContent =
+    cantidad === 1 ? "1 movimiento" : `${cantidad} movimientos`;
 }
-
 
 /* ========================================
    ESTADO
 ======================================== */
 
-function mostrarEstadoHistorial(
-    mensaje,
-    error = false
-) {
+function mostrarEstadoHistorial(mensaje, error = false) {
+  const lista = document.getElementById("lista-historial-cliente");
 
-    const lista =
-        document.getElementById(
-            "lista-historial-cliente"
-        );
+  if (!lista) {
+    return;
+  }
 
+  lista.innerHTML = "";
 
-    if (!lista) {
-        return;
-    }
+  const estado = document.createElement("div");
 
+  estado.className = "estado-historial-cliente";
 
-    lista.innerHTML = "";
+  if (error) {
+    estado.classList.add("error");
+  }
 
+  estado.textContent = mensaje;
 
-    const estado =
-        document.createElement(
-            "div"
-        );
-
-
-    estado.className =
-        "estado-historial-cliente";
-
-
-    if (error) {
-
-        estado.classList.add(
-            "error"
-        );
-
-    }
-
-
-    estado.textContent =
-        mensaje;
-
-
-    lista.appendChild(
-        estado
-    );
-
+  lista.appendChild(estado);
 }
-
 
 /* ========================================
    UTILIDADES
 ======================================== */
 
-function obtenerFechaMovimiento(
-    fecha
-) {
-
-    if (!fecha) {
-        return 0;
-    }
-
-
-    if (
-        typeof fecha.toDate ===
-        "function"
-    ) {
-
-        return fecha
-            .toDate()
-            .getTime();
-
-    }
-
-
-    if (
-        fecha instanceof Date
-    ) {
-
-        return fecha.getTime();
-
-    }
-
-
-    if (
-        typeof fecha ===
-        "number"
-    ) {
-
-        return fecha;
-
-    }
-
-
-    const fechaConvertida =
-        new Date(fecha);
-
-
-    if (
-        !Number.isNaN(
-            fechaConvertida.getTime()
-        )
-    ) {
-
-        return fechaConvertida.getTime();
-
-    }
-
-
+function obtenerFechaMovimiento(fecha) {
+  if (!fecha) {
     return 0;
+  }
 
+  if (typeof fecha.toDate === "function") {
+    return fecha.toDate().getTime();
+  }
+
+  if (fecha instanceof Date) {
+    return fecha.getTime();
+  }
+
+  if (typeof fecha === "number") {
+    return fecha;
+  }
+
+  const fechaConvertida = new Date(fecha);
+
+  if (!Number.isNaN(fechaConvertida.getTime())) {
+    return fechaConvertida.getTime();
+  }
+
+  return 0;
 }
 
+function formatearFechaHistorial(fecha) {
+  const timestamp = obtenerFechaMovimiento(fecha);
 
-function formatearFechaHistorial(
-    fecha
-) {
+  if (!timestamp) {
+    return "Sin fecha";
+  }
 
-    const timestamp =
-        obtenerFechaMovimiento(
-            fecha
-        );
-
-
-    if (!timestamp) {
-
-        return "Sin fecha";
-
-    }
-
-
-    return new Date(
-        timestamp
-    ).toLocaleDateString(
-        "es-AR",
-        {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-        }
-    );
-
+  return new Date(timestamp).toLocaleDateString("es-AR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 }
 
+function formatearHoraHistorial(fecha) {
+  const timestamp = obtenerFechaMovimiento(fecha);
 
-function formatearHoraHistorial(
-    fecha
-) {
+  if (!timestamp) {
+    return "";
+  }
 
-    const timestamp =
-        obtenerFechaMovimiento(
-            fecha
-        );
-
-
-    if (!timestamp) {
-
-        return "";
-
-    }
-
-
-    return new Date(
-        timestamp
-    ).toLocaleTimeString(
-        "es-AR",
-        {
-            hour: "2-digit",
-            minute: "2-digit",
-        }
-    );
-
+  return new Date(timestamp).toLocaleTimeString("es-AR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
+function formatearPrecioHistorial(valor) {
+  const numero = Number(valor) || 0;
 
-function formatearPrecioHistorial(
-    valor
-) {
-
-    const numero =
-        Number(valor) || 0;
-
-
-    return numero.toLocaleString(
-        "es-AR",
-        {
-            style: "currency",
-            currency: "ARS",
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-        }
-    );
-
+  return numero.toLocaleString("es-AR", {
+    style: "currency",
+    currency: "ARS",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
 }
 
+function obtenerInicialesHistorial(cliente) {
+  const nombre = String(cliente?.nombre || "").trim();
 
-function obtenerInicialesHistorial(
-    cliente
-) {
+  const apellido = String(cliente?.apellido || "").trim();
 
-    const nombre =
-        String(
-            cliente?.nombre || ""
-        ).trim();
+  if (!nombre && !apellido) {
+    return "--";
+  }
 
-
-    const apellido =
-        String(
-            cliente?.apellido || ""
-        ).trim();
-
-
-    if (
-        !nombre &&
-        !apellido
-    ) {
-
-        return "--";
-
-    }
-
-
-    return (
-        `${nombre.charAt(0)}${
-            apellido.charAt(0)
-        }`
-    )
-        .toUpperCase();
-
+  return `${nombre.charAt(0)}${apellido.charAt(0)}`.toUpperCase();
 }
 
+function normalizarTipoMovimiento(tipo) {
+  const valor = String(tipo || "")
+    .trim()
+    .toLowerCase();
 
-function normalizarTipoMovimiento(
-    tipo
-) {
+  if (valor === "pago" || valor === "pagodeuda") {
+    return "pago";
+  }
 
-    const valor =
-        String(
-            tipo || ""
-        )
-            .trim()
-            .toLowerCase();
+  if (valor === "interes" || valor === "interés") {
+    return "interes";
+  }
 
-
-    if (
-        valor === "pago" ||
-        valor === "pagodeuda"
-    ) {
-
-        return "pago";
-
-    }
-
-
-    if (
-        valor === "interes" ||
-        valor === "interés"
-    ) {
-
-        return "interes";
-
-    }
-
-
-    return valor;
-
+  return valor;
 }
 
+function textoTipoMovimiento(tipo) {
+  if (tipo === "venta") {
+    return "Venta";
+  }
 
-function textoTipoMovimiento(
-    tipo
-) {
+  if (tipo === "pago") {
+    return "Pago";
+  }
 
-    if (tipo === "venta") {
+  if (tipo === "interes") {
+    return "Interés";
+  }
 
-        return "Venta";
-
-    }
-
-
-    if (tipo === "pago") {
-
-        return "Pago";
-
-    }
-
-
-    if (tipo === "interes") {
-
-        return "Interés";
-
-    }
-
-
-    return "Movimiento";
-
+  return "Movimiento";
 }
 
+function obtenerIconoMovimiento(tipo) {
+  if (tipo === "venta") {
+    return "🛒";
+  }
 
-function obtenerIconoMovimiento(
-    tipo
-) {
+  if (tipo === "pago") {
+    return "$";
+  }
 
-    if (tipo === "venta") {
+  if (tipo === "interes") {
+    return "%";
+  }
 
-        return "🛒";
-
-    }
-
-
-    if (tipo === "pago") {
-
-        return "$";
-
-    }
-
-
-    if (tipo === "interes") {
-
-        return "%";
-
-    }
-
-
-    return "•";
-
+  return "•";
 }
 
-
-function escaparHTMLHistorial(
-    valor
-) {
-
-    return String(
-        valor ?? ""
-    )
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
-
+function escaparHTMLHistorial(valor) {
+  return String(valor ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }

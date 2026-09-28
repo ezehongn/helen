@@ -1,24 +1,3 @@
-// ========================================
-// CARGAR CSS DE PRODUCTOS
-// ========================================
-
-function cargarCSSProductos() {
-  if (document.getElementById("css-productos")) {
-    return;
-  }
-
-  const link = document.createElement("link");
-
-  link.id = "css-productos";
-
-  link.rel = "stylesheet";
-
-  link.href = "css/productos/productos.css";
-
-  document.head.appendChild(link);
-}
-
-cargarCSSProductos();
 
 // ========================================
 // FIREBASE FIRESTORE
@@ -94,7 +73,7 @@ async function inicializarProductos() {
 
   await cargarModalRegistrarProducto();
 
-  cargarScriptModalRegistrarProducto();
+  await cargarScriptModalRegistrarProducto();
 
   await cargarModalConsultarProducto();
 
@@ -104,7 +83,7 @@ async function inicializarProductos() {
 
   await cargarModalNuevaCategoria();
   cargarCSSNuevaCategoria();
-  cargarScriptNuevaCategoria();
+  await cargarScriptNuevaCategoria();
 
   await cargarModalRegistrarIngresos();
   cargarCSSRegistrarIngresos();
@@ -261,9 +240,14 @@ async function cargarLimitesStockProductos() {
 // CAMBIO DE USUARIO OPERATIVO
 // ========================================
 
-window.addEventListener("usuarioOperativoCambiado", async () => {
-  await iniciarEscuchaProductos();
-});
+function manejarCambioUsuarioProductos() {
+  iniciarEscuchaProductos();
+}
+
+window.addEventListener(
+  "usuarioOperativoCambiado",
+  manejarCambioUsuarioProductos,
+);
 
 // ========================================
 // MENSAJE SIN USUARIO
@@ -353,17 +337,23 @@ async function cargarModalRegistrarProducto() {
 // ========================================
 
 function cargarScriptModalRegistrarProducto() {
-  if (document.getElementById("js-registrar-producto")) {
-    return;
-  }
+  return new Promise((resolve, reject) => {
+    const scriptAnterior = document.getElementById("js-registrar-producto");
+    if (scriptAnterior) {
+      scriptAnterior.remove();
+    }
 
-  const script = document.createElement("script");
+    const script = document.createElement("script");
 
-  script.id = "js-registrar-producto";
+    script.id = "js-registrar-producto";
+    script.type = "module";
+    script.src = `js/productos/registrarproducto.js?t=${Date.now()}`;
 
-  script.src = `js/productos/registrarproducto.js?t=${Date.now()}`;
+    script.onload = resolve;
+    script.onerror = reject;
 
-  document.body.appendChild(script);
+    document.body.appendChild(script);
+  });
 }
 
 // ========================================
@@ -1208,17 +1198,24 @@ function cargarCSSNuevaCategoria() {
 }
 
 function cargarScriptNuevaCategoria() {
-  if (document.getElementById("js-nueva-categoria")) {
-    return;
-  }
+  return new Promise((resolve, reject) => {
+    const scriptAnterior = document.getElementById("js-nueva-categoria");
 
-  const script = document.createElement("script");
+    if (scriptAnterior) {
+      scriptAnterior.remove();
+    }
 
-  script.id = "js-nueva-categoria";
+    const script = document.createElement("script");
 
-  script.src = `js/productos/nueva-categoria.js?t=${Date.now()}`;
+    script.id = "js-nueva-categoria";
+    script.type = "module";
+    script.src = `js/productos/nueva-categoria.js?t=${Date.now()}`;
 
-  document.body.appendChild(script);
+    script.onload = resolve;
+    script.onerror = reject;
+
+    document.body.appendChild(script);
+  });
 }
 
 async function cargarModalRegistrarIngresos() {
@@ -1268,32 +1265,72 @@ function cargarCSSRegistrarIngresos() {
 }
 
 function cargarScriptRegistrarIngresos() {
-  const existente = document.getElementById("js-registrar-ingresos");
+  return new Promise((resolve, reject) => {
+    const existente = document.getElementById("js-registrar-ingresos");
 
-  if (existente) {
-    if (typeof inicializarRegistrarIngresos === "function") {
-      inicializarRegistrarIngresos();
+    if (existente) {
+      existente.remove();
     }
 
-    return Promise.resolve();
-  }
-
-  return new Promise((resolve, reject) => {
     const script = document.createElement("script");
 
     script.id = "js-registrar-ingresos";
+    script.type = "module";
     script.src = `js/productos/registraringresos.js?t=${Date.now()}`;
 
-    script.onload = () => {
-      if (typeof inicializarRegistrarIngresos === "function") {
-        inicializarRegistrarIngresos();
-      }
-
-      resolve();
-    };
-
+    script.onload = resolve;
     script.onerror = reject;
 
     document.body.appendChild(script);
   });
 }
+
+window.limpiarProductos = function () {
+  if (cancelarEscuchaProductos) {
+    cancelarEscuchaProductos();
+    cancelarEscuchaProductos = null;
+  }
+
+  window.removeEventListener(
+    "usuarioOperativoCambiado",
+    manejarCambioUsuarioProductos,
+  );
+
+  delete window.abrirModalRegistrarProducto;
+  delete window.abrirModalConsultarProducto;
+  delete window.abrirModalNuevaCategoria;
+  delete window.abrirModalRegistrarIngresos;
+  delete window.cargarCategorias;
+  delete window.actualizarCategoriasProductos;
+  delete window.recargarProductos;
+  delete window.productosListos;
+
+  // --------------------------------
+  // ELIMINAR SCRIPTS DE LOS MODALES
+  // --------------------------------
+
+  const scriptsModales = [
+    "js-registrar-producto",
+    "js-consultar-producto",
+    "js-nueva-categoria",
+    "js-registrar-ingresos",
+  ];
+
+  scriptsModales.forEach((id) => {
+    const script = document.getElementById(id);
+
+    if (script) {
+      script.remove();
+    }
+  });
+
+  // --------------------------------
+  // ELIMINAR MODALES
+  // --------------------------------
+
+  const modales = document.getElementById("modales-productos");
+
+  if (modales) {
+    modales.innerHTML = "";
+  }
+};

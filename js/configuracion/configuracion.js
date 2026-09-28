@@ -609,7 +609,7 @@ async function restablecerDatosSistema() {
       "ventas",
       "clientes",
       "gastos",
-      "categorias",
+      "categoriasGastos",
     ];
 
     for (const nombreColeccion of colecciones) {

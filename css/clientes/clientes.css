@@ -68,54 +68,6 @@
 
 }
 
-
-.boton-nuevo-cliente {
-
-    height: 44px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 9px;
-
-    padding: 0 20px;
-
-    border: none;
-
-    border-radius: 6px;
-
-    background: #1268e8;
-
-    color: #ffffff;
-
-    font-family: inherit;
-
-    font-size: 13px;
-
-    font-weight: 600;
-
-    cursor: pointer;
-
-}
-
-
-.boton-nuevo-cliente span {
-
-    font-size: 22px;
-
-    font-weight: 300;
-
-}
-
-
-.boton-nuevo-cliente:hover {
-
-    background: #0e5ed4;
-
-}
-
-
 /* ========================================
    ESTADÍSTICAS
 ======================================== */
