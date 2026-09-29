@@ -117,7 +117,7 @@ async function iniciarEscuchaProductos() {
 
   const usuarioOperativo = sessionStorage.getItem("usuarioOperativo");
 
-  if (usuarioOperativo !== "Gon" && usuarioOperativo !== "Matias") {
+  if (usuarioOperativo !== "Gon" && usuarioOperativo !== "Helen") {
     mostrarMensajeSinUsuario();
 
     return;
@@ -199,7 +199,7 @@ async function iniciarEscuchaProductos() {
 async function cargarLimitesStockProductos() {
   const usuarioOperativo = sessionStorage.getItem("usuarioOperativo");
 
-  if (usuarioOperativo !== "Gon" && usuarioOperativo !== "Matias") {
+  if (usuarioOperativo !== "Gon" && usuarioOperativo !== "Helen") {
     limitesStockProductos = {};
     return;
   }

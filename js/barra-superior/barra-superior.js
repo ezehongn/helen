@@ -65,7 +65,7 @@ function inicializarUsuario() {
 
     if (
         usuario !== "Gon" &&
-        usuario !== "Matias"
+        usuario !== "Helen"
     ) {
 
         usuario =
@@ -210,10 +210,10 @@ function obtenerUsuarioDesdeOpcion(
 
 
     if (
-        usuario === "matias"
+        usuario === "helen"
     ) {
 
-        return "Matias";
+        return "Helen";
 
     }
 

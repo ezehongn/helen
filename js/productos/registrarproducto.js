@@ -300,7 +300,7 @@ formularioRegistrarProducto.addEventListener("submit", async (evento) => {
 
   const usuarioOperativo = sessionStorage.getItem("usuarioOperativo");
 
-  if (usuarioOperativo !== "Gon" && usuarioOperativo !== "Matias") {
+  if (usuarioOperativo !== "Gon" && usuarioOperativo !== "Helen") {
     alert("Seleccioná primero el usuario operativo.");
 
     return;
