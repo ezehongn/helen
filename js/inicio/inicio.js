@@ -748,12 +748,14 @@ function actualizarEstadisticasInicio() {
 
 
     const totalVentasHoy =
-        ventasHoy.reduce(
-            (total, venta) =>
-                total +
-                Number(venta.total || 0),
-            0
-        );
+    ventasHoy.reduce(
+        (total, venta) =>
+            total +
+            Number(
+                venta.totalEntregado ?? venta.total ?? 0
+            ),
+        0
+    );
 
 
     // ----------------------------------------

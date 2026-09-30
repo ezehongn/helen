@@ -207,14 +207,16 @@ function convertirNumero(valor) {
 // SELECCIÓN DE IMAGEN
 // ========================================
 
-imagenProducto.addEventListener("change", () => {
-  const archivo = imagenProducto.files[0];
-
+function procesarImagenSeleccionada(archivo) {
   if (!archivo) {
     return;
   }
 
-  const tiposPermitidos = ["image/jpeg", "image/png", "image/webp"];
+  const tiposPermitidos = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+  ];
 
   if (!tiposPermitidos.includes(archivo.type)) {
     alert("La imagen debe ser JPG, PNG o WEBP.");
@@ -231,7 +233,8 @@ imagenProducto.addEventListener("change", () => {
   const lector = new FileReader();
 
   lector.onload = (evento) => {
-    selectorImagen.style.backgroundImage = `url("${evento.target.result}")`;
+    selectorImagen.style.backgroundImage =
+      `url("${evento.target.result}")`;
 
     selectorImagen.style.backgroundSize = "cover";
 
@@ -239,7 +242,10 @@ imagenProducto.addEventListener("change", () => {
 
     selectorImagen.classList.add("imagen-seleccionada");
 
-    const elementos = selectorImagen.querySelectorAll("span, strong, small");
+    const elementos =
+      selectorImagen.querySelectorAll(
+        "span, strong, small"
+      );
 
     elementos.forEach((elemento) => {
       elemento.style.visibility = "hidden";
@@ -247,6 +253,56 @@ imagenProducto.addEventListener("change", () => {
   };
 
   lector.readAsDataURL(archivo);
+};
+
+
+// ========================================
+// SELECCIONAR DESDE ARCHIVO
+// ========================================
+
+imagenProducto.addEventListener("change", () => {
+  const archivo = imagenProducto.files[0];
+
+  procesarImagenSeleccionada(archivo);
+});
+
+
+// ========================================
+// ARRASTRAR Y SOLTAR
+// ========================================
+
+selectorImagen.addEventListener("dragover", (evento) => {
+  evento.preventDefault();
+
+  selectorImagen.classList.add("arrastrando");
+});
+
+
+selectorImagen.addEventListener("dragleave", () => {
+  selectorImagen.classList.remove("arrastrando");
+});
+
+
+selectorImagen.addEventListener("drop", (evento) => {
+  evento.preventDefault();
+
+  selectorImagen.classList.remove("arrastrando");
+
+  const archivo = evento.dataTransfer.files[0];
+
+  if (!archivo) {
+    return;
+  }
+
+  // Procesar la imagen
+  procesarImagenSeleccionada(archivo);
+
+  // Guardar el archivo también en el input
+  const transferencia = new DataTransfer();
+
+  transferencia.items.add(archivo);
+
+  imagenProducto.files = transferencia.files;
 });
 
 // ========================================

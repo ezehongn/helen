@@ -33,9 +33,7 @@ let CONFIGURACION_TARJETA_CREDITO = {
 async function cargarConfiguracionTarjetaCredito() {
   try {
     const { doc, getDoc } =
-      await import(
-        "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js"
-      );
+      await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
 
     const referencia = doc(window.db, "configuracion", "general");
 
@@ -54,7 +52,7 @@ async function cargarConfiguracionTarjetaCredito() {
 
     console.log(
       "Configuración de recargos cargada:",
-      CONFIGURACION_TARJETA_CREDITO
+      CONFIGURACION_TARJETA_CREDITO,
     );
   } catch (error) {
     console.error("Error cargando configuración de recargos:", error);
@@ -64,6 +62,7 @@ async function cargarConfiguracionTarjetaCredito() {
 let clienteSeleccionadoVenta = null;
 let usuarioVentaActivo = null;
 let cancelarEscuchaUltimasVentas = null;
+let totalVentaPersonalizado = null;
 
 /* ========================================
    INICIALIZACIÓN
@@ -213,6 +212,14 @@ function configurarEventosVentas() {
   document
     .getElementById("registrar-venta")
     ?.addEventListener("click", registrarVenta);
+
+  document
+    .getElementById("total-a-pagar")
+    ?.addEventListener("input", (evento) => {
+      totalVentaPersonalizado = convertirNumeroVenta(evento.target.value);
+
+      actualizarTotalesVenta();
+    });
 
   document
     .getElementById("nuevo-cliente-venta")
@@ -1076,7 +1083,10 @@ function actualizarTotalesVenta() {
 
   const recargo = obtenerRecargoVenta();
 
-  const total = totalBase + recargo;
+  const totalCalculado = totalBase + recargo;
+
+  const total =
+    totalVentaPersonalizado !== null ? totalVentaPersonalizado : totalCalculado;
 
   const entregado = obtenerTotalEntregado();
 
@@ -1085,10 +1095,13 @@ function actualizarTotalesVenta() {
   const saldo = Math.max(total - entregado, 0);
 
   document.getElementById("total-venta").textContent =
-    formatearPrecioVenta(total);
+    formatearPrecioVenta(totalCalculado);
 
-  document.getElementById("total-a-pagar").textContent =
-    formatearPrecioVenta(total);
+  const inputTotal = document.getElementById("total-a-pagar");
+
+  if (inputTotal && document.activeElement !== inputTotal) {
+    inputTotal.value = total;
+  }
 
   document.getElementById("total-entregado").textContent =
     formatearPrecioVenta(entregado);
@@ -1114,8 +1127,13 @@ function actualizarEstadoBotonRegistrar() {
   }
 
   const totalBase = obtenerTotalVenta();
+
   const recargo = obtenerRecargoVenta();
-  const total = totalBase + recargo;
+
+  const totalCalculado = totalBase + recargo;
+
+  const total =
+    totalVentaPersonalizado !== null ? totalVentaPersonalizado : totalCalculado;
 
   const entregado = obtenerTotalEntregado();
 
@@ -1131,12 +1149,18 @@ function actualizarEstadoBotonRegistrar() {
 
 async function registrarVenta() {
   const totalBase = obtenerTotalVenta();
+
   const recargoTotal = obtenerRecargoVenta();
-  const total = totalBase + recargoTotal;
+
+  const totalCalculado = totalBase + recargoTotal;
+
+  const total =
+    totalVentaPersonalizado !== null ? totalVentaPersonalizado : totalCalculado;
 
   const entregado = obtenerTotalEntregado();
 
   const vuelto = Math.max(entregado - total, 0);
+
   const saldo = Math.max(total - entregado, 0);
 
   if (!carritoVenta.length) {
@@ -1544,6 +1568,8 @@ function limpiarVenta() {
   clienteSeleccionadoVenta = null;
 
   mediosPagoVenta = [];
+
+  totalVentaPersonalizado = null;
 
   const busquedaProducto = document.getElementById("busqueda-productos-venta");
 

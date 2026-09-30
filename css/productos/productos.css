@@ -989,19 +989,12 @@
 ======================================== */
 
 .paginacion-productos {
-
     min-width: 0;
-
     display: flex;
-
     align-items: center;
-
-    justify-content: space-between;
-
+    justify-content: center;
     gap: 15px;
-
     margin-top: 14px;
-
 }
 
 
@@ -1020,48 +1013,37 @@
 
 
 .controles-paginacion {
-
     display: flex;
-
     align-items: center;
-
+    justify-content: center;
     gap: 4px;
+}
 
+#numeros-pagina {
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 
 .boton-paginacion,
 .numero-pagina {
-
     width: 30px;
-
     height: 30px;
-
     padding: 0;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     border: 1px solid #dbe2ea;
-
     border-radius: 5px;
-
     background: #ffffff;
-
     color: #52647b;
-
     font-family:
         "Segoe UI",
         Arial,
         sans-serif;
-
     font-size: 11px;
-
     cursor: pointer;
-
 }
 
 
