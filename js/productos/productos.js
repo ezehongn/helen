@@ -1,4 +1,3 @@
-
 // ========================================
 // FIREBASE FIRESTORE
 // ========================================
@@ -601,15 +600,23 @@ function crearTarjetaProducto(producto) {
 
             <div class="opciones-producto">
 
-                <button
-                    type="button"
-                    class="opcion-borrar-producto"
-                >
-                    <span>🗑</span>
-                    Borrar producto
-                </button>
+    <button
+        type="button"
+        class="opcion-mover-producto"
+    >
+        <span>↔</span>
+        Mover a ${producto.creadoPor === "Gon" ? "Helen" : "Gon"}
+    </button>
 
-            </div>
+    <button
+        type="button"
+        class="opcion-borrar-producto"
+    >
+        <span>🗑</span>
+        Borrar producto
+    </button>
+
+</div>
 
         </div>
 
@@ -709,6 +716,19 @@ function crearTarjetaProducto(producto) {
   // BORRAR PRODUCTO
   // ========================================
 
+  const botonMover = tarjeta.querySelector(".opcion-mover-producto");
+
+  botonMover.addEventListener("click", async (evento) => {
+    evento.stopPropagation();
+
+    opcionesMenu.classList.remove("visible");
+
+    const usuarioActual = producto.creadoPor;
+    const usuarioDestino = usuarioActual === "Gon" ? "Helen" : "Gon";
+
+    await moverProducto(producto, usuarioDestino);
+  });
+
   const botonBorrar = tarjeta.querySelector(".opcion-borrar-producto");
 
   botonBorrar.addEventListener("click", async (evento) => {
@@ -744,6 +764,25 @@ async function borrarProducto(producto) {
     console.error("Error borrando producto:", error);
 
     alert("No se pudo borrar el producto.");
+  }
+}
+
+async function moverProducto(producto, usuarioDestino) {
+  try {
+    const { doc, updateDoc } =
+      await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
+
+    const referencia = doc(window.db, "productos", producto.id);
+
+    await updateDoc(referencia, {
+      creadoPor: usuarioDestino,
+    });
+
+    console.log(`Producto "${producto.nombre}" movido a ${usuarioDestino}`);
+  } catch (error) {
+    console.error("Error moviendo producto:", error);
+
+    alert("No se pudo mover el producto.");
   }
 }
 

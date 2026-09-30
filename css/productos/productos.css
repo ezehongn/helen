@@ -1562,6 +1562,57 @@
 
 }
 
+/* ========================================
+   OPCIÓN MOVER
+======================================== */
+
+.opcion-mover-producto {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 8px 10px;
+
+    border: none;
+
+    border-radius: 4px;
+
+    background: transparent;
+
+    color: #24344d;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 11px;
+
+    text-align: left;
+
+    cursor: pointer;
+
+}
+
+
+.opcion-mover-producto span {
+
+    font-size: 12px;
+
+}
+
+
+.opcion-mover-producto:hover {
+
+    background: #f1f4f8;
+
+}
+
 
 /* ========================================
    OPCIÓN BORRAR
