@@ -60,7 +60,7 @@ const guardarCambios = document.getElementById("guardar-cambios-producto");
 
 window.abrirModalConsultarProducto = async function (producto) {
   await cargarLimitesStockConfiguracion();
-  
+
   productoEditando = producto;
 
   cargarDatosProducto(producto);
@@ -148,9 +148,7 @@ function cargarImagen(imagen) {
 // NUEVA IMAGEN
 // ========================================
 
-consultarImagen.addEventListener("change", async () => {
-  const archivo = consultarImagen.files[0];
-
+async function procesarImagenSeleccionada(archivo) {
   if (!archivo) {
     return;
   }
@@ -159,9 +157,7 @@ consultarImagen.addEventListener("change", async () => {
 
   if (!tiposPermitidos.includes(archivo.type)) {
     alert("La imagen debe ser JPG, PNG o WEBP.");
-
     consultarImagen.value = "";
-
     return;
   }
 
@@ -171,7 +167,6 @@ consultarImagen.addEventListener("change", async () => {
     consultarSelectorImagen.style.backgroundImage = `url("${imagen}")`;
 
     consultarSelectorImagen.style.backgroundSize = "cover";
-
     consultarSelectorImagen.style.backgroundPosition = "center";
 
     document.getElementById("consultar-placeholder-imagen").style.display =
@@ -183,6 +178,52 @@ consultarImagen.addEventListener("change", async () => {
 
     alert("No se pudo procesar la imagen.");
   }
+}
+
+// ========================================
+// SELECCIONAR DESDE ARCHIVO
+// ========================================
+
+consultarImagen.addEventListener("change", () => {
+  const archivo = consultarImagen.files[0];
+
+  procesarImagenSeleccionada(archivo);
+});
+
+// ========================================
+// ARRASTRAR Y SOLTAR
+// ========================================
+
+consultarSelectorImagen.addEventListener("dragover", (evento) => {
+  evento.preventDefault();
+
+  consultarSelectorImagen.classList.add("arrastrando");
+});
+
+consultarSelectorImagen.addEventListener("dragleave", () => {
+  consultarSelectorImagen.classList.remove("arrastrando");
+});
+
+consultarSelectorImagen.addEventListener("drop", (evento) => {
+  evento.preventDefault();
+
+  consultarSelectorImagen.classList.remove("arrastrando");
+
+  const archivo = evento.dataTransfer.files[0];
+
+  if (!archivo) {
+    return;
+  }
+
+  // Procesar la imagen
+  procesarImagenSeleccionada(archivo);
+
+  // Guardar el archivo también en el input
+  const transferencia = new DataTransfer();
+
+  transferencia.items.add(archivo);
+
+  consultarImagen.files = transferencia.files;
 });
 
 // ========================================

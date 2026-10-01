@@ -1156,3 +1156,9 @@
     }
 
 }
+
+#consultar-selector-imagen.arrastrando {
+    border-color: #2587e8;
+    background-color: #f0f7ff;
+    box-shadow: 0 0 0 2px rgba(37, 135, 232, 0.08);
+}
