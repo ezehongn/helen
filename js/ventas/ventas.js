@@ -624,7 +624,7 @@ function renderizarCarritoVenta() {
                     class="boton-eliminar-carrito"
                     title="Eliminar producto"
                 >
-                    🗑
+                    🗑️
                 </button>
 
             `;
@@ -1419,6 +1419,234 @@ async function registrarVenta() {
   }
 }
 
+async function eliminarVenta(venta) {
+  if (!venta?.id) {
+    return;
+  }
+
+  if (venta.usuario !== usuarioVentaActivo) {
+    mostrarMensajeVenta(
+      "No podés eliminar una venta de otro usuario.",
+      "error"
+    );
+
+    return;
+  }
+
+  const confirmar = confirm(
+    "¿Estás seguro de que querés eliminar esta venta?\n\n" +
+    "Se eliminará la venta y se restaurará el stock de los productos."
+  );
+
+  if (!confirmar) {
+    return;
+  }
+
+  try {
+    const {
+      doc,
+      runTransaction,
+    } = await import(
+      "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js"
+    );
+
+    await runTransaction(window.db, async (transaction) => {
+      const referenciaVenta = doc(
+        window.db,
+        "ventas",
+        venta.id
+      );
+
+      /*
+       * Leer la venta nuevamente para asegurarnos
+       * de trabajar con la información actual.
+       */
+      const documentoVenta = await transaction.get(referenciaVenta);
+
+      if (!documentoVenta.exists()) {
+        throw new Error("La venta ya no existe.");
+      }
+
+      const datosVenta = documentoVenta.data();
+
+      if (datosVenta.usuario !== usuarioVentaActivo) {
+        throw new Error(
+          "No podés eliminar una venta de otro usuario."
+        );
+      }
+
+      const productos = Array.isArray(datosVenta.productos)
+        ? datosVenta.productos
+        : [];
+
+      /*
+       * Agrupar cantidades por producto y talle.
+       */
+      const reposiciones = new Map();
+
+      productos.forEach((producto) => {
+        const productoId = producto.productoId;
+
+        if (!productoId) {
+          return;
+        }
+
+        const talle = producto.talle || "";
+        const clave = `${productoId}__${talle}`;
+
+        reposiciones.set(
+          clave,
+          (reposiciones.get(clave) || 0) +
+            (Number(producto.cantidad) || 0)
+        );
+      });
+
+      /*
+       * Leer todos los productos que necesitan
+       * recuperar stock.
+       */
+      const productosLeidos = new Map();
+
+      for (const [clave] of reposiciones) {
+        const separador = clave.indexOf("__");
+
+        const productoId = clave.slice(0, separador);
+
+        if (productosLeidos.has(productoId)) {
+          continue;
+        }
+
+        const referenciaProducto = doc(
+          window.db,
+          "productos",
+          productoId
+        );
+
+        const documentoProducto = await transaction.get(
+          referenciaProducto
+        );
+
+        if (!documentoProducto.exists()) {
+          throw new Error(
+            "No se pudo encontrar uno de los productos de la venta. La venta no fue eliminada."
+          );
+        }
+
+        productosLeidos.set(productoId, {
+          referencia: referenciaProducto,
+          datos: documentoProducto.data(),
+        });
+      }
+
+      /*
+       * Restaurar stock.
+       */
+      reposiciones.forEach((cantidad, clave) => {
+        const separador = clave.indexOf("__");
+
+        const productoId = clave.slice(0, separador);
+        const talle = clave.slice(separador + 2);
+
+        const productoLeido = productosLeidos.get(productoId);
+
+        if (!productoLeido) {
+          return;
+        }
+
+        const datos = productoLeido.datos;
+
+        const talles = Array.isArray(datos.talles)
+          ? datos.talles.map((item) => ({
+              ...item,
+            }))
+          : [];
+
+        if (talles.length) {
+          const indice = talles.findIndex(
+            (item) =>
+              String(item.talle) === String(talle)
+          );
+
+          if (indice === -1) {
+            throw new Error(
+              `No se encontró el talle "${talle}" del producto "${datos.nombre}". La venta no fue eliminada.`
+            );
+          }
+
+          const stockActual =
+            Number(talles[indice].stock) || 0;
+
+          talles[indice].stock =
+            stockActual + cantidad;
+
+          const stockTotal = talles.reduce(
+            (total, item) =>
+              total + (Number(item.stock) || 0),
+            0
+          );
+
+          transaction.update(
+            productoLeido.referencia,
+            {
+              talles: talles,
+              stock: stockTotal,
+            }
+          );
+        } else {
+          const stockActual =
+            Number(datos.stock) || 0;
+
+          transaction.update(
+            productoLeido.referencia,
+            {
+              stock: stockActual + cantidad,
+            }
+          );
+        }
+      });
+
+      /*
+       * Finalmente eliminar la venta.
+       */
+      transaction.delete(referenciaVenta);
+    });
+
+    mostrarMensajeVenta(
+      "Venta eliminada y stock restaurado correctamente.",
+      "exito"
+    );
+
+    /*
+     * Si el historial completo está abierto,
+     * actualizarlo.
+     */
+    if (window.abrirModalHistorialVentas) {
+      const modal = document.getElementById(
+        "modal-historial-ventas"
+      );
+
+      if (
+        modal &&
+        modal.classList.contains("visible")
+      ) {
+        window.abrirModalHistorialVentas();
+      }
+    }
+
+    await cargarProductosVenta();
+
+  } catch (error) {
+    console.error("Error eliminando venta:", error);
+
+    mostrarMensajeVenta(
+      error.message || "No se pudo eliminar la venta.",
+      "error"
+    );
+  }
+}
+
+window.eliminarVenta = eliminarVenta;
+
 /* ========================================
    NÚMERO DE VENTA
 ======================================== */
@@ -1512,9 +1740,19 @@ function renderizarUltimasVentas(ventas) {
       ? `${venta.cliente.nombre || ""} ${venta.cliente.apellido || ""}`.trim()
       : "Cliente general";
 
-    const cantidadProductos = Array.isArray(venta.productos)
-      ? venta.productos.length
-      : 0;
+    const productos = Array.isArray(venta.productos)
+      ? venta.productos
+      : [];
+
+    const nombresProductos = productos
+      .map((producto) => producto.nombre || "")
+      .filter(Boolean);
+
+    const textoProductos = nombresProductos.length
+      ? nombresProductos.join(", ")
+      : "Sin productos";
+
+    const cantidadProductos = productos.length;
 
     const conDeuda = Number(venta.saldoAdeber) > 0;
 
@@ -1526,7 +1764,7 @@ function renderizarUltimasVentas(ventas) {
       <div class="info-venta-historial">
 
         <strong>
-          #${escaparHTMLVenta(venta.numero || venta.id)}
+          ${escaparHTMLVenta(textoProductos)}
         </strong>
 
         <span>
@@ -1552,7 +1790,23 @@ function renderizarUltimasVentas(ventas) {
       <div class="total-venta-historial">
         ${formatearPrecioVenta(venta.total)}
       </div>
+
+      <button
+        type="button"
+        class="boton-eliminar-venta"
+        title="Eliminar venta"
+      >
+        🗑️
+      </button>
     `;
+
+    elemento
+      .querySelector(".boton-eliminar-venta")
+      .addEventListener("click", async (evento) => {
+        evento.stopPropagation();
+
+        await eliminarVenta(venta);
+      });
 
     contenedor.appendChild(elemento);
   });

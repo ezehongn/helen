@@ -68,6 +68,39 @@
 
 }
 
+.boton-registrar-cliente {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    height: 36px;
+    padding: 0 14px;
+
+    border: none;
+    border-radius: 6px;
+
+    background: #2587e8;
+    color: #ffffff;
+
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition: background-color 0.15s ease;
+}
+
+.boton-registrar-cliente span {
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1;
+}
+
+.boton-registrar-cliente:hover {
+    background: #1976d2;
+}
+
 /* ========================================
    ESTADÍSTICAS
 ======================================== */

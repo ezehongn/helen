@@ -1,0 +1,348 @@
+/* ========================================
+   MODAL REGISTRAR CLIENTE
+======================================== */
+
+#modal-registrar-cliente {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(15, 23, 42, 0.35);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease;
+}
+
+#modal-registrar-cliente:not([hidden]) {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* ========================================
+   CONTENIDO
+======================================== */
+
+#modal-registrar-cliente .contenido-modal-cliente {
+    width: min(100%, 620px);
+    max-height: calc(100vh - 40px);
+
+    overflow-y: auto;
+
+    background: #ffffff;
+    border-radius: 10px;
+
+    box-shadow: 0 12px 35px rgba(15, 23, 42, 0.18);
+
+    padding: 24px;
+}
+
+
+/* ========================================
+   ENCABEZADO
+======================================== */
+
+#modal-registrar-cliente .encabezado-modal-cliente {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 24px;
+}
+
+#modal-registrar-cliente .encabezado-modal-cliente h2 {
+    margin: 0 0 5px;
+
+    color: #24344d;
+
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+#modal-registrar-cliente .encabezado-modal-cliente p {
+    margin: 0;
+
+    color: #7a8798;
+
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 12px;
+}
+
+
+/* ========================================
+   BOTÓN CERRAR
+======================================== */
+
+#modal-registrar-cliente .cerrar-modal-cliente {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 6px;
+
+    background: transparent;
+    color: #7a8798;
+
+    font-size: 23px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+#modal-registrar-cliente .cerrar-modal-cliente:hover {
+    background: #f1f4f8;
+    color: #24344d;
+}
+
+
+/* ========================================
+   CAMPOS
+======================================== */
+
+#modal-registrar-cliente .campos-cliente {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+#modal-registrar-cliente .campo-cliente {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+#modal-registrar-cliente .campo-cliente label {
+    color: #24344d;
+
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+#modal-registrar-cliente .campo-cliente label span {
+    color: #e05252;
+}
+
+#modal-registrar-cliente .campo-cliente input,
+#modal-registrar-cliente .campo-cliente textarea {
+    width: 100%;
+    box-sizing: border-box;
+
+    border: 1px solid #d9e0e8;
+    border-radius: 6px;
+
+    background: #ffffff;
+    color: #24344d;
+
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 12px;
+
+    outline: none;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+#modal-registrar-cliente .campo-cliente input {
+    height: 38px;
+    padding: 0 11px;
+}
+
+#modal-registrar-cliente .campo-cliente textarea {
+    min-height: 76px;
+
+    padding: 10px 11px;
+
+    resize: vertical;
+}
+
+#modal-registrar-cliente .campo-cliente input::placeholder,
+#modal-registrar-cliente .campo-cliente textarea::placeholder {
+    color: #a7b0bd;
+}
+
+#modal-registrar-cliente .campo-cliente input:focus,
+#modal-registrar-cliente .campo-cliente textarea:focus {
+    border-color: #2587e8;
+
+    box-shadow: 0 0 0 2px rgba(37, 135, 232, 0.08);
+}
+
+
+/* ========================================
+   SEPARADOR DEUDA
+======================================== */
+
+#modal-registrar-cliente .separador-modal-cliente {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    margin: 25px 0 18px;
+}
+
+#modal-registrar-cliente .separador-modal-cliente::before,
+#modal-registrar-cliente .separador-modal-cliente::after {
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background: #e5e9ef;
+}
+
+#modal-registrar-cliente .separador-modal-cliente span {
+    color: #24344d;
+
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+/* ========================================
+   OBSERVACIONES
+======================================== */
+
+#modal-registrar-cliente .campo-observaciones-registrar {
+    margin-top: 16px;
+}
+
+
+/* ========================================
+   MENSAJE
+======================================== */
+
+#modal-registrar-cliente .mensaje-modal-cliente {
+    min-height: 18px;
+
+    margin-top: 14px;
+
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 12px;
+}
+
+
+/* ========================================
+   ACCIONES
+======================================== */
+
+#modal-registrar-cliente .acciones-modal-cliente {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 22px;
+}
+
+#modal-registrar-cliente .boton-cancelar-cliente,
+#modal-registrar-cliente .boton-guardar-cliente {
+    height: 36px;
+
+    padding: 0 16px;
+
+    border-radius: 6px;
+
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        opacity 0.15s ease;
+}
+
+#modal-registrar-cliente .boton-cancelar-cliente {
+    border: 1px solid #d9e0e8;
+
+    background: #ffffff;
+    color: #59677a;
+}
+
+#modal-registrar-cliente .boton-cancelar-cliente:hover {
+    background: #f5f7fa;
+}
+
+#modal-registrar-cliente .boton-guardar-cliente {
+    border: 1px solid #2587e8;
+
+    background: #2587e8;
+    color: #ffffff;
+}
+
+#modal-registrar-cliente .boton-guardar-cliente:hover {
+    background: #1976d2;
+}
+
+#modal-registrar-cliente .boton-guardar-cliente:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 600px) {
+
+    #modal-registrar-cliente {
+        padding: 12px;
+    }
+
+    #modal-registrar-cliente .contenido-modal-cliente {
+        padding: 20px;
+
+        max-height: calc(100vh - 24px);
+    }
+
+    #modal-registrar-cliente .campos-cliente {
+        grid-template-columns: 1fr;
+    }
+
+    #modal-registrar-cliente .acciones-modal-cliente {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    #modal-registrar-cliente .boton-cancelar-cliente,
+    #modal-registrar-cliente .boton-guardar-cliente {
+        width: 100%;
+    }
+}

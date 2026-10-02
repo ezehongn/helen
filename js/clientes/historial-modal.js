@@ -237,7 +237,7 @@ async function cargarHistorialCliente(cliente) {
 
       const tipo = normalizarTipoMovimiento(movimiento.tipo);
 
-      if (tipo !== "pago" && tipo !== "interes") {
+      if (tipo !== "pago" && tipo !== "interes" && tipo !== "deuda_inicial") {
         return;
       }
 
@@ -341,6 +341,13 @@ function crearMovimientoCliente(movimientoId, movimiento) {
   let titulo = "Movimiento";
 
   let descripcion = "";
+
+  if (tipo === "deuda_inicial") {
+    titulo = "Deuda inicial";
+
+    descripcion =
+      movimiento.descripcion || "Deuda anterior al registro en el sistema";
+  }
 
   if (tipo === "pago") {
     titulo = "Pago de deuda";
@@ -643,6 +650,10 @@ function construirDetalleMovimiento(movimiento) {
     return construirDetalleVenta(movimiento);
   }
 
+  if (movimiento.tipo === "deuda_inicial") {
+    return construirDetalleDeudaInicial(movimiento);
+  }
+
   if (movimiento.tipo === "pago") {
     return construirDetallePago(movimiento);
   }
@@ -652,6 +663,58 @@ function construirDetalleMovimiento(movimiento) {
   }
 
   return "";
+}
+
+function construirDetalleDeudaInicial(movimiento) {
+  return `
+        <div class="detalle-grid-historial">
+
+            <div class="dato-detalle-historial">
+                <span>
+                    Monto inicial
+                </span>
+
+                <strong>
+                    ${formatearPrecioHistorial(movimiento.monto)}
+                </strong>
+            </div>
+
+            <div class="dato-detalle-historial">
+                <span>
+                    Usuario
+                </span>
+
+                <strong>
+                    ${escaparHTMLHistorial(movimiento.usuario)}
+                </strong>
+            </div>
+
+            <div class="dato-detalle-historial">
+                <span>
+                    Fecha
+                </span>
+
+                <strong>
+                    ${formatearFechaHistorial(movimiento.fecha)}
+                </strong>
+            </div>
+
+        </div>
+
+        ${
+          movimiento.descripcionOriginal
+            ? `
+                    <div class="texto-extra-historial">
+                        <strong>
+                            Descripción:
+                        </strong>
+
+                        ${escaparHTMLHistorial(movimiento.descripcionOriginal)}
+                    </div>
+                `
+            : ""
+        }
+    `;
 }
 
 /* ========================================
@@ -1265,6 +1328,10 @@ function textoTipoMovimiento(tipo) {
 function obtenerIconoMovimiento(tipo) {
   if (tipo === "venta") {
     return "🛒";
+  }
+
+  if (tipo === "deuda_inicial") {
+    return "$";
   }
 
   if (tipo === "pago") {

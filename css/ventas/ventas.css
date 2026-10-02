@@ -1365,6 +1365,33 @@
     cursor: not-allowed;
 }
 
+.boton-eliminar-venta,
+.boton-eliminar-venta-historial {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 6px;
+    border-radius: 5px;
+    transition: background-color 0.15s ease;
+}
+
+.boton-eliminar-venta:hover,
+.boton-eliminar-venta-historial:hover {
+    background-color: #fce8e8;
+}
+
+.boton-eliminar-venta-historial {
+    font-size: 13px;
+}
+
+.acciones-historial-venta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
 
 /* ========================================
    RESPONSIVE

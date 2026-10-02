@@ -1,0 +1,172 @@
+<div
+    class="modal-cliente"
+    id="modal-registrar-cliente"
+    hidden
+>
+    <div class="contenido-modal-cliente">
+
+        <div class="encabezado-modal-cliente">
+
+            <div>
+                <h2>Registrar cliente</h2>
+                <p>Registrá los datos del cliente y su deuda inicial</p>
+            </div>
+
+            <button
+                type="button"
+                class="cerrar-modal-cliente"
+                id="cerrar-modal-registrar-cliente"
+                aria-label="Cerrar"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <form id="formulario-registrar-cliente">
+
+            <!-- DATOS DEL CLIENTE -->
+            <div class="campos-cliente">
+
+                <div class="campo-cliente">
+                    <label for="registrar-cliente-nombre">
+                        Nombre <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="registrar-cliente-nombre"
+                        placeholder="Ej. Juan"
+                        autocomplete="off"
+                        required
+                    >
+                </div>
+
+                <div class="campo-cliente">
+                    <label for="registrar-cliente-apellido">
+                        Apellido <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="registrar-cliente-apellido"
+                        placeholder="Ej. Pérez"
+                        autocomplete="off"
+                        required
+                    >
+                </div>
+
+                <div class="campo-cliente">
+                    <label for="registrar-cliente-dni">
+                        DNI <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="registrar-cliente-dni"
+                        placeholder="Ej. 31245678"
+                        inputmode="numeric"
+                        autocomplete="off"
+                        required
+                    >
+                </div>
+
+                <div class="campo-cliente">
+                    <label for="registrar-cliente-telefono">
+                        Teléfono <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="registrar-cliente-telefono"
+                        placeholder="Ej. 3511234567"
+                        inputmode="tel"
+                        autocomplete="off"
+                        required
+                    >
+                </div>
+
+            </div>
+
+
+            <!-- DEUDA INICIAL -->
+            <div class="separador-modal-cliente">
+                <span>Deuda inicial</span>
+            </div>
+
+            <div class="campos-cliente">
+
+                <div class="campo-cliente">
+                    <label for="registrar-cliente-deuda">
+                        Monto de deuda <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="registrar-cliente-deuda"
+                        placeholder="Ej. $25.000"
+                        inputmode="decimal"
+                        autocomplete="off"
+                        required
+                    >
+                </div>
+
+                <div class="campo-cliente">
+                    <label for="registrar-cliente-fecha-deuda">
+                        Fecha de la deuda <span>*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="registrar-cliente-fecha-deuda"
+                        required
+                    >
+                </div>
+
+            </div>
+
+
+            <!-- OBSERVACIONES -->
+            <div class="campo-cliente campo-observaciones-registrar">
+                <label for="registrar-cliente-observaciones">
+                    Observaciones
+                </label>
+
+                <textarea
+                    id="registrar-cliente-observaciones"
+                    placeholder="Ej. Deuda anterior al sistema"
+                    rows="3"
+                ></textarea>
+            </div>
+
+
+            <div
+                class="mensaje-modal-cliente"
+                id="mensaje-modal-registrar-cliente"
+            ></div>
+
+
+            <div class="acciones-modal-cliente">
+
+                <button
+                    type="button"
+                    class="boton-cancelar-cliente"
+                    id="cancelar-registrar-cliente"
+                >
+                    Cancelar
+                </button>
+
+                <button
+                    type="submit"
+                    class="boton-guardar-cliente"
+                    id="guardar-registrar-cliente"
+                >
+                    Registrar cliente
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>

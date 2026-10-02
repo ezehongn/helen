@@ -30,6 +30,10 @@ function inicializarHistorialVentas() {
     ?.addEventListener("change", renderizarHistorialVentas);
 
   document
+    .getElementById("filtro-usuario-historial")
+    ?.addEventListener("change", renderizarHistorialVentas);
+
+  document
     .getElementById("fecha-desde-historial")
     ?.addEventListener("change", renderizarHistorialVentas);
 
@@ -69,6 +73,18 @@ window.abrirModalHistorialVentas = async function () {
 
   if (filtro) {
     filtro.value = "";
+  }
+
+  const filtroUsuario = document.getElementById("filtro-usuario-historial");
+
+  if (filtroUsuario) {
+    const usuarioActivo = sessionStorage.getItem("usuarioOperativo");
+
+    if (usuarioActivo === "Gon" || usuarioActivo === "Helen") {
+      filtroUsuario.value = usuarioActivo;
+    } else {
+      filtroUsuario.value = "";
+    }
   }
 
   const fechaDesde = document.getElementById("fecha-desde-historial");
@@ -117,29 +133,15 @@ async function cargarVentasHistorial() {
     const { collection, getDocs } =
       await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
 
-    const usuarioActivo = sessionStorage.getItem("usuarioOperativo");
-
-    if (!usuarioActivo) {
-      ventasHistorialCompleto = [];
-
-      return;
-    }
-
     const snapshot = await getDocs(collection(window.db, "ventas"));
 
     ventasHistorialCompleto = snapshot.docs
-
       .map((documento) => ({
         id: documento.id,
-
         ...documento.data(),
       }))
-
-      .filter((venta) => venta.usuario === usuarioActivo)
-
       .sort((a, b) => {
         const fechaA = obtenerFechaHistorial(a.fecha)?.getTime() || 0;
-
         const fechaB = obtenerFechaHistorial(b.fecha)?.getTime() || 0;
 
         return fechaB - fechaA;
@@ -153,10 +155,10 @@ async function cargarVentasHistorial() {
 
     if (contenedor) {
       contenedor.innerHTML = `
-                <div class="historial-vacio-completo">
-                    No se pudieron cargar las ventas.
-                </div>
-            `;
+        <div class="historial-vacio-completo">
+          No se pudieron cargar las ventas.
+        </div>
+      `;
     }
   }
 }
@@ -180,6 +182,9 @@ function renderizarHistorialVentas() {
 
   const filtro =
     document.getElementById("filtro-estado-historial")?.value || "";
+
+  const filtroUsuario =
+    document.getElementById("filtro-usuario-historial")?.value || "";
 
   const fechaDesde =
     document.getElementById("fecha-desde-historial")?.value || "";
@@ -210,6 +215,8 @@ function renderizarHistorialVentas() {
     const estado = Number(venta.saldoAdeber) > 0 ? "con_deuda" : "pagada";
 
     const coincideEstado = !filtro || estado === filtro;
+
+    const coincideUsuario = !filtroUsuario || venta.usuario === filtroUsuario;
 
     /* ==========================
                    FECHA
@@ -243,7 +250,9 @@ function renderizarHistorialVentas() {
       }
     }
 
-    return coincideBusqueda && coincideEstado && coincideFecha;
+    return (
+      coincideBusqueda && coincideEstado && coincideUsuario && coincideFecha
+    );
   });
 
   /* ==========================
@@ -308,6 +317,14 @@ function crearVentaHistorial(venta) {
 
   const productos = Array.isArray(venta.productos) ? venta.productos : [];
 
+  const nombresProductos = productos
+    .map((producto) => producto.nombre || "")
+    .filter(Boolean);
+
+  const textoProductos = nombresProductos.length
+    ? nombresProductos.join(", ")
+    : "Sin productos";
+
   elemento.innerHTML = `
 
         <div
@@ -316,15 +333,15 @@ function crearVentaHistorial(venta) {
 
             <div class="numero-venta-historial">
 
-                <strong>
-                    #${escaparHistorial(venta.numero || venta.id)}
-                </strong>
+    <strong>
+        ${escaparHistorial(textoProductos)}
+    </strong>
 
-                <span>
-                    ${formatearFechaHistorial(venta.fecha)}
-                </span>
+    <span>
+        ${formatearFechaHistorial(venta.fecha)}
+    </span>
 
-            </div>
+</div>
 
 
             <div class="cliente-venta-historial">
@@ -360,9 +377,21 @@ function crearVentaHistorial(venta) {
             </div>
 
 
-            <div class="flecha-historial">
-                ▾
-            </div>
+            <div class="acciones-historial-venta">
+
+    <button
+        type="button"
+        class="boton-eliminar-venta-historial"
+        title="Eliminar venta"
+    >
+        🗑️
+    </button>
+
+    <div class="flecha-historial">
+        ▾
+    </div>
+
+</div>
 
         </div>
 
@@ -604,6 +633,16 @@ function crearVentaHistorial(venta) {
     .querySelector(".encabezado-item-historial")
     .addEventListener("click", () => {
       elemento.classList.toggle("abierto");
+    });
+
+  elemento
+    .querySelector(".boton-eliminar-venta-historial")
+    .addEventListener("click", async (evento) => {
+      evento.stopPropagation();
+
+      if (window.eliminarVenta) {
+        await window.eliminarVenta(venta);
+      }
     });
 
   return elemento;

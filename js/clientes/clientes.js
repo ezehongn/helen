@@ -42,6 +42,8 @@ let clienteSeleccionado = null;
 
 let productosPendientesCliente = [];
 
+let deudaInicialPendienteCliente = 0;
+
 // Todas las ventas se cargan una sola vez al entrar
 // en la pantalla Clientes.
 let ventasClientes = [];
@@ -70,6 +72,9 @@ async function inicializarClientes() {
 
   await cargarModalEditarCliente();
   await cargarScriptEditarCliente();
+
+  await cargarModalRegistrarCliente();
+  await cargarScriptRegistrarCliente();
 
   configurarEventosClientes();
 
@@ -253,6 +258,24 @@ function configurarEventosClientes() {
           actualizarEstadisticasClientes();
         });
       }
+    });
+
+  document
+    .getElementById("boton-registrar-cliente")
+    ?.addEventListener("click", () => {
+      if (window.abrirModalRegistrarCliente) {
+        window.abrirModalRegistrarCliente(async () => {
+          await cargarClientes();
+
+          renderizarClientes();
+
+          actualizarEstadisticasClientes();
+        });
+
+        return;
+      }
+
+      console.log("El modal de registrar cliente todavía no está conectado.");
     });
 
   /* ================================
@@ -739,8 +762,11 @@ function cargarDatosClienteDetalle(cliente) {
 
 async function cargarProductosPendientesCliente(cliente) {
   productosPendientesCliente = [];
+  deudaInicialPendienteCliente = 0;
 
   try {
+    const movimientos = movimientosClientes[cliente.id] || [];
+    deudaInicialPendienteCliente = obtenerDeudaInicialCliente(movimientos);
     /*
      * Obtener todas las ventas que ya cargamos
      * al iniciar Clientes.
@@ -874,12 +900,108 @@ function renderizarProductosPendientes() {
 
   contenedor.innerHTML = "";
 
-  if (productosPendientesCliente.length === 0) {
+  /* ========================================
+       DEUDA INICIAL
+  ======================================== */
+
+  if (deudaInicialPendienteCliente > 0) {
+    const bloqueDeudaInicial = document.createElement("div");
+
+    bloqueDeudaInicial.className = "bloque-venta-deuda bloque-deuda-inicial";
+
+    bloqueDeudaInicial.innerHTML = `
+      <div class="encabezado-venta-deuda">
+
+        <div class="info-venta-deuda">
+
+          <strong>
+            Deuda inicial
+          </strong>
+
+          <span>
+            Deuda registrada al ingresar el cliente al sistema
+          </span>
+
+        </div>
+
+        <div class="resumen-venta-deuda">
+
+          <div class="saldo-venta">
+
+            <small>Saldo pendiente</small>
+
+            <strong>
+              ${formatearPrecioCliente(deudaInicialPendienteCliente)}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="fila-producto-deuda deuda-inicial-fila">
+
+        <div>
+          <input
+            type="checkbox"
+            class="checkbox-deuda-inicial"
+          >
+        </div>
+
+        <div class="producto-deuda-nombre">
+          <strong>
+            Deuda anterior al sistema
+          </strong>
+        </div>
+
+        <div>
+          —
+        </div>
+
+        <div>
+          —
+        </div>
+
+        <div>
+          —
+        </div>
+
+        <div>
+          —
+        </div>
+
+        <div>
+          ${formatearPrecioCliente(deudaInicialPendienteCliente)}
+        </div>
+
+      </div>
+    `;
+
+    const checkboxDeudaInicial = bloqueDeudaInicial.querySelector(
+      ".checkbox-deuda-inicial",
+    );
+
+    checkboxDeudaInicial?.addEventListener("change", () => {
+      actualizarResumenPagoCliente(true);
+    });
+
+    contenedor.appendChild(bloqueDeudaInicial);
+  }
+
+  /* ========================================
+       SIN VENTAS NI DEUDA INICIAL
+  ======================================== */
+
+  if (
+    productosPendientesCliente.length === 0 &&
+    deudaInicialPendienteCliente <= 0
+  ) {
     contenedor.innerHTML = `
-            <div class="sin-productos-deuda">
-                Este cliente no tiene productos pendientes.
-            </div>
-        `;
+      <div class="sin-productos-deuda">
+        Este cliente no tiene productos pendientes.
+      </div>
+    `;
 
     return;
   }
@@ -1063,42 +1185,47 @@ function actualizarResumenPagoCliente(actualizarMontoDesdeCheckbox = false) {
 
   const inputMonto = document.getElementById("monto-pago-cliente");
 
-  /*
-   * Verificar si hay productos seleccionados.
-   */
+  /* ========================================
+     SELECCIONES
+  ======================================== */
+
   const checkboxesSeleccionados = document.querySelectorAll(
     ".checkbox-producto-deuda:checked",
   );
 
   const hayProductosSeleccionados = checkboxesSeleccionados.length > 0;
 
-  /*
-   * Obtener el valor de los productos seleccionados.
-   */
   const totalSeleccionado = obtenerTotalProductosSeleccionados();
 
-  /*
-   * Si esta actualización viene de un checkbox,
-   * actualizar automáticamente el monto.
-   *
-   * Si no hay ninguno seleccionado,
-   * volver a $0.
-   */
+  const deudaInicialSeleccionada = obtenerDeudaInicialSeleccionada();
+
+  const hayDeudaInicialSeleccionada = deudaInicialSeleccionada > 0;
+
+  /* ========================================
+     ACTUALIZAR MONTO SEGÚN SELECCIÓN
+  ======================================== */
+
   if (actualizarMontoDesdeCheckbox && inputMonto) {
-    inputMonto.value = Math.round(totalSeleccionado);
+    if (hayDeudaInicialSeleccionada) {
+      inputMonto.value = Math.round(deudaInicialSeleccionada);
+    } else if (hayProductosSeleccionados) {
+      inputMonto.value = Math.round(totalSeleccionado);
+    } else {
+      inputMonto.value = "0";
+    }
   }
 
-  /*
-   * Monto que figura actualmente en el input.
-   */
+  /* ========================================
+     MONTO ENTREGADO
+  ======================================== */
+
   let montoEntregado = convertirNumeroCliente(inputMonto?.value);
 
-  /*
-   * Si no hay productos seleccionados y
-   * estamos actualizando desde un checkbox,
-   * el monto debe ser $0.
-   */
-  if (actualizarMontoDesdeCheckbox && !hayProductosSeleccionados) {
+  if (
+    actualizarMontoDesdeCheckbox &&
+    !hayProductosSeleccionados &&
+    !hayDeudaInicialSeleccionada
+  ) {
     montoEntregado = 0;
 
     if (inputMonto) {
@@ -1106,46 +1233,53 @@ function actualizarResumenPagoCliente(actualizarMontoDesdeCheckbox = false) {
     }
   }
 
-  /*
-   * Deuda total real del cliente.
-   */
+  /* ========================================
+     DEUDA TOTAL
+  ======================================== */
+
   const deudaCliente = obtenerDeudaCliente(clienteSeleccionado);
 
-  /*
-   * La base para el pago es:
-   *
-   * - productos seleccionados, si hay;
-   * - deuda total, si no hay productos seleccionados.
-   */
-  const baseOperacion = hayProductosSeleccionados
-    ? Math.min(totalSeleccionado, deudaCliente)
-    : deudaCliente;
+  /* ========================================
+     BASE DE LA OPERACIÓN
+  ======================================== */
 
-  /*
-   * Calcular interés.
-   */
+  let baseOperacion = deudaCliente;
+
+  if (hayDeudaInicialSeleccionada) {
+    baseOperacion = Math.min(deudaInicialSeleccionada, deudaCliente);
+  } else if (hayProductosSeleccionados) {
+    baseOperacion = Math.min(totalSeleccionado, deudaCliente);
+  }
+
+  /* ========================================
+     INTERÉS
+  ======================================== */
+
   const interes = obtenerMontoInteresCliente(baseOperacion);
 
-  /*
-   * Total que corresponde pagar.
-   */
+  /* ========================================
+     TOTAL
+  ======================================== */
+
   const totalOperacion = baseOperacion + interes;
 
   const totalEntregado = montoEntregado;
 
-  /*
-   * Vuelto.
-   */
+  /* ========================================
+     VUELTO
+  ======================================== */
+
   const vuelto = Math.max(0, montoEntregado - totalOperacion);
 
-  /*
-   * Saldo.
-   */
+  /* ========================================
+     SALDO
+  ======================================== */
+
   const saldo = Math.max(0, totalOperacion - totalEntregado);
 
-  /* ================================
-       MOSTRAR TOTAL
-    ================================ */
+  /* ========================================
+     MOSTRAR TOTAL
+  ======================================== */
 
   const totalElemento = document.getElementById("total-seleccionado-cliente");
 
@@ -1153,9 +1287,9 @@ function actualizarResumenPagoCliente(actualizarMontoDesdeCheckbox = false) {
     totalElemento.textContent = formatearPrecioCliente(totalOperacion);
   }
 
-  /* ================================
-       TOTAL ENTREGADO
-    ================================ */
+  /* ========================================
+     TOTAL ENTREGADO
+  ======================================== */
 
   const entregadoElemento = document.getElementById("total-entregado-cliente");
 
@@ -1163,9 +1297,9 @@ function actualizarResumenPagoCliente(actualizarMontoDesdeCheckbox = false) {
     entregadoElemento.textContent = formatearPrecioCliente(totalEntregado);
   }
 
-  /* ================================
-       VUELTO
-    ================================ */
+  /* ========================================
+     VUELTO
+  ======================================== */
 
   const vueltoElemento = document.getElementById("vuelto-cliente");
 
@@ -1173,9 +1307,9 @@ function actualizarResumenPagoCliente(actualizarMontoDesdeCheckbox = false) {
     vueltoElemento.textContent = formatearPrecioCliente(vuelto);
   }
 
-  /* ================================
-       SALDO
-    ================================ */
+  /* ========================================
+     SALDO
+  ======================================== */
 
   const saldoElemento = document.getElementById("saldo-deber-cliente");
 
@@ -1183,9 +1317,9 @@ function actualizarResumenPagoCliente(actualizarMontoDesdeCheckbox = false) {
     saldoElemento.textContent = formatearPrecioCliente(saldo);
   }
 
-  /* ================================
-       BOTÓN
-    ================================ */
+  /* ========================================
+     BOTÓN
+  ======================================== */
 
   const boton = document.getElementById("boton-registrar-pago");
 
@@ -1199,6 +1333,16 @@ function actualizarResumenPagoCliente(actualizarMontoDesdeCheckbox = false) {
 /* ========================================
    PRODUCTOS / VENTAS SELECCIONADAS
 ======================================== */
+
+function obtenerDeudaInicialSeleccionada() {
+  const checkbox = document.querySelector(".checkbox-deuda-inicial:checked");
+
+  if (!checkbox) {
+    return 0;
+  }
+
+  return deudaInicialPendienteCliente;
+}
 
 function obtenerTotalProductosSeleccionados() {
   if (!clienteSeleccionado) {
@@ -1429,8 +1573,7 @@ async function registrarPagoCliente() {
   const medioPago =
     document.getElementById("medio-pago-cliente")?.value || "efectivo";
 
-  const fechaPago =
-    document.getElementById("fecha-pago-cliente")?.value || "";
+  const fechaPago = document.getElementById("fecha-pago-cliente")?.value || "";
 
   const usuario =
     sessionStorage.getItem("usuarioOperativo") ||
@@ -1442,18 +1585,26 @@ async function registrarPagoCliente() {
   ======================================== */
 
   const productosSeleccionados = document.querySelectorAll(
-    ".checkbox-producto-deuda:checked"
+    ".checkbox-producto-deuda:checked",
   );
 
   const hayProductosSeleccionados = productosSeleccionados.length > 0;
 
   const totalSeleccionado = obtenerTotalProductosSeleccionados();
 
+  const deudaInicialSeleccionada = obtenerDeudaInicialSeleccionada();
+
+  const hayDeudaInicialSeleccionada = deudaInicialSeleccionada > 0;
+
   const deudaCliente = obtenerDeudaCliente(clienteSeleccionado);
 
-  const baseOperacion = hayProductosSeleccionados
-    ? Math.min(totalSeleccionado, deudaCliente)
-    : deudaCliente;
+  let baseOperacion = deudaCliente;
+
+  if (hayDeudaInicialSeleccionada) {
+    baseOperacion = Math.min(deudaInicialSeleccionada, deudaCliente);
+  } else if (hayProductosSeleccionados) {
+    baseOperacion = Math.min(totalSeleccionado, deudaCliente);
+  }
 
   const interes = obtenerMontoInteresCliente(baseOperacion);
 
@@ -1518,7 +1669,7 @@ async function registrarPagoCliente() {
    */
   if (ventasSeleccionadas.size > 0) {
     ventasConDeuda = ventasConDeuda.filter((venta) =>
-      ventasSeleccionadas.has(venta.id)
+      ventasSeleccionadas.has(venta.id),
     );
   }
 
@@ -1527,7 +1678,7 @@ async function registrarPagoCliente() {
   ======================================== */
 
   ventasConDeuda.sort(
-    (a, b) => obtenerFechaCliente(a.fecha) - obtenerFechaCliente(b.fecha)
+    (a, b) => obtenerFechaCliente(a.fecha) - obtenerFechaCliente(b.fecha),
   );
 
   /* ========================================
@@ -1540,52 +1691,79 @@ async function registrarPagoCliente() {
    *
    * El resto se aplica a las ventas.
    */
-  const montoParaVentas = Math.max(
-    0,
-    Math.min(montoRealPago, baseOperacion)
-  );
+  const montoParaAplicar = Math.max(0, Math.min(montoRealPago, baseOperacion));
 
-  let restante = montoParaVentas;
+  let restante = montoParaAplicar;
 
   const aplicaciones = [];
 
-  for (const venta of ventasConDeuda) {
-    if (restante <= 0) {
-      break;
+  let totalAplicadoInicial = 0;
+
+  /* ========================================
+   APLICAR A DEUDA INICIAL
+======================================== */
+
+  if (hayDeudaInicialSeleccionada) {
+    const montoAplicadoInicial = Math.min(deudaInicialSeleccionada, restante);
+
+    if (montoAplicadoInicial > 0) {
+      aplicaciones.push({
+        tipo: "deuda_inicial",
+        origen: "deuda_inicial",
+        monto: montoAplicadoInicial,
+        descripcion: "Pago aplicado a deuda inicial",
+      });
+
+      totalAplicadoInicial = montoAplicadoInicial;
+      restante -= montoAplicadoInicial;
     }
-
-    const saldoVenta = Number(venta.saldoActual) || 0;
-
-    const montoAplicado = Math.min(saldoVenta, restante);
-
-    if (montoAplicado <= 0) {
-      continue;
-    }
-
-    aplicaciones.push({
-      ventaId: venta.id,
-      numero: venta.numero || venta.id,
-      monto: montoAplicado,
-    });
-
-    restante -= montoAplicado;
   }
 
-  const totalAplicadoVentas = aplicaciones.reduce(
-    (total, aplicacion) => total + (Number(aplicacion.monto) || 0),
-    0
-  );
+  /* ========================================
+   APLICAR A VENTAS
+======================================== */
 
-  /*
-   * Si el pago debía aplicarse a una venta
-   * y no pudimos aplicar nada, detener.
-   */
+  if (!hayDeudaInicialSeleccionada) {
+    const montoParaVentas = restante;
+
+    for (const venta of ventasConDeuda) {
+      if (restante <= 0) {
+        break;
+      }
+
+      const saldoVenta = Number(venta.saldoActual) || 0;
+
+      const montoAplicado = Math.min(saldoVenta, restante);
+
+      if (montoAplicado <= 0) {
+        continue;
+      }
+
+      aplicaciones.push({
+        ventaId: venta.id,
+        numero: venta.numero || venta.id,
+        monto: montoAplicado,
+      });
+
+      restante -= montoAplicado;
+    }
+  }
+
+  const totalAplicadoVentas = aplicaciones
+    .filter((aplicacion) => !aplicacion.tipo)
+    .reduce((total, aplicacion) => total + (Number(aplicacion.monto) || 0), 0);
+
+  /* ========================================
+   VALIDAR APLICACIÓN
+======================================== */
+
   if (
     totalAplicadoVentas <= 0 &&
+    totalAplicadoInicial <= 0 &&
     baseOperacion > 0 &&
     montoRealPago > 0
   ) {
-    alert("No se pudo determinar a qué venta aplicar el pago.");
+    alert("No se pudo determinar a qué deuda aplicar el pago.");
     return;
   }
 
@@ -1607,15 +1785,8 @@ async function registrarPagoCliente() {
   ======================================== */
 
   try {
-    const {
-      doc,
-      writeBatch,
-      addDoc,
-      collection,
-      serverTimestamp,
-    } = await import(
-      "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js"
-    );
+    const { doc, writeBatch, addDoc, collection, serverTimestamp } =
+      await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
 
     /*
      * Usamos un batch para que las modificaciones
@@ -1629,7 +1800,7 @@ async function registrarPagoCliente() {
 
     for (const aplicacion of aplicaciones) {
       const venta = ventasCliente.find(
-        (item) => item.id === aplicacion.ventaId
+        (item) => item.id === aplicacion.ventaId,
       );
 
       if (!venta) {
@@ -1644,11 +1815,9 @@ async function registrarPagoCliente() {
 
       const nuevoSaldo = Math.max(0, saldoAnterior - montoAplicado);
 
-      const nuevoTotalEntregado =
-        entregadoAnterior + montoAplicado;
+      const nuevoTotalEntregado = entregadoAnterior + montoAplicado;
 
-      const nuevoEstado =
-        nuevoSaldo <= 0 ? "pagada" : "con_deuda";
+      const nuevoEstado = nuevoSaldo <= 0 ? "pagada" : "con_deuda";
 
       const ventaRef = doc(window.db, "ventas", venta.id);
 
@@ -1664,23 +1833,17 @@ async function registrarPagoCliente() {
            ACTUALIZAR CLIENTE
     ======================================== */
 
-    const nuevaDeudaVentas = Math.max(
-      0,
-      deudaCliente - totalAplicadoVentas
-    );
+    const totalAplicadoDeuda = totalAplicadoVentas + totalAplicadoInicial;
 
     const nuevaDeuda = Math.max(
       0,
-      nuevaDeudaVentas +
+      deudaCliente -
+        totalAplicadoDeuda +
         interes -
-        Math.max(0, montoRealPago - totalAplicadoVentas)
+        Math.max(0, montoRealPago - totalAplicadoDeuda),
     );
 
-    const clienteRef = doc(
-      window.db,
-      "clientes",
-      clienteSeleccionado.id
-    );
+    const clienteRef = doc(window.db, "clientes", clienteSeleccionado.id);
 
     batch.update(clienteRef, {
       deudaTotal: nuevaDeuda,
@@ -1693,18 +1856,13 @@ async function registrarPagoCliente() {
     ======================================== */
 
     const movimientoRef = doc(
-      collection(
-        window.db,
-        "clientes",
-        clienteSeleccionado.id,
-        "movimientos"
-      )
+      collection(window.db, "clientes", clienteSeleccionado.id, "movimientos"),
     );
 
     batch.set(movimientoRef, {
       tipo: "pago",
       monto: montoRealPago,
-      montoAplicado: totalAplicadoVentas,
+      montoAplicado: totalAplicadoVentas + totalAplicadoInicial,
       medioPago: medioPago,
       fecha: serverTimestamp(),
       usuario: usuario,
@@ -1719,45 +1877,52 @@ async function registrarPagoCliente() {
 
     if (interes > 0) {
       const tipoInteres =
-        document.getElementById("tipo-interes-cliente")?.value ||
-        "porcentaje";
+        document.getElementById("tipo-interes-cliente")?.value || "porcentaje";
 
       const valorInteres = convertirNumeroCliente(
-        document.getElementById("valor-interes-cliente")?.value
+        document.getElementById("valor-interes-cliente")?.value,
       );
 
       /*
-       * Determinar a qué ventas se aplica el interés.
+       * Si el interés corresponde a la deuda inicial,
+       * no se modifica ninguna venta.
        *
-       * Si hay productos seleccionados, se aplica
-       * a las ventas seleccionadas.
-       *
-       * Si no hay productos seleccionados, se aplica
-       * a la primera venta con deuda.
+       * El interés queda registrado como movimiento
+       * con origen "deuda_inicial".
        */
-      let ventasParaInteres = [...ventasConDeuda];
+      if (!hayDeudaInicialSeleccionada) {
+        /*
+         * Determinar a qué venta se aplica el interés.
+         *
+         * Si hay productos seleccionados, se aplica
+         * a las ventas seleccionadas.
+         *
+         * Si no hay productos seleccionados, se aplica
+         * a la primera venta con deuda.
+         */
+        let ventasParaInteres = [...ventasConDeuda];
 
-      if (ventasSeleccionadas.size > 0) {
-        ventasParaInteres = ventasParaInteres.filter((venta) =>
-          ventasSeleccionadas.has(venta.id)
-        );
-      }
+        if (ventasSeleccionadas.size > 0) {
+          ventasParaInteres = ventasParaInteres.filter((venta) =>
+            ventasSeleccionadas.has(venta.id),
+          );
+        }
 
-      if (ventasParaInteres.length > 0) {
-        const ventaInteres = ventasParaInteres[0];
+        if (ventasParaInteres.length > 0) {
+          const ventaInteres = ventasParaInteres[0];
 
-        const saldoAnteriorInteres =
-          Number(ventaInteres.saldoAdeber) || 0;
+          const saldoAnteriorInteres = Number(ventaInteres.saldoAdeber) || 0;
 
-        batch.update(doc(window.db, "ventas", ventaInteres.id), {
-          saldoAdeber: saldoAnteriorInteres + interes,
-          estado: "con_deuda",
-          actualizadoEn: serverTimestamp(),
-        });
+          batch.update(doc(window.db, "ventas", ventaInteres.id), {
+            saldoAdeber: saldoAnteriorInteres + interes,
+            estado: "con_deuda",
+            actualizadoEn: serverTimestamp(),
+          });
+        }
       }
 
       /*
-       * Guardar también el movimiento para conservar
+       * Guardar el movimiento para conservar
        * el historial del interés.
        */
       const interesRef = doc(
@@ -1765,8 +1930,8 @@ async function registrarPagoCliente() {
           window.db,
           "clientes",
           clienteSeleccionado.id,
-          "movimientos"
-        )
+          "movimientos",
+        ),
       );
 
       batch.set(interesRef, {
@@ -1774,6 +1939,11 @@ async function registrarPagoCliente() {
         monto: interes,
         tipoInteres: tipoInteres,
         valor: valorInteres,
+
+        // Indicar si el interés proviene
+        // de la deuda inicial o de una venta.
+        origen: hayDeudaInicialSeleccionada ? "deuda_inicial" : "venta",
+
         fecha: serverTimestamp(),
         usuario: usuario,
         descripcion: "Recargo de interés",
@@ -1807,16 +1977,11 @@ async function registrarPagoCliente() {
     }
 
     // Reiniciar interés
-    const valorInteres = document.getElementById(
-      "valor-interes-cliente"
-    );
+    const valorInteres = document.getElementById("valor-interes-cliente");
 
-    const camposInteres =
-      document.getElementById("campos-interes");
+    const camposInteres = document.getElementById("campos-interes");
 
-    const botonInteres = document.getElementById(
-      "activar-interes-cliente"
-    );
+    const botonInteres = document.getElementById("activar-interes-cliente");
 
     if (valorInteres) {
       valorInteres.value = "";
@@ -1843,7 +2008,7 @@ async function registrarPagoCliente() {
     await cargarClientes();
 
     const clienteActual = clientes.find(
-      (cliente) => cliente.id === clienteSeleccionado.id
+      (cliente) => cliente.id === clienteSeleccionado.id,
     );
 
     if (clienteActual) {
@@ -1856,29 +2021,23 @@ async function registrarPagoCliente() {
 
     actualizarEstadisticasClientes();
 
-    await cargarProductosPendientesCliente(
-      clienteSeleccionado
-    );
+    await cargarProductosPendientesCliente(clienteSeleccionado);
 
     renderizarProductosPendientes();
 
     // Actualizar el resumen sin volver a cargar
     // el último interés guardado.
     actualizarInteresCliente();
-
   } catch (error) {
     console.error("Error registrando pago:", error);
 
     alert("No se pudo registrar el pago.");
-
   } finally {
     /* ========================================
            DESBLOQUEAR BOTÓN
     ======================================== */
 
-    const botonRegistrar = document.getElementById(
-      "boton-registrar-pago"
-    );
+    const botonRegistrar = document.getElementById("boton-registrar-pago");
 
     if (botonRegistrar) {
       botonRegistrar.disabled = false;
@@ -2012,6 +2171,76 @@ function obtenerVentasCliente(cliente) {
    DEUDA ACTUAL
 ======================================== */
 
+function normalizarTipoMovimientoCliente(tipo) {
+  const valor = String(tipo || "")
+    .trim()
+    .toLowerCase();
+
+  if (valor === "pago" || valor === "pagodeuda") {
+    return "pago";
+  }
+
+  if (valor === "interes" || valor === "interés") {
+    return "interes";
+  }
+
+  if (valor === "deuda_inicial" || valor === "deudainicial") {
+    return "deuda_inicial";
+  }
+
+  return valor;
+}
+
+function obtenerDeudaInicialCliente(movimientos = []) {
+  // Deudas iniciales registradas.
+  const deudaInicial = movimientos
+    .filter(
+      (movimiento) =>
+        normalizarTipoMovimientoCliente(movimiento.tipo) === "deuda_inicial",
+    )
+    .reduce((total, movimiento) => total + (Number(movimiento.monto) || 0), 0);
+
+  // Intereses que fueron agregados
+  // específicamente sobre la deuda inicial.
+  const interesesIniciales = movimientos
+    .filter(
+      (movimiento) =>
+        normalizarTipoMovimientoCliente(movimiento.tipo) === "interes" &&
+        movimiento.origen === "deuda_inicial",
+    )
+    .reduce((total, movimiento) => total + (Number(movimiento.monto) || 0), 0);
+
+  // Pagos que fueron aplicados
+  // específicamente sobre la deuda inicial.
+  const pagosIniciales = movimientos
+    .filter(
+      (movimiento) =>
+        normalizarTipoMovimientoCliente(movimiento.tipo) === "pago",
+    )
+    .reduce((total, movimiento) => {
+      const aplicaciones = Array.isArray(movimiento.aplicaciones)
+        ? movimiento.aplicaciones
+        : [];
+
+      return (
+        total +
+        aplicaciones
+          .filter(
+            (aplicacion) =>
+              aplicacion.tipo === "deuda_inicial" ||
+              aplicacion.origen === "deuda_inicial",
+          )
+          .reduce(
+            (acumulado, aplicacion) =>
+              acumulado + (Number(aplicacion.monto) || 0),
+            0,
+          )
+      );
+    }, 0);
+
+  return Math.max(0, deudaInicial + interesesIniciales - pagosIniciales);
+}
+
 function calcularDeudaActualCliente(
   cliente,
   ventas = obtenerVentasCliente(cliente),
@@ -2024,7 +2253,9 @@ function calcularDeudaActualCliente(
     0,
   );
 
-  return Math.max(0, deudaVentas);
+  const deudaInicial = obtenerDeudaInicialCliente(movimientos);
+
+  return Math.max(0, deudaVentas + deudaInicial);
 }
 
 /* ========================================
@@ -2249,6 +2480,63 @@ function calcularCobradoMes() {
   });
 
   return total;
+}
+
+async function cargarModalRegistrarCliente() {
+  try {
+    const respuesta = await fetch("html/clientes/registrar-cliente.html");
+
+    if (!respuesta.ok) {
+      throw new Error("No se pudo cargar el modal de registrar cliente.");
+    }
+
+    const html = await respuesta.text();
+
+    const contenedor = document.getElementById("modales-clientes");
+
+    if (!contenedor) {
+      console.error("No existe #modales-clientes.");
+      return;
+    }
+
+    if (document.getElementById("modal-registrar-cliente")) {
+      return;
+    }
+
+    contenedor.insertAdjacentHTML("beforeend", html);
+
+    if (!document.getElementById("css-registrar-cliente")) {
+      const link = document.createElement("link");
+
+      link.id = "css-registrar-cliente";
+      link.rel = "stylesheet";
+      link.href = "css/clientes/registrar-cliente.css";
+
+      document.head.appendChild(link);
+    }
+  } catch (error) {
+    console.error("Error cargando modal registrar cliente:", error);
+  }
+}
+
+function cargarScriptRegistrarCliente() {
+  if (document.getElementById("js-registrar-cliente")) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+
+    script.id = "js-registrar-cliente";
+    script.src = `js/clientes/registrarcliente.js?t=${Date.now()}`;
+
+    script.type = "module";
+
+    script.onload = resolve;
+    script.onerror = reject;
+
+    document.body.appendChild(script);
+  });
 }
 
 async function cargarModalHistorialCliente() {
