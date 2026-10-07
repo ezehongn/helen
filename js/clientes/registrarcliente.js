@@ -1,5 +1,5 @@
 // ========================================
-// REGISTRAR CLIENTE
+// REGISTRAR CLIENTE EN LA PANTALLA CLIENTE
 // ========================================
 
 let callbackDespuesRegistrarCliente = null;

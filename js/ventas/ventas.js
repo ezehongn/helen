@@ -77,11 +77,11 @@ async function inicializarVentas() {
 
   await cargarConfiguracionTarjetaCredito();
 
-  configurarEventosVentas();
-
   await cargarModalNuevoCliente();
 
   await cargarModalHistorialVentas();
+
+  configurarEventosVentas();
 
   agregarMedioPagoVenta();
 
@@ -108,7 +108,7 @@ async function cargarModalNuevoCliente() {
 
     document.body.insertAdjacentHTML("beforeend", html);
 
-    cargarScriptNuevoCliente();
+    await cargarScriptNuevoCliente();
   } catch (error) {
     console.error("Error cargando modal de cliente:", error);
   }
@@ -116,16 +116,20 @@ async function cargarModalNuevoCliente() {
 
 function cargarScriptNuevoCliente() {
   if (document.getElementById("js-registrar-cliente")) {
-    return;
+    return Promise.resolve();
   }
 
-  const script = document.createElement("script");
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
 
-  script.id = "js-registrar-cliente";
+    script.id = "js-registrar-cliente";
+    script.src = `js/ventas/registrarcliente.js?t=${Date.now()}`;
 
-  script.src = `js/ventas/registrarcliente.js?t=${Date.now()}`;
+    script.onload = resolve;
+    script.onerror = reject;
 
-  document.body.appendChild(script);
+    document.body.appendChild(script);
+  });
 }
 
 async function cargarModalHistorialVentas() {
@@ -221,15 +225,21 @@ function configurarEventosVentas() {
       actualizarTotalesVenta();
     });
 
-  document
-    .getElementById("nuevo-cliente-venta")
-    ?.addEventListener("click", () => {
-      if (window.abrirModalNuevoCliente) {
-        window.abrirModalNuevoCliente((cliente) => {
-          seleccionarClienteVenta(cliente);
-        });
-      }
-    });
+  document.addEventListener("click", (evento) => {
+    const botonNuevoCliente = evento.target.closest("#nuevo-cliente-venta");
+
+    if (!botonNuevoCliente) {
+      return;
+    }
+
+    if (window.abrirModalNuevoCliente) {
+      window.abrirModalNuevoCliente((cliente) => {
+        seleccionarClienteVenta(cliente);
+      });
+    } else {
+      console.error("abrirModalNuevoCliente todavía no está disponible.");
+    }
+  });
 
   document
     .getElementById("ver-historial-completo")
@@ -1427,7 +1437,7 @@ async function eliminarVenta(venta) {
   if (venta.usuario !== usuarioVentaActivo) {
     mostrarMensajeVenta(
       "No podés eliminar una venta de otro usuario.",
-      "error"
+      "error",
     );
 
     return;
@@ -1435,7 +1445,7 @@ async function eliminarVenta(venta) {
 
   const confirmar = confirm(
     "¿Estás seguro de que querés eliminar esta venta?\n\n" +
-    "Se eliminará la venta y se restaurará el stock de los productos."
+      "Se eliminará la venta y se restaurará el stock de los productos.",
   );
 
   if (!confirmar) {
@@ -1443,19 +1453,11 @@ async function eliminarVenta(venta) {
   }
 
   try {
-    const {
-      doc,
-      runTransaction,
-    } = await import(
-      "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js"
-    );
+    const { doc, runTransaction } =
+      await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
 
     await runTransaction(window.db, async (transaction) => {
-      const referenciaVenta = doc(
-        window.db,
-        "ventas",
-        venta.id
-      );
+      const referenciaVenta = doc(window.db, "ventas", venta.id);
 
       /*
        * Leer la venta nuevamente para asegurarnos
@@ -1470,9 +1472,7 @@ async function eliminarVenta(venta) {
       const datosVenta = documentoVenta.data();
 
       if (datosVenta.usuario !== usuarioVentaActivo) {
-        throw new Error(
-          "No podés eliminar una venta de otro usuario."
-        );
+        throw new Error("No podés eliminar una venta de otro usuario.");
       }
 
       const productos = Array.isArray(datosVenta.productos)
@@ -1496,8 +1496,7 @@ async function eliminarVenta(venta) {
 
         reposiciones.set(
           clave,
-          (reposiciones.get(clave) || 0) +
-            (Number(producto.cantidad) || 0)
+          (reposiciones.get(clave) || 0) + (Number(producto.cantidad) || 0),
         );
       });
 
@@ -1516,19 +1515,13 @@ async function eliminarVenta(venta) {
           continue;
         }
 
-        const referenciaProducto = doc(
-          window.db,
-          "productos",
-          productoId
-        );
+        const referenciaProducto = doc(window.db, "productos", productoId);
 
-        const documentoProducto = await transaction.get(
-          referenciaProducto
-        );
+        const documentoProducto = await transaction.get(referenciaProducto);
 
         if (!documentoProducto.exists()) {
           throw new Error(
-            "No se pudo encontrar uno de los productos de la venta. La venta no fue eliminada."
+            "No se pudo encontrar uno de los productos de la venta. La venta no fue eliminada.",
           );
         }
 
@@ -1563,45 +1556,34 @@ async function eliminarVenta(venta) {
 
         if (talles.length) {
           const indice = talles.findIndex(
-            (item) =>
-              String(item.talle) === String(talle)
+            (item) => String(item.talle) === String(talle),
           );
 
           if (indice === -1) {
             throw new Error(
-              `No se encontró el talle "${talle}" del producto "${datos.nombre}". La venta no fue eliminada.`
+              `No se encontró el talle "${talle}" del producto "${datos.nombre}". La venta no fue eliminada.`,
             );
           }
 
-          const stockActual =
-            Number(talles[indice].stock) || 0;
+          const stockActual = Number(talles[indice].stock) || 0;
 
-          talles[indice].stock =
-            stockActual + cantidad;
+          talles[indice].stock = stockActual + cantidad;
 
           const stockTotal = talles.reduce(
-            (total, item) =>
-              total + (Number(item.stock) || 0),
-            0
+            (total, item) => total + (Number(item.stock) || 0),
+            0,
           );
 
-          transaction.update(
-            productoLeido.referencia,
-            {
-              talles: talles,
-              stock: stockTotal,
-            }
-          );
+          transaction.update(productoLeido.referencia, {
+            talles: talles,
+            stock: stockTotal,
+          });
         } else {
-          const stockActual =
-            Number(datos.stock) || 0;
+          const stockActual = Number(datos.stock) || 0;
 
-          transaction.update(
-            productoLeido.referencia,
-            {
-              stock: stockActual + cantidad,
-            }
-          );
+          transaction.update(productoLeido.referencia, {
+            stock: stockActual + cantidad,
+          });
         }
       });
 
@@ -1613,7 +1595,7 @@ async function eliminarVenta(venta) {
 
     mostrarMensajeVenta(
       "Venta eliminada y stock restaurado correctamente.",
-      "exito"
+      "exito",
     );
 
     /*
@@ -1621,26 +1603,20 @@ async function eliminarVenta(venta) {
      * actualizarlo.
      */
     if (window.abrirModalHistorialVentas) {
-      const modal = document.getElementById(
-        "modal-historial-ventas"
-      );
+      const modal = document.getElementById("modal-historial-ventas");
 
-      if (
-        modal &&
-        modal.classList.contains("visible")
-      ) {
+      if (modal && modal.classList.contains("visible")) {
         window.abrirModalHistorialVentas();
       }
     }
 
     await cargarProductosVenta();
-
   } catch (error) {
     console.error("Error eliminando venta:", error);
 
     mostrarMensajeVenta(
       error.message || "No se pudo eliminar la venta.",
-      "error"
+      "error",
     );
   }
 }
@@ -1740,9 +1716,7 @@ function renderizarUltimasVentas(ventas) {
       ? `${venta.cliente.nombre || ""} ${venta.cliente.apellido || ""}`.trim()
       : "Cliente general";
 
-    const productos = Array.isArray(venta.productos)
-      ? venta.productos
-      : [];
+    const productos = Array.isArray(venta.productos) ? venta.productos : [];
 
     const nombresProductos = productos
       .map((producto) => producto.nombre || "")

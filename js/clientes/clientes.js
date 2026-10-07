@@ -261,6 +261,10 @@ function configurarEventosClientes() {
     });
 
   document
+    .getElementById("boton-eliminar-cliente")
+    ?.addEventListener("click", eliminarCliente);
+
+  document
     .getElementById("boton-registrar-cliente")
     ?.addEventListener("click", () => {
       if (window.abrirModalRegistrarCliente) {
@@ -282,8 +286,16 @@ function configurarEventosClientes() {
        CAMBIO DE USUARIO OPERATIVO
   ================================ */
 
-  window.addEventListener("usuarioOperativoCambiado", () => {
-    console.log("Usuario operativo cambiado. Clientes permanecen compartidos.");
+  window.addEventListener("usuarioOperativoCambiado", async () => {
+    console.log("Usuario operativo cambiado. Recargando clientes...");
+
+    paginaClientes = 1;
+
+    await cargarClientes();
+
+    renderizarClientes();
+
+    actualizarEstadisticasClientes();
   });
 }
 
@@ -371,26 +383,28 @@ async function cargarClientes() {
        CALCULAR INFORMACIÓN
     ================================ */
 
-    clientes = clientesBase.map((cliente) => {
-      const ventas = obtenerVentasCliente(cliente);
+    clientes = clientesBase
+      .filter((cliente) => clienteEsVisibleParaUsuario(cliente))
+      .map((cliente) => {
+        const ventas = obtenerVentasCliente(cliente);
 
-      const movimientos = movimientosClientes[cliente.id] || [];
+        const movimientos = movimientosClientes[cliente.id] || [];
 
-      const deuda = calcularDeudaActualCliente(cliente, ventas, movimientos);
+        const deuda = calcularDeudaActualCliente(cliente, ventas, movimientos);
 
-      const ultimoMovimiento = obtenerUltimoMovimientoCliente(
-        ventas,
-        movimientos,
-      );
+        const ultimoMovimiento = obtenerUltimoMovimientoCliente(
+          ventas,
+          movimientos,
+        );
 
-      return {
-        ...cliente,
+        return {
+          ...cliente,
 
-        deudaTotal: deuda,
+          deudaTotal: deuda,
 
-        ultimoMovimiento,
-      };
-    });
+          ultimoMovimiento,
+        };
+      });
 
     console.log("Clientes encontrados:", clientes.length);
 
@@ -2046,6 +2060,139 @@ async function registrarPagoCliente() {
   }
 }
 
+async function eliminarCliente() {
+  if (!clienteSeleccionado) {
+    return;
+  }
+
+  const nombre =
+    `${clienteSeleccionado.nombre || ""} ${clienteSeleccionado.apellido || ""}`.trim() ||
+    "este cliente";
+
+  const deuda = obtenerDeudaCliente(clienteSeleccionado);
+
+  let mensaje =
+    `¿Estás seguro de que querés eliminar a ${nombre}?\n\n` +
+    "Se eliminarán sus datos y movimientos de cuenta corriente.\n" +
+    "Las ventas históricas NO se eliminarán.";
+
+  if (deuda > 0) {
+    mensaje += `\n\n⚠ ATENCIÓN: este cliente todavía tiene una deuda de ${formatearPrecioCliente(deuda)}.`;
+  }
+
+  mensaje += "\n\nEsta acción no se puede deshacer.";
+
+  const confirmar = confirm(mensaje);
+
+  if (!confirmar) {
+    return;
+  }
+
+  const botonEliminar = document.getElementById("boton-eliminar-cliente");
+
+  if (botonEliminar) {
+    botonEliminar.disabled = true;
+    botonEliminar.textContent = "Eliminando...";
+  }
+
+  try {
+    const { collection, doc, getDocs, writeBatch } =
+      await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
+
+    const clienteId = clienteSeleccionado.id;
+
+    /*
+     * Obtener todos los movimientos
+     * del cliente.
+     */
+    const movimientosRef = collection(
+      window.db,
+      "clientes",
+      clienteId,
+      "movimientos",
+    );
+
+    const movimientosSnapshot = await getDocs(movimientosRef);
+
+    /*
+     * Eliminar movimientos y cliente
+     * utilizando batches.
+     */
+    let batch = writeBatch(window.db);
+    let operaciones = 0;
+
+    for (const movimiento of movimientosSnapshot.docs) {
+      batch.delete(movimiento.ref);
+      operaciones++;
+
+      /*
+       * Firestore permite como máximo
+       * 500 operaciones por batch.
+       */
+      if (operaciones >= 450) {
+        await batch.commit();
+
+        batch = writeBatch(window.db);
+        operaciones = 0;
+      }
+    }
+
+    /*
+     * Eliminar documento principal del cliente.
+     */
+    const clienteRef = doc(window.db, "clientes", clienteId);
+
+    batch.delete(clienteRef);
+    operaciones++;
+
+    await batch.commit();
+
+    console.log("Cliente eliminado correctamente:", clienteId);
+
+    /*
+     * Limpiar selección.
+     */
+    clienteSeleccionado = null;
+    productosPendientesCliente = [];
+    deudaInicialPendienteCliente = 0;
+
+    /*
+     * Volver al estado vacío del detalle.
+     */
+    const estadoVacio = document.getElementById("detalle-cliente-vacio");
+
+    if (estadoVacio) {
+      estadoVacio.style.display = "flex";
+    }
+
+    const contenido = document.getElementById("detalle-cliente-contenido");
+
+    if (contenido) {
+      contenido.style.display = "none";
+      contenido.hidden = true;
+    }
+
+    /*
+     * Recargar clientes.
+     */
+    await cargarClientes();
+
+    renderizarClientes();
+    actualizarEstadisticasClientes();
+
+    alert("Cliente eliminado correctamente.");
+  } catch (error) {
+    console.error("Error eliminando cliente:", error);
+
+    alert("No se pudo eliminar el cliente.");
+  } finally {
+    if (botonEliminar) {
+      botonEliminar.disabled = false;
+      botonEliminar.textContent = "🗑 Eliminar";
+    }
+  }
+}
+
 /* ========================================
    FECHA PAGO
 ======================================== */
@@ -2160,11 +2307,57 @@ function obtenerVentasCliente(cliente) {
     return [];
   }
 
+  const usuarioActivo = sessionStorage.getItem("usuarioOperativo") || "Gon";
+
+  return ventasClientes
+    .filter(
+      (venta) =>
+        ventaCorrespondeCliente(venta, cliente) &&
+        venta.usuario === usuarioActivo,
+    )
+    .sort(
+      (a, b) => obtenerFechaCliente(a.fecha) - obtenerFechaCliente(b.fecha),
+    );
+}
+
+function obtenerTodasVentasCliente(cliente) {
+  if (!cliente) {
+    return [];
+  }
+
   return ventasClientes
     .filter((venta) => ventaCorrespondeCliente(venta, cliente))
     .sort(
       (a, b) => obtenerFechaCliente(a.fecha) - obtenerFechaCliente(b.fecha),
     );
+}
+
+function clienteEsVisibleParaUsuario(cliente) {
+  if (!cliente) {
+    return false;
+  }
+
+  const usuarioActivo = sessionStorage.getItem("usuarioOperativo") || "Gon";
+
+  // Cliente sin usuarioCreador = compartido
+  if (!cliente.usuarioCreador) {
+    return true;
+  }
+
+  // Cliente creado por el usuario activo
+  if (cliente.usuarioCreador === usuarioActivo) {
+    return true;
+  }
+
+  // Cliente con deuda pendiente en una venta del usuario activo
+  const ventas = obtenerTodasVentasCliente(cliente);
+
+  const tieneDeudaDelUsuario = ventas.some(
+    (venta) =>
+      venta.usuario === usuarioActivo && (Number(venta.saldoAdeber) || 0) > 0,
+  );
+
+  return tieneDeudaDelUsuario;
 }
 
 /* ========================================
