@@ -6,6 +6,7 @@ let ventasInformes = [];
 let gastosInformes = [];
 let clientesInformes = [];
 let productosInformes = [];
+let movimientosInformes = {};
 
 let cancelarVentasInformes = null;
 let cancelarGastosInformes = null;
@@ -225,49 +226,145 @@ async function exportarInformesPDF() {
     );
 
     // ========================================
-    // 4 PANELES POR PÁGINA
+    // DISTRIBUCIÓN DE PANELES EN PDF
     // ========================================
 
     const anchoPanel = (anchoUtil - 6) / 2;
 
-    const altoPanel = (altoUtil - 6) / 2;
+    let yPanel = margen;
 
-    for (let i = 0; i < paneles.length; i += 4) {
-      pdf.addPage();
+    pdf.addPage();
 
-      const pagina = paneles.slice(i, i + 4);
+    // ========================================
+    // OBTENER TAMAÑO DE UN PANEL
+    // ========================================
 
-      for (let j = 0; j < pagina.length; j++) {
-        const panel = pagina[j];
+    async function obtenerCanvasPanel(panel) {
+      return await capturarElemento(panel);
+    }
 
-        const canvas = await capturarElemento(panel);
+    // ========================================
+    // AGREGAR FILA DE DOS PANELES
+    // ========================================
 
-        const proporcion = canvas.height / canvas.width;
+    async function agregarFilaDosPaneles(panelIzquierdo, panelDerecho) {
+      const canvasIzquierdo = await obtenerCanvasPanel(panelIzquierdo);
 
-        let ancho = anchoPanel;
+      const canvasDerecho = await obtenerCanvasPanel(panelDerecho);
 
-        let alto = ancho * proporcion;
+      const proporcionIzquierda =
+        canvasIzquierdo.height / canvasIzquierdo.width;
 
-        // El panel nunca supera
-        // la mitad vertical de la página
+      const proporcionDerecha = canvasDerecho.height / canvasDerecho.width;
 
-        if (alto > altoPanel) {
-          alto = altoPanel;
+      const anchoIzquierdo = anchoPanel;
+      const anchoDerecho = anchoPanel;
 
-          ancho = alto / proporcion;
-        }
+      const altoIzquierdo = anchoIzquierdo * proporcionIzquierda;
 
-        const columna = j % 2;
+      const altoDerecho = anchoDerecho * proporcionDerecha;
 
-        const fila = Math.floor(j / 2);
+      const altoFila = Math.max(altoIzquierdo, altoDerecho);
 
-        const x =
-          margen + columna * (anchoPanel + 6) + (anchoPanel - ancho) / 2;
+      // Si la fila no entra, nueva página
+      if (yPanel > margen && yPanel + altoFila > altoPagina - margen) {
+        pdf.addPage();
 
-        const y = margen + fila * (altoPanel + 6) + (altoPanel - alto) / 2;
-
-        agregarImagen(canvas, x, y, ancho, alto);
+        yPanel = margen;
       }
+
+      const y = yPanel;
+
+      agregarImagen(canvasIzquierdo, margen, y, anchoIzquierdo, altoIzquierdo);
+
+      agregarImagen(
+        canvasDerecho,
+        margen + anchoPanel + 6,
+        y,
+        anchoDerecho,
+        altoDerecho,
+      );
+
+      yPanel += altoFila + 6;
+    }
+
+    // ========================================
+    // AGREGAR PANEL DE ANCHO COMPLETO
+    // ========================================
+
+    async function agregarPanelAnchoCompleto(panel) {
+      const canvas = await obtenerCanvasPanel(panel);
+
+      const proporcion = canvas.height / canvas.width;
+
+      const ancho = anchoUtil;
+
+      const alto = ancho * proporcion;
+
+      // Si no entra, nueva página
+      if (yPanel > margen && yPanel + alto > altoPagina - margen) {
+        pdf.addPage();
+
+        yPanel = margen;
+      }
+
+      agregarImagen(canvas, margen, yPanel, ancho, alto);
+
+      yPanel += alto + 6;
+    }
+
+    // ========================================
+    // RECORRER TODOS LOS PANELES
+    // ========================================
+
+    for (let i = 0; i < paneles.length; i++) {
+      const panelActual = paneles[i];
+
+      const esAnchoCompleto = panelActual.classList.contains(
+        "panel-rentabilidad-informe",
+      );
+
+      // Panel especial de ancho completo
+      if (esAnchoCompleto) {
+        await agregarPanelAnchoCompleto(panelActual);
+
+        continue;
+      }
+
+      // Buscar el siguiente panel
+      const siguientePanel = paneles[i + 1];
+
+      const siguienteEsAnchoCompleto =
+        siguientePanel &&
+        siguientePanel.classList.contains("panel-rentabilidad-informe");
+
+      // Dos paneles normales juntos
+      if (siguientePanel && !siguienteEsAnchoCompleto) {
+        await agregarFilaDosPaneles(panelActual, siguientePanel);
+
+        i++;
+
+        continue;
+      }
+
+      // Panel normal que queda solo en la fila
+      const canvas = await obtenerCanvasPanel(panelActual);
+
+      const proporcion = canvas.height / canvas.width;
+
+      const ancho = anchoPanel;
+
+      const alto = ancho * proporcion;
+
+      if (yPanel > margen && yPanel + alto > altoPagina - margen) {
+        pdf.addPage();
+
+        yPanel = margen;
+      }
+
+      agregarImagen(canvas, margen, yPanel, ancho, alto);
+
+      yPanel += alto + 6;
     }
 
     // ========================================
@@ -683,11 +780,47 @@ async function iniciarEscuchasInformes() {
   try {
     cancelarClientesInformes = onSnapshot(
       collection(window.db, "clientes"),
-      (snapshot) => {
-        clientesInformes = snapshot.docs.map((documento) => ({
+      async (snapshot) => {
+        const clientes = snapshot.docs.map((documento) => ({
           id: documento.id,
           ...documento.data(),
         }));
+
+        clientesInformes = clientes;
+
+        const { getDocs, collection: collectionFirestore } =
+          await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
+
+        movimientosInformes = {};
+
+        await Promise.all(
+          clientes.map(async (cliente) => {
+            try {
+              const movimientosSnapshot = await getDocs(
+                collectionFirestore(
+                  window.db,
+                  "clientes",
+                  cliente.id,
+                  "movimientos",
+                ),
+              );
+
+              movimientosInformes[cliente.id] = movimientosSnapshot.docs.map(
+                (documento) => ({
+                  id: documento.id,
+                  ...documento.data(),
+                }),
+              );
+            } catch (error) {
+              console.warn(
+                `No se pudieron cargar los movimientos del cliente ${cliente.id}:`,
+                error,
+              );
+
+              movimientosInformes[cliente.id] = [];
+            }
+          }),
+        );
 
         renderizarInformes();
       },
@@ -755,6 +888,8 @@ function renderizarInformes() {
   renderizarGastosCategoria(gastosFiltrados);
 
   renderizarProductosMasVendidos(ventasFiltradas);
+
+  renderizarRentabilidadProductos(ventasFiltradas);
 
   renderizarClientesConMayorDeuda();
 
@@ -1583,17 +1718,44 @@ function renderizarCategoriasVendidas(ventas) {
 
 function renderizarEstadoCobros(ventas) {
   let cobrado = 0;
-  let deuda = 0;
+
+  /* ========================================
+     COBRADO DE VENTAS
+  ======================================== */
 
   ventas.forEach((venta) => {
     const total = obtenerNumeroInforme(venta.total);
 
     const saldo = Math.max(obtenerNumeroInforme(venta.saldoAdeber), 0);
 
-    deuda += saldo;
-
     cobrado += Math.max(total - saldo, 0);
   });
+
+  /* ========================================
+     DEUDA TOTAL
+     
+     Usamos exactamente la misma función
+     que utilizan:
+     - Clientes con mayor deuda
+     - Deudas más antiguas
+     
+     Esto incluye:
+     - Deudas de ventas
+     - Deudas iniciales
+     - Intereses de deuda inicial
+     - Pagos aplicados a deuda inicial
+  ======================================== */
+
+  const deudasClientes = obtenerDeudasClientesInforme();
+
+  const deuda = deudasClientes.reduce(
+    (total, cliente) => total + cliente.deuda,
+    0,
+  );
+
+  /* ========================================
+     MOSTRAR GRÁFICO
+  ======================================== */
 
   if (cobrado <= 0 && deuda <= 0) {
     mostrarSinDatosGraficoInforme("grafico-estado-cobros");
@@ -2183,17 +2345,102 @@ function renderizarProductosMasVendidos(ventas) {
 }
 
 // ========================================
-// CLIENTES CON MAYOR DEUDA
+// RENTABILIDAD DE PRODUCTOS
 // ========================================
 
-function renderizarClientesConMayorDeuda() {
-  const contenedor = document.getElementById("tabla-clientes-mayor-deuda");
+function renderizarRentabilidadProductos(ventas) {
+  let costoReposicion = 0;
 
-  if (!contenedor) {
-    return;
-  }
+  /* ========================================
+     COSTO DE REPOSICIÓN
+  ======================================== */
 
+  ventas.forEach((venta) => {
+    if (!Array.isArray(venta.productos)) {
+      return;
+    }
+
+    venta.productos.forEach((productoVenta) => {
+      const productoBD = buscarProductoInforme(productoVenta.productoId);
+
+      const precioCompra = obtenerNumeroInforme(productoBD?.precioCompra);
+
+      const cantidad = obtenerNumeroInforme(productoVenta.cantidad);
+
+      costoReposicion += precioCompra * cantidad;
+    });
+  });
+
+  /* ========================================
+     TOTAL VENDIDO
+  ======================================== */
+
+  const totalVendido = ventas.reduce(
+    (total, venta) => total + obtenerTotalVentaInforme(venta),
+    0,
+  );
+
+  /* ========================================
+     GANANCIA BRUTA
+  ======================================== */
+
+  const gananciaBruta = totalVendido - costoReposicion;
+
+  /* ========================================
+     MARGEN BRUTO
+  ======================================== */
+
+  const margenBruto =
+    totalVendido > 0 ? (gananciaBruta / totalVendido) * 100 : 0;
+
+  /* ========================================
+     MOSTRAR RESULTADOS
+  ======================================== */
+
+  establecerTextoInforme(
+    "costo-reposicion-informes",
+    formatearPrecioInforme(costoReposicion),
+  );
+
+  establecerTextoInforme(
+    "ganancia-bruta-informes",
+    formatearPrecioInforme(gananciaBruta),
+  );
+
+  establecerTextoInforme(
+    "margen-bruto-informes",
+    `${margenBruto.toFixed(1).replace(".", ",")} %`,
+  );
+}
+
+// ========================================
+// DEUDAS DE CLIENTES
+// ========================================
+
+function obtenerDeudasClientesInforme() {
   const deudasPorCliente = {};
+
+  clientesInformes.forEach((cliente) => {
+    if (!cliente?.id) {
+      return;
+    }
+
+    deudasPorCliente[cliente.id] = {
+      id: cliente.id,
+
+      nombre:
+        [cliente.nombre, cliente.apellido].filter(Boolean).join(" ").trim() ||
+        "Cliente",
+
+      deuda: 0,
+
+      ultimoMovimiento: null,
+    };
+  });
+
+  /* ========================================
+     DEUDAS DE VENTAS
+  ======================================== */
 
   ventasInformes.forEach((venta) => {
     const cliente = venta.cliente;
@@ -2205,6 +2452,13 @@ function renderizarClientesConMayorDeuda() {
     const saldo = obtenerNumeroInforme(venta.saldoAdeber);
 
     if (saldo <= 0) {
+      return;
+    }
+
+    if (
+      usuarioInformeSeleccionado !== "general" &&
+      venta.usuario !== usuarioInformeSeleccionado
+    ) {
       return;
     }
 
@@ -2223,97 +2477,300 @@ function renderizarClientesConMayorDeuda() {
     }
 
     deudasPorCliente[cliente.id].deuda += saldo;
-  });
 
-  // Buscar el último movimiento
-  // entre las ventas del cliente
-  Object.values(deudasPorCliente).forEach((cliente) => {
-    const ventasCliente = ventasInformes
-      .filter((venta) => venta.cliente?.id === cliente.id)
-      .map((venta) => ({
-        fecha: obtenerFechaVentaInforme(venta),
-      }))
-      .filter((venta) => venta.fecha)
-      .sort((a, b) => b.fecha - a.fecha);
+    const fecha = obtenerFechaVentaInforme(venta);
 
-    if (ventasCliente.length) {
-      cliente.ultimoMovimiento = ventasCliente[0].fecha;
+    if (
+      fecha &&
+      (!deudasPorCliente[cliente.id].ultimoMovimiento ||
+        fecha > deudasPorCliente[cliente.id].ultimoMovimiento)
+    ) {
+      deudasPorCliente[cliente.id].ultimoMovimiento = fecha;
     }
   });
 
-  const ranking = Object.values(deudasPorCliente)
-    .sort((a, b) => b.deuda - a.deuda)
-    .slice(0, 5);
+  /* ========================================
+     DEUDAS INICIALES
+  ======================================== */
+
+  clientesInformes.forEach((cliente) => {
+    const movimientos = movimientosInformes[cliente.id] || [];
+
+    /* ================================
+       DEUDA INICIAL
+    ================================ */
+
+    let deudaInicial = movimientos
+      .filter((movimiento) => {
+        const tipo = String(movimiento.tipo || "")
+          .trim()
+          .toLowerCase();
+
+        if (tipo !== "deuda_inicial") {
+          return false;
+        }
+
+        if (
+          usuarioInformeSeleccionado !== "general" &&
+          movimiento.usuario !== usuarioInformeSeleccionado
+        ) {
+          return false;
+        }
+
+        return true;
+      })
+      .reduce(
+        (total, movimiento) => total + obtenerNumeroInforme(movimiento.monto),
+        0,
+      );
+
+    /* ================================
+       INTERESES DE DEUDA INICIAL
+    ================================ */
+
+    const interesesIniciales = movimientos
+      .filter((movimiento) => {
+        const tipo = String(movimiento.tipo || "")
+          .trim()
+          .toLowerCase();
+
+        if (tipo !== "interes") {
+          return false;
+        }
+
+        if (movimiento.origen !== "deuda_inicial") {
+          return false;
+        }
+
+        if (
+          usuarioInformeSeleccionado !== "general" &&
+          movimiento.usuario !== usuarioInformeSeleccionado
+        ) {
+          return false;
+        }
+
+        return true;
+      })
+      .reduce(
+        (total, movimiento) => total + obtenerNumeroInforme(movimiento.monto),
+        0,
+      );
+
+    /* ================================
+       PAGOS APLICADOS A DEUDA INICIAL
+    ================================ */
+
+    const pagosIniciales = movimientos
+      .filter(
+        (movimiento) =>
+          String(movimiento.tipo || "")
+            .trim()
+            .toLowerCase() === "pago",
+      )
+      .reduce((total, movimiento) => {
+        const aplicaciones = Array.isArray(movimiento.aplicaciones)
+          ? movimiento.aplicaciones
+          : [];
+
+        return (
+          total +
+          aplicaciones
+            .filter(
+              (aplicacion) =>
+                aplicacion.tipo === "deuda_inicial" ||
+                aplicacion.origen === "deuda_inicial",
+            )
+            .reduce(
+              (acumulado, aplicacion) =>
+                acumulado + obtenerNumeroInforme(aplicacion.monto),
+              0,
+            )
+        );
+      }, 0);
+
+    /*
+     * La deuda inicial actual es:
+     *
+     * deuda inicial
+     * + intereses
+     * - pagos aplicados
+     */
+
+    deudaInicial = Math.max(
+      0,
+      deudaInicial + interesesIniciales - pagosIniciales,
+    );
+
+    if (deudaInicial <= 0) {
+      return;
+    }
+
+    if (!deudasPorCliente[cliente.id]) {
+      deudasPorCliente[cliente.id] = {
+        id: cliente.id,
+
+        nombre:
+          [cliente.nombre, cliente.apellido].filter(Boolean).join(" ").trim() ||
+          "Cliente",
+
+        deuda: 0,
+
+        ultimoMovimiento: null,
+      };
+    }
+
+    deudasPorCliente[cliente.id].deuda += deudaInicial;
+
+    /* ================================
+       FECHA DE LA DEUDA INICIAL
+    ================================ */
+
+    const fechasDeudaInicial = movimientos
+      .filter((movimiento) => {
+        const tipo = String(movimiento.tipo || "")
+          .trim()
+          .toLowerCase();
+
+        if (tipo !== "deuda_inicial") {
+          return false;
+        }
+
+        if (
+          usuarioInformeSeleccionado !== "general" &&
+          movimiento.usuario !== usuarioInformeSeleccionado
+        ) {
+          return false;
+        }
+
+        return true;
+      })
+      .map((movimiento) => obtenerFechaMovimientoInforme(movimiento))
+      .filter(Boolean);
+
+    if (fechasDeudaInicial.length > 0) {
+      const fechaMasReciente = new Date(
+        Math.max(...fechasDeudaInicial.map((fecha) => fecha.getTime())),
+      );
+
+      if (
+        !deudasPorCliente[cliente.id].ultimoMovimiento ||
+        fechaMasReciente > deudasPorCliente[cliente.id].ultimoMovimiento
+      ) {
+        deudasPorCliente[cliente.id].ultimoMovimiento = fechaMasReciente;
+      }
+    }
+  });
+
+  return Object.values(deudasPorCliente).filter((cliente) => cliente.deuda > 0);
+}
+
+function obtenerFechaMovimientoInforme(movimiento) {
+  if (!movimiento) {
+    return null;
+  }
+
+  const fecha = movimiento.fecha || movimiento.creadoEn;
+
+  if (!fecha) {
+    return null;
+  }
+
+  if (fecha.toDate && typeof fecha.toDate === "function") {
+    return fecha.toDate();
+  }
+
+  if (fecha.seconds !== undefined) {
+    return new Date(fecha.seconds * 1000);
+  }
+
+  if (fecha instanceof Date) {
+    return fecha;
+  }
+
+  if (typeof fecha === "string") {
+    const resultado = new Date(fecha);
+
+    if (!isNaN(resultado.getTime())) {
+      return resultado;
+    }
+  }
+
+  return null;
+}
+
+// ========================================
+// CLIENTES CON MAYOR DEUDA
+// ========================================
+
+function renderizarClientesConMayorDeuda() {
+  const contenedor = document.getElementById("tabla-clientes-mayor-deuda");
+
+  if (!contenedor) {
+    return;
+  }
+
+  const deudas = obtenerDeudasClientesInforme();
+
+  const ranking = deudas.sort((a, b) => b.deuda - a.deuda).slice(0, 5);
 
   if (!ranking.length) {
     mostrarSinDatosGraficoInforme("tabla-clientes-mayor-deuda");
-
     return;
   }
 
   let html = `
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Cliente</th>
+          <th>Deuda total</th>
+          <th>Último movimiento</th>
+          <th>Días</th>
+        </tr>
+      </thead>
 
-        <table>
-
-            <thead>
-
-                <tr>
-                    <th>#</th>
-                    <th>Cliente</th>
-                    <th>Deuda total</th>
-                    <th>Último movimiento</th>
-                    <th>Días</th>
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-    `;
+      <tbody>
+  `;
 
   ranking.forEach((cliente, indice) => {
     const dias = calcularDiasDesdeFechaInforme(cliente.ultimoMovimiento);
 
     html += `
+      <tr>
 
-                <tr>
+        <td>
+          ${indice + 1}
+        </td>
 
-                    <td>
-                        ${indice + 1}
-                    </td>
+        <td>
+          ${escapeHTMLInforme(cliente.nombre)}
+        </td>
 
-                    <td>
-                        ${escapeHTMLInforme(cliente.nombre)}
-                    </td>
+        <td class="deuda">
+          ${formatearPrecioInforme(cliente.deuda)}
+        </td>
 
-                    <td class="deuda">
-                        ${formatearPrecioInforme(cliente.deuda)}
-                    </td>
+        <td>
+          ${
+            cliente.ultimoMovimiento
+              ? formatearFechaInforme(cliente.ultimoMovimiento)
+              : "—"
+          }
+        </td>
 
-                    <td>
-                        ${
-                          cliente.ultimoMovimiento
-                            ? formatearFechaInforme(cliente.ultimoMovimiento)
-                            : "—"
-                        }
-                    </td>
+        <td class="dias">
+          ${dias !== null ? dias : "—"}
+        </td>
 
-                    <td class="dias">
-                        ${dias !== null ? dias : "—"}
-                    </td>
-
-                </tr>
-
-            `;
+      </tr>
+    `;
   });
 
   html += `
-
-            </tbody>
-
-        </table>
-
-    `;
+      </tbody>
+    </table>
+  `;
 
   contenedor.innerHTML = html;
 }
@@ -2331,6 +2788,10 @@ function renderizarDeudasAntiguas() {
 
   const deudas = [];
 
+  /* ========================================
+     DEUDAS DE VENTAS
+  ======================================== */
+
   ventasInformes.forEach((venta) => {
     const saldo = obtenerNumeroInforme(venta.saldoAdeber);
 
@@ -2340,7 +2801,14 @@ function renderizarDeudasAntiguas() {
 
     const cliente = venta.cliente;
 
-    if (!cliente) {
+    if (!cliente?.id) {
+      return;
+    }
+
+    if (
+      usuarioInformeSeleccionado !== "general" &&
+      venta.usuario !== usuarioInformeSeleccionado
+    ) {
       return;
     }
 
@@ -2361,73 +2829,197 @@ function renderizarDeudasAntiguas() {
     });
   });
 
+  /* ========================================
+     DEUDAS INICIALES
+  ======================================== */
+
+  clientesInformes.forEach((cliente) => {
+    const movimientos = movimientosInformes[cliente.id] || [];
+
+    let deudaInicial = movimientos
+      .filter((movimiento) => {
+        const tipo = String(movimiento.tipo || "")
+          .trim()
+          .toLowerCase();
+
+        if (tipo !== "deuda_inicial") {
+          return false;
+        }
+
+        if (
+          usuarioInformeSeleccionado !== "general" &&
+          movimiento.usuario !== usuarioInformeSeleccionado
+        ) {
+          return false;
+        }
+
+        return true;
+      })
+      .reduce(
+        (total, movimiento) => total + obtenerNumeroInforme(movimiento.monto),
+        0,
+      );
+
+    const interesesIniciales = movimientos
+      .filter((movimiento) => {
+        const tipo = String(movimiento.tipo || "")
+          .trim()
+          .toLowerCase();
+
+        if (tipo !== "interes") {
+          return false;
+        }
+
+        if (movimiento.origen !== "deuda_inicial") {
+          return false;
+        }
+
+        if (
+          usuarioInformeSeleccionado !== "general" &&
+          movimiento.usuario !== usuarioInformeSeleccionado
+        ) {
+          return false;
+        }
+
+        return true;
+      })
+      .reduce(
+        (total, movimiento) => total + obtenerNumeroInforme(movimiento.monto),
+        0,
+      );
+
+    const pagosIniciales = movimientos
+      .filter(
+        (movimiento) =>
+          String(movimiento.tipo || "")
+            .trim()
+            .toLowerCase() === "pago",
+      )
+      .reduce((total, movimiento) => {
+        const aplicaciones = Array.isArray(movimiento.aplicaciones)
+          ? movimiento.aplicaciones
+          : [];
+
+        return (
+          total +
+          aplicaciones
+            .filter(
+              (aplicacion) =>
+                aplicacion.tipo === "deuda_inicial" ||
+                aplicacion.origen === "deuda_inicial",
+            )
+            .reduce(
+              (acumulado, aplicacion) =>
+                acumulado + obtenerNumeroInforme(aplicacion.monto),
+              0,
+            )
+        );
+      }, 0);
+
+    deudaInicial = Math.max(
+      0,
+      deudaInicial + interesesIniciales - pagosIniciales,
+    );
+
+    if (deudaInicial <= 0) {
+      return;
+    }
+
+    const fechas = movimientos
+      .filter((movimiento) => {
+        const tipo = String(movimiento.tipo || "")
+          .trim()
+          .toLowerCase();
+
+        if (tipo !== "deuda_inicial") {
+          return false;
+        }
+
+        if (
+          usuarioInformeSeleccionado !== "general" &&
+          movimiento.usuario !== usuarioInformeSeleccionado
+        ) {
+          return false;
+        }
+
+        return true;
+      })
+      .map((movimiento) => obtenerFechaMovimientoInforme(movimiento))
+      .filter(Boolean);
+
+    if (!fechas.length) {
+      return;
+    }
+
+    const fecha = new Date(Math.min(...fechas.map((fecha) => fecha.getTime())));
+
+    deudas.push({
+      cliente:
+        [cliente.nombre, cliente.apellido].filter(Boolean).join(" ").trim() ||
+        "Cliente",
+
+      monto: deudaInicial,
+
+      fecha,
+    });
+  });
+
+  /* ========================================
+     ORDENAR
+  ======================================== */
+
   deudas.sort((a, b) => a.fecha - b.fecha);
 
   if (!deudas.length) {
     mostrarSinDatosGraficoInforme("tabla-deudas-antiguas");
-
     return;
   }
 
   let html = `
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Cliente</th>
+          <th>Monto pendiente</th>
+          <th>Fecha de deuda</th>
+          <th>Días</th>
+        </tr>
+      </thead>
 
-        <table>
-
-            <thead>
-
-                <tr>
-                    <th>#</th>
-                    <th>Cliente</th>
-                    <th>Monto pendiente</th>
-                    <th>Fecha de venta</th>
-                    <th>Días</th>
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-    `;
+      <tbody>
+  `;
 
   deudas.slice(0, 5).forEach((deuda, indice) => {
     const dias = calcularDiasDesdeFechaInforme(deuda.fecha);
 
     html += `
+      <tr>
+        <td>${indice + 1}</td>
 
-                    <tr>
+        <td>
+          ${escapeHTMLInforme(deuda.cliente)}
+        </td>
 
-                        <td>
-                            ${indice + 1}
-                        </td>
+        <td class="deuda">
+          ${formatearPrecioInforme(deuda.monto)}
+        </td>
 
-                        <td>
-                            ${escapeHTMLInforme(deuda.cliente)}
-                        </td>
+        <td>
+          ${formatearFechaInforme(deuda.fecha)}
+        </td>
 
-                        <td class="deuda">
-                            ${formatearPrecioInforme(deuda.monto)}
-                        </td>
-
-                        <td>
-                            ${formatearFechaInforme(deuda.fecha)}
-                        </td>
-
-                        <td class="dias">
-                            ${dias !== null ? dias : "—"}
-                        </td>
-
-                    </tr>
-
-                `;
+        <td class="dias">
+          ${dias !== null ? dias : "—"}
+        </td>
+      </tr>
+    `;
   });
 
   html += `
-
-            </tbody>
-
-        </table>
-
-    `;
+      </tbody>
+    </table>
+  `;
 
   contenedor.innerHTML = html;
 }

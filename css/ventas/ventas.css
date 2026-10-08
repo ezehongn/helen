@@ -482,9 +482,87 @@
 }
 
 .panel-cliente,
-.panel-medios-pago {
+.panel-medios-pago,
+.panel-fecha-venta,
+.panel-descuento-venta {
     min-height: 175px;
     padding: 16px;
+    box-sizing: border-box;
+}
+
+/* ========================================
+   FECHA Y DESCUENTO
+======================================== */
+
+.campo-fecha-venta {
+    margin-top: 18px;
+}
+
+.campo-fecha-venta label,
+.campo-descuento-valor label,
+.campo-descuento-tipo label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #172b4d;
+}
+
+.campo-fecha-venta input {
+    width: 100%;
+    height: 44px;
+    padding: 0 12px;
+    box-sizing: border-box;
+    border: 1px solid #d3dce7;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #172b4d;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+}
+
+.campo-fecha-venta input:focus,
+.campo-descuento-valor input:focus,
+.campo-descuento-tipo select:focus {
+    border-color: #172b4d;
+}
+
+.ayuda-fecha-venta,
+.ayuda-descuento-venta {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #718096;
+}
+
+
+/* DESCUENTO */
+
+.campo-descuento-venta {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 80px;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.campo-descuento-valor input,
+.campo-descuento-tipo select {
+    width: 100%;
+    height: 44px;
+    padding: 0 12px;
+    box-sizing: border-box;
+    border: 1px solid #d3dce7;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #172b4d;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+}
+
+.campo-descuento-tipo select {
+    cursor: pointer;
 }
 
 .buscador-cliente-venta {

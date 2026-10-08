@@ -379,6 +379,78 @@
     font-size: 12px;
 }
 
+/* ========================================
+   RENTABILIDAD DE PRODUCTOS
+======================================== */
+
+.panel-rentabilidad-informe {
+    grid-column: 1 / -1;
+}
+
+.rentabilidad-grid-informe {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+.tarjeta-rentabilidad-informe {
+    min-height: 95px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    box-sizing: border-box;
+    border: 1px solid #e0e6ed;
+    border-radius: 9px;
+    background: #fafbfd;
+}
+
+.icono-rentabilidad-informe {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.tarjeta-rentabilidad-informe span {
+    display: block;
+    color: #718096;
+    font-size: 12px;
+}
+
+.tarjeta-rentabilidad-informe strong {
+    display: block;
+    margin-top: 4px;
+    color: #24344d;
+    font-size: 20px;
+}
+
+/* Costo de reposición */
+
+.tarjeta-rentabilidad-informe.costo .icono-rentabilidad-informe {
+    background: #fff2df;
+    color: #f39a22;
+}
+
+/* Ganancia bruta */
+
+.tarjeta-rentabilidad-informe.ganancia .icono-rentabilidad-informe {
+    background: #e5f7ef;
+    color: #16a56c;
+}
+
+/* Margen bruto */
+
+.tarjeta-rentabilidad-informe.margen .icono-rentabilidad-informe {
+    background: #e8f2ff;
+    color: #2587e8;
+}
+
 
 /* ========================================
    RESPONSIVE
@@ -413,6 +485,10 @@
     }
 
     .grid-informes {
+        grid-template-columns: 1fr;
+    }
+
+    .rentabilidad-grid-informe {
         grid-template-columns: 1fr;
     }
 

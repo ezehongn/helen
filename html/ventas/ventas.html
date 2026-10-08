@@ -75,9 +75,10 @@
             </section>
 
 
-            <!-- CLIENTE + MEDIOS DE PAGO -->
+            <!-- CLIENTE + MEDIOS DE PAGO + FECHA + DESCUENTO -->
             <div class="fila-detalles-venta">
 
+                <!-- CLIENTE -->
                 <section class="panel-ventas panel-cliente">
 
                     <div class="encabezado-detalle-venta">
@@ -117,6 +118,7 @@
                 </section>
 
 
+                <!-- MEDIOS DE PAGO -->
                 <section class="panel-ventas panel-medios-pago">
 
                     <div class="encabezado-detalle-venta">
@@ -136,6 +138,71 @@
                          class="sin-medios-pago">
                         Agregá un medio de pago para registrar la venta.
                     </div>
+
+                </section>
+
+
+                <!-- FECHA DE VENTA -->
+                <section class="panel-ventas panel-fecha-venta">
+
+                    <div class="encabezado-detalle-venta">
+                        <h2>Fecha de venta</h2>
+                    </div>
+
+                    <div class="campo-fecha-venta">
+                        <label for="fecha-venta">
+                            Fecha
+                        </label>
+
+                        <input type="date"
+                               id="fecha-venta">
+                    </div>
+
+                    <small class="ayuda-fecha-venta">
+                        Por defecto se utiliza la fecha de hoy.
+                    </small>
+
+                </section>
+
+
+                <!-- DESCUENTO -->
+                <section class="panel-ventas panel-descuento-venta">
+
+                    <div class="encabezado-detalle-venta">
+                        <h2>Descuento</h2>
+                    </div>
+
+                    <div class="campo-descuento-venta">
+
+                        <div class="campo-descuento-valor">
+                            <label for="descuento-venta">
+                                Descuento
+                            </label>
+
+                            <input type="number"
+                                   id="descuento-venta"
+                                   min="0"
+                                   step="0.01"
+                                   value="0"
+                                   inputmode="decimal">
+                        </div>
+
+                        <div class="campo-descuento-tipo">
+                            <label for="tipo-descuento-venta">
+                                Tipo
+                            </label>
+
+                            <select id="tipo-descuento-venta">
+                                <option value="porcentaje" selected>%</option>
+                                <option value="monto">$</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <small class="ayuda-descuento-venta">
+                        Podés ingresar un porcentaje o un monto fijo.
+                    </small>
 
                 </section>
 

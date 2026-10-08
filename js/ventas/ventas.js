@@ -85,6 +85,8 @@ async function inicializarVentas() {
 
   agregarMedioPagoVenta();
 
+  establecerFechaVentaHoy();
+
   cargarProductosVenta();
 
   iniciarEscuchaUltimasVentas();
@@ -224,6 +226,14 @@ function configurarEventosVentas() {
 
       actualizarTotalesVenta();
     });
+
+  document
+    .getElementById("descuento-venta")
+    ?.addEventListener("input", actualizarTotalesVenta);
+
+  document
+    .getElementById("tipo-descuento-venta")
+    ?.addEventListener("change", actualizarTotalesVenta);
 
   document.addEventListener("click", (evento) => {
     const botonNuevoCliente = evento.target.closest("#nuevo-cliente-venta");
@@ -1050,6 +1060,29 @@ function obtenerTotalVenta() {
   }, 0);
 }
 
+function obtenerDescuentoVenta() {
+  const inputDescuento = document.getElementById("descuento-venta");
+  const selectTipo = document.getElementById("tipo-descuento-venta");
+
+  if (!inputDescuento || !selectTipo) {
+    return 0;
+  }
+
+  const valor = convertirNumeroVenta(inputDescuento.value);
+
+  if (valor <= 0) {
+    return 0;
+  }
+
+  const totalBase = obtenerTotalVenta();
+
+  if (selectTipo.value === "porcentaje") {
+    return totalBase * (valor / 100);
+  }
+
+  return Math.min(valor, totalBase);
+}
+
 function obtenerRecargoTarjetaCredito(totalBase, cuotas) {
   if (cuotas === 3) {
     return totalBase * (CONFIGURACION_TARJETA_CREDITO.recargo3Cuotas / 100);
@@ -1091,9 +1124,13 @@ function obtenerTotalEntregado() {
 function actualizarTotalesVenta() {
   const totalBase = obtenerTotalVenta();
 
+  const descuento = obtenerDescuentoVenta();
+
+  const subtotalConDescuento = Math.max(totalBase - descuento, 0);
+
   const recargo = obtenerRecargoVenta();
 
-  const totalCalculado = totalBase + recargo;
+  const totalCalculado = subtotalConDescuento + recargo;
 
   const total =
     totalVentaPersonalizado !== null ? totalVentaPersonalizado : totalCalculado;
@@ -1138,9 +1175,13 @@ function actualizarEstadoBotonRegistrar() {
 
   const totalBase = obtenerTotalVenta();
 
+  const descuento = obtenerDescuentoVenta();
+
+  const subtotalConDescuento = Math.max(totalBase - descuento, 0);
+
   const recargo = obtenerRecargoVenta();
 
-  const totalCalculado = totalBase + recargo;
+  const totalCalculado = subtotalConDescuento + recargo;
 
   const total =
     totalVentaPersonalizado !== null ? totalVentaPersonalizado : totalCalculado;
@@ -1160,9 +1201,13 @@ function actualizarEstadoBotonRegistrar() {
 async function registrarVenta() {
   const totalBase = obtenerTotalVenta();
 
+  const descuento = obtenerDescuentoVenta();
+
+  const subtotalConDescuento = Math.max(totalBase - descuento, 0);
+
   const recargoTotal = obtenerRecargoVenta();
 
-  const totalCalculado = totalBase + recargoTotal;
+  const totalCalculado = subtotalConDescuento + recargoTotal;
 
   const total =
     totalVentaPersonalizado !== null ? totalVentaPersonalizado : totalCalculado;
@@ -1172,6 +1217,26 @@ async function registrarVenta() {
   const vuelto = Math.max(entregado - total, 0);
 
   const saldo = Math.max(total - entregado, 0);
+
+  const inputFecha = document.getElementById("fecha-venta");
+
+  const fechaSeleccionada = inputFecha?.value;
+
+  if (!fechaSeleccionada) {
+    mostrarMensajeVenta("Seleccioná una fecha para la venta.", "error");
+    return;
+  }
+
+  const [año, mes, dia] = fechaSeleccionada.split("-");
+
+  const fechaVenta = new Date(
+    Number(año),
+    Number(mes) - 1,
+    Number(dia),
+    12,
+    0,
+    0,
+  );
 
   if (!carritoVenta.length) {
     mostrarMensajeVenta("Agregá al menos un producto.", "error");
@@ -1343,7 +1408,7 @@ async function registrarVenta() {
 
         usuario: usuarioVentaActivo,
 
-        fecha: serverTimestamp(),
+        fecha: fechaVenta,
 
         cliente: clienteSeleccionadoVenta
           ? {
@@ -1376,6 +1441,14 @@ async function registrarVenta() {
         }),
 
         totalBase: totalBase,
+        descuento: descuento,
+        subtotalConDescuento: subtotalConDescuento,
+        tipoDescuento:
+          document.getElementById("tipo-descuento-venta")?.value ||
+          "porcentaje",
+        valorDescuento: convertirNumeroVenta(
+          document.getElementById("descuento-venta")?.value || 0,
+        ),
         recargoTotal: recargoTotal,
         total: total,
 
@@ -1799,6 +1872,19 @@ function limpiarVenta() {
 
   totalVentaPersonalizado = null;
 
+  const descuento = document.getElementById("descuento-venta");
+  const tipoDescuento = document.getElementById("tipo-descuento-venta");
+
+  if (descuento) {
+    descuento.value = 0;
+  }
+
+  if (tipoDescuento) {
+    tipoDescuento.value = "porcentaje";
+  }
+
+  establecerFechaVentaHoy();
+
   const busquedaProducto = document.getElementById("busqueda-productos-venta");
 
   const observaciones = document.getElementById("observaciones-venta");
@@ -1847,6 +1933,22 @@ function mostrarMensajeVenta(mensaje, tipo) {
 /* ========================================
    UTILIDADES
 ======================================== */
+
+function establecerFechaVentaHoy() {
+  const inputFecha = document.getElementById("fecha-venta");
+
+  if (!inputFecha) {
+    return;
+  }
+
+  const hoy = new Date();
+
+  const año = hoy.getFullYear();
+  const mes = String(hoy.getMonth() + 1).padStart(2, "0");
+  const dia = String(hoy.getDate()).padStart(2, "0");
+
+  inputFecha.value = `${año}-${mes}-${dia}`;
+}
 
 function formatearPrecioVenta(valor) {
   return `$ ${(Number(valor) || 0).toLocaleString("es-AR", {
