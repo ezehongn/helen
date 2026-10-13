@@ -520,15 +520,43 @@ function obtenerPagosDeudasMesInicio(mes) {
 // ========================================
 
 function obtenerDineroIngresadoVentasInicio(ventas) {
-  return ventas.reduce((total, venta) => total + Number(venta.total || 0), 0);
+  return ventas.reduce((total, venta) => {
+    // Importe que se aplicó posteriormente a la deuda de esta venta.
+    const pagosPosteriores = pagosDeudasInicio.reduce((sumaPagos, pago) => {
+      const aplicaciones = Array.isArray(pago.aplicaciones)
+        ? pago.aplicaciones
+        : [];
+
+      const aplicadoAEstaVenta = aplicaciones.reduce(
+        (sumaAplicaciones, aplicacion) => {
+          if (String(aplicacion.ventaId) === String(venta.id)) {
+            return sumaAplicaciones + Number(aplicacion.monto || 0);
+          }
+
+          return sumaAplicaciones;
+        },
+        0,
+      );
+
+      return sumaPagos + aplicadoAEstaVenta;
+    }, 0);
+
+    // totalEntregado puede incluir pagos de deuda posteriores.
+    // Los restamos para recuperar lo cobrado al realizar la venta.
+    const totalEntregado = Number(venta.totalEntregado ?? 0);
+    const vuelto = Number(venta.vuelto ?? 0);
+
+    const cobradoOriginal = totalEntregado - pagosPosteriores - vuelto;
+
+    return total + Math.max(0, cobradoOriginal);
+  }, 0);
 }
 
-// ========================================
-// DINERO INGRESADO POR PAGOS DE DEUDAS
-// ========================================
-
 function obtenerDineroIngresadoPagosInicio(pagos) {
-  return pagos.reduce((total, pago) => total + Number(pago.monto ?? 0), 0);
+  return pagos.reduce((total, pago) => {
+    // Se cuenta el importe realmente recibido en el pago.
+    return total + Number(pago.monto ?? 0);
+  }, 0);
 }
 
 function actualizarEstadisticasInicio() {
@@ -894,10 +922,7 @@ function renderizarVentasSemana() {
       );
     });
 
-    const totalVentas = ventasDelDia.reduce(
-      (suma, venta) => suma + Number(venta.totalEntregado ?? 0),
-      0,
-    );
+    const totalVentas = obtenerDineroIngresadoVentasInicio(ventasDelDia);
 
     const totalPagos = pagosDelDia.reduce(
       (suma, pago) => suma + Number(pago.monto ?? 0),
