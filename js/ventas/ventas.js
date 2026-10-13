@@ -1229,14 +1229,19 @@ async function registrarVenta() {
 
   const [año, mes, dia] = fechaSeleccionada.split("-");
 
-  const fechaVenta = new Date(
-    Number(año),
-    Number(mes) - 1,
-    Number(dia),
-    12,
-    0,
-    0,
-  );
+  const ahora = new Date();
+
+  const hoy = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, "0")}-${String(ahora.getDate()).padStart(2, "0")}`;
+
+  let fechaVenta;
+
+  if (fechaSeleccionada === hoy) {
+    // Si es hoy, conservar la hora actual.
+    fechaVenta = ahora;
+  } else {
+    // Si es una fecha pasada, usar las 12:00 del mediodía.
+    fechaVenta = new Date(Number(año), Number(mes) - 1, Number(dia), 12, 0, 0);
+  }
 
   if (!carritoVenta.length) {
     mostrarMensajeVenta("Agregá al menos un producto.", "error");

@@ -520,10 +520,7 @@ function obtenerPagosDeudasMesInicio(mes) {
 // ========================================
 
 function obtenerDineroIngresadoVentasInicio(ventas) {
-  return ventas.reduce(
-    (total, venta) => total + Number(venta.totalEntregado ?? 0),
-    0,
-  );
+  return ventas.reduce((total, venta) => total + Number(venta.total || 0), 0);
 }
 
 // ========================================
