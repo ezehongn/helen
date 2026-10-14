@@ -6,6 +6,7 @@ let ventasInicio = [];
 let productosInicio = [];
 let gastosInicio = [];
 let pagosDeudasInicio = [];
+let pagosAplicadosPorVentaInicio = new Map();
 
 let cancelarEscuchaVentasInicio = null;
 let cancelarEscuchaProductosInicio = null;
@@ -113,9 +114,17 @@ async function iniciarEscuchasInicio() {
   try {
     const referenciaVentas = collection(window.db, "ventas");
 
+    const ahora = new Date();
+
+    const fechaInicio = new Date(ahora.getFullYear(), ahora.getMonth() - 12, 1);
+
+    const fechaFin = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 1);
+
     const consultaVentas = query(
       referenciaVentas,
       where("usuario", "==", usuarioOperativo),
+      where("fecha", ">=", fechaInicio),
+      where("fecha", "<", fechaFin),
     );
 
     cancelarEscuchaVentasInicio = onSnapshot(
@@ -181,9 +190,33 @@ async function iniciarEscuchasInicio() {
   try {
     const referenciaGastos = collection(window.db, "gastos");
 
+    const ahora = new Date();
+
+    const fechaInicioGastos = new Date(
+      ahora.getFullYear(),
+      ahora.getMonth() - 12,
+      1,
+    );
+
+    const fechaFinGastos = new Date(
+      ahora.getFullYear(),
+      ahora.getMonth() + 1,
+      1,
+    );
+
+    const formatearFechaConsulta = (fecha) => {
+      const año = fecha.getFullYear();
+      const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+      const dia = String(fecha.getDate()).padStart(2, "0");
+
+      return `${año}-${mes}-${dia}`;
+    };
+
     const consultaGastos = query(
       referenciaGastos,
       where("usuario", "==", usuarioOperativo),
+      where("fecha", ">=", formatearFechaConsulta(fechaInicioGastos)),
+      where("fecha", "<", formatearFechaConsulta(fechaFinGastos)),
     );
 
     cancelarEscuchaGastosInicio = onSnapshot(
@@ -229,6 +262,29 @@ async function iniciarEscuchasInicio() {
           id: documento.id,
           ...documento.data(),
         }));
+
+        // Crear un índice de los importes aplicados a cada venta.
+        pagosAplicadosPorVentaInicio = new Map();
+
+        pagosDeudasInicio.forEach((pago) => {
+          const aplicaciones = Array.isArray(pago.aplicaciones)
+            ? pago.aplicaciones
+            : [];
+
+          aplicaciones.forEach((aplicacion) => {
+            if (aplicacion.ventaId == null) {
+              return;
+            }
+
+            const ventaId = String(aplicacion.ventaId);
+            const monto = Number(aplicacion.monto || 0);
+
+            pagosAplicadosPorVentaInicio.set(
+              ventaId,
+              (pagosAplicadosPorVentaInicio.get(ventaId) || 0) + monto,
+            );
+          });
+        });
 
         window.pagosDeudasInicio = pagosDeudasInicio;
 
@@ -521,28 +577,11 @@ function obtenerPagosDeudasMesInicio(mes) {
 
 function obtenerDineroIngresadoVentasInicio(ventas) {
   return ventas.reduce((total, venta) => {
-    // Importe que se aplicó posteriormente a la deuda de esta venta.
-    const pagosPosteriores = pagosDeudasInicio.reduce((sumaPagos, pago) => {
-      const aplicaciones = Array.isArray(pago.aplicaciones)
-        ? pago.aplicaciones
-        : [];
+    // Consultar directamente los pagos aplicados a esta venta.
+    const pagosPosteriores =
+      pagosAplicadosPorVentaInicio.get(String(venta.id)) || 0;
 
-      const aplicadoAEstaVenta = aplicaciones.reduce(
-        (sumaAplicaciones, aplicacion) => {
-          if (String(aplicacion.ventaId) === String(venta.id)) {
-            return sumaAplicaciones + Number(aplicacion.monto || 0);
-          }
-
-          return sumaAplicaciones;
-        },
-        0,
-      );
-
-      return sumaPagos + aplicadoAEstaVenta;
-    }, 0);
-
-    // totalEntregado puede incluir pagos de deuda posteriores.
-    // Los restamos para recuperar lo cobrado al realizar la venta.
+    // Recuperar lo cobrado originalmente al realizar la venta.
     const totalEntregado = Number(venta.totalEntregado ?? 0);
     const vuelto = Number(venta.vuelto ?? 0);
 
@@ -1488,6 +1527,8 @@ window.limpiarInicio = function () {
   gastosInicio = [];
 
   pagosDeudasInicio = [];
+
+  pagosAplicadosPorVentaInicio = new Map();
 };
 
 // ========================================

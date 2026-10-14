@@ -2713,20 +2713,46 @@ async function cargarModalRegistrarCliente() {
 }
 
 function cargarScriptRegistrarCliente() {
-  if (document.getElementById("js-registrar-cliente")) {
+  const scriptExistente = document.getElementById("js-registrar-cliente");
+
+  // Si el script y sus funciones siguen disponibles, no hace falta recargarlo.
+  if (
+    scriptExistente &&
+    typeof window.abrirModalRegistrarCliente === "function" &&
+    typeof window.cerrarModalRegistrarCliente === "function"
+  ) {
     return Promise.resolve();
   }
+
+  // Si quedó un script sin sus funciones, eliminarlo y cargarlo de nuevo.
+  scriptExistente?.remove();
+
+  delete window.abrirModalRegistrarCliente;
+  delete window.cerrarModalRegistrarCliente;
 
   return new Promise((resolve, reject) => {
     const script = document.createElement("script");
 
     script.id = "js-registrar-cliente";
     script.src = `js/clientes/registrarcliente.js?t=${Date.now()}`;
-
     script.type = "module";
 
-    script.onload = resolve;
-    script.onerror = reject;
+    script.onload = () => {
+      if (typeof window.abrirModalRegistrarCliente !== "function") {
+        reject(
+          new Error(
+            "El script se cargó, pero no inicializó abrirModalRegistrarCliente."
+          )
+        );
+        return;
+      }
+
+      resolve();
+    };
+
+    script.onerror = () => {
+      reject(new Error("No se pudo cargar registrarcliente.js."));
+    };
 
     document.body.appendChild(script);
   });
@@ -2864,6 +2890,23 @@ function cargarScriptEditarCliente() {
 }
 
 window.limpiarClientes = function () {
+  // Cerrar el modal de registrar cliente.
+  const modalRegistrar = document.getElementById(
+    "modal-registrar-cliente"
+  );
+
+  if (modalRegistrar) {
+    modalRegistrar.classList.remove("visible");
+    modalRegistrar.setAttribute("hidden", "");
+  }
+
+  // Eliminar el script auxiliar.
+  document.getElementById("js-registrar-cliente")?.remove();
+
+  delete window.abrirModalRegistrarCliente;
+  delete window.cerrarModalRegistrarCliente;
+
+  // Cerrar el historial.
   const modal = document.getElementById("modal-historial-cliente");
 
   if (modal) {
@@ -2871,6 +2914,7 @@ window.limpiarClientes = function () {
     modal.setAttribute("hidden", "");
   }
 
+  // Cerrar el modal de edición.
   const modalEditar = document.getElementById("modal-editar-cliente");
 
   if (modalEditar) {
@@ -2878,8 +2922,10 @@ window.limpiarClientes = function () {
     modalEditar.setAttribute("hidden", "");
   }
 
+  // Restaurar el desplazamiento de la página.
   document.body.style.overflow = "";
 
+  // Eliminar el script auxiliar de edición.
   document.getElementById("js-editar-cliente")?.remove();
 
   delete window.abrirModalEditarCliente;

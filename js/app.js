@@ -8,6 +8,8 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/f
 
 const contenido = document.getElementById("contenido");
 
+let navegacionActual = 0;
+
 // ========================================
 // CARGAR CSS
 // ========================================
@@ -38,24 +40,40 @@ function cargarCSS(ruta, identificador) {
 // ========================================
 
 async function cargarPantalla(ruta, script = null, css = null) {
+  const navegacion = ++navegacionActual;
+
   try {
-    const respuesta = await fetch(ruta);
-
-    if (!respuesta.ok) {
-      throw new Error(`No se pudo cargar ${ruta}. Código: ${respuesta.status}`);
-    }
-
-    const html = await respuesta.text();
-
     const contenedor = document.getElementById("contenido-pantalla");
 
     if (!contenedor) {
       throw new Error("No existe #contenido-pantalla.");
     }
 
-    // --------------------------------
-    // ELIMINAR SCRIPT ANTERIOR
-    // --------------------------------
+    const cargaHTML = fetch(ruta).then(async (respuesta) => {
+      if (!respuesta.ok) {
+        throw new Error(
+          `No se pudo cargar ${ruta}. Código: ${respuesta.status}`,
+        );
+      }
+
+      return respuesta.text();
+    });
+
+    const cargaCSS = css ? cargarCSS(css.ruta, css.id) : Promise.resolve();
+
+    const [html] = await Promise.all([cargaHTML, cargaCSS]);
+
+    // Si el usuario cambió de pantalla durante la descarga,
+    // descartamos esta navegación.
+    if (navegacion !== navegacionActual) return;
+
+    // Puede haber cambiado la pantalla mientras cargaba el CSS.
+    if (navegacion !== navegacionActual) return;
+
+    // Limpiar la pantalla anterior.
+    if (typeof window.limpiarInicio === "function") {
+      window.limpiarInicio();
+    }
 
     if (typeof window.limpiarProductos === "function") {
       window.limpiarProductos();
@@ -65,63 +83,54 @@ async function cargarPantalla(ruta, script = null, css = null) {
       window.limpiarClientes();
     }
 
+    // Retirar el script de la pantalla anterior.
     const scriptAnterior = document.querySelector("script[data-pantalla]");
 
     if (scriptAnterior) {
       scriptAnterior.remove();
     }
 
-    // --------------------------------
-    // INSERTAR HTML
-    // --------------------------------
-    if (css) {
-      await cargarCSS(css.ruta, css.id);
-    }
-
+    // Mostrar el HTML.
     contenedor.innerHTML = html;
 
-    // --------------------------------
-    // CARGAR JAVASCRIPT
-    // --------------------------------
-
+    // Inicializar el JavaScript de la pantalla.
     if (script) {
       const nuevoScript = document.createElement("script");
 
       nuevoScript.src = `${script}?t=${Date.now()}`;
-
       nuevoScript.type = "module";
-
       nuevoScript.dataset.pantalla = "true";
 
       await new Promise((resolve, reject) => {
         nuevoScript.onload = resolve;
-        nuevoScript.onerror = reject;
+        nuevoScript.onerror = () => {
+          reject(new Error(`No se pudo cargar ${script}`));
+        };
 
         document.body.appendChild(nuevoScript);
       });
     }
   } catch (error) {
+    // No mostrar errores de una navegación que ya fue descartada.
+    if (navegacion !== navegacionActual) return;
+
     console.error("Error al cargar pantalla:", error);
 
     const contenedor = document.getElementById("contenido-pantalla");
 
     if (contenedor) {
       contenedor.innerHTML = `
-                <div
-                    style="
-                        min-height: 100vh;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        font-family: Arial, Helvetica, sans-serif;
-                        color: #626a76;
-                    "
-                >
-                    <p>
-                        No se pudo cargar la pantalla.
-                    </p>
-                </div>
-            `;
+        <div style="
+          min-height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-family: Arial, Helvetica, sans-serif;
+          color: #626a76;
+        ">
+          <p>No se pudo cargar la pantalla.</p>
+        </div>
+      `;
     }
   }
 }
@@ -212,9 +221,7 @@ async function cargarAplicacion() {
     // CARGAR BARRA
     // --------------------------------
 
-    await cargarBarraLateral();
-
-    await cargarBarraSuperior();
+    await Promise.all([cargarBarraLateral(), cargarBarraSuperior()]);
 
     // --------------------------------
     // CARGAR INICIO

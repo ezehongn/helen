@@ -306,64 +306,42 @@ function configurarEventosVentas() {
 
 async function cargarProductosVenta() {
   try {
-    const { collection, getDocs } =
+    const { collection, getDocs, query, where } =
       await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
 
     if (!window.db) {
       throw new Error("Firebase Firestore no está inicializado.");
     }
 
-    console.log("Cargando productos desde Firestore...");
+    if (!usuarioVentaActivo) {
+      throw new Error("No hay un usuario operativo seleccionado.");
+    }
+
+    console.log("Cargando productos para Ventas...");
 
     const referencia = collection(window.db, "productos");
 
-    const snapshot = await getDocs(referencia);
+    const consulta = query(
+      referencia,
+      where("creadoPor", "==", usuarioVentaActivo),
+      where("estado", "==", "activo"),
+    );
 
-    console.log("Productos encontrados en Firestore:", snapshot.size);
+    const snapshot = await getDocs(consulta);
 
-    const todosLosProductos = snapshot.docs.map((documento) => {
+    productosVenta = snapshot.docs.map((documento) => {
       const datos = documento.data();
-
-      console.log(
-        "PRODUCTO COMPLETO:",
-        documento.id,
-        JSON.stringify(datos, null, 2),
-      );
 
       return {
         id: documento.id,
-
         ...datos,
-
         talles: Array.isArray(datos.talles) ? datos.talles : [],
-
         stock: Number(datos.stock) || 0,
-
         precio: Number(datos.precio) || 0,
       };
     });
 
-    /*
-     * Filtramos los productos del usuario actual.
-     */
-
-    productosVenta = todosLosProductos.filter((producto) => {
-      const mismoUsuario =
-        String(producto.creadoPor || "")
-          .trim()
-          .toLowerCase() ===
-        String(usuarioVentaActivo || "")
-          .trim()
-          .toLowerCase();
-
-      const productoActivo = producto.estado === "activo";
-
-      return mismoUsuario && productoActivo;
-    });
-
-    console.log("Usuario activo:", usuarioVentaActivo);
-
-    console.log("Productos disponibles para Ventas:", productosVenta);
+    console.log("Productos disponibles para Ventas:", productosVenta.length);
   } catch (error) {
     console.error("Error cargando productos para Ventas:", error);
 
@@ -1738,27 +1716,31 @@ async function iniciarEscuchaUltimasVentas() {
       cancelarEscuchaUltimasVentas = null;
     }
 
-    const { collection, onSnapshot } =
+    const { collection, onSnapshot, query, where, orderBy, limit } =
       await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
+
+    if (!usuarioVentaActivo) {
+      console.warn("No hay un usuario activo para cargar las últimas ventas.");
+      renderizarUltimasVentas([]);
+      return;
+    }
 
     const referencia = collection(window.db, "ventas");
 
-    cancelarEscuchaUltimasVentas = onSnapshot(
+    const consulta = query(
       referencia,
-      (snapshot) => {
-        const ventas = snapshot.docs
-          .map((documento) => ({
-            id: documento.id,
-            ...documento.data(),
-          }))
-          .filter((venta) => venta.usuario === usuarioVentaActivo)
-          .sort((a, b) => {
-            const fechaA = obtenerFechaJS(a.fecha)?.getTime() || 0;
-            const fechaB = obtenerFechaJS(b.fecha)?.getTime() || 0;
+      where("usuario", "==", usuarioVentaActivo),
+      orderBy("fecha", "desc"),
+      limit(8),
+    );
 
-            return fechaB - fechaA;
-          })
-          .slice(0, 8);
+    cancelarEscuchaUltimasVentas = onSnapshot(
+      consulta,
+      (snapshot) => {
+        const ventas = snapshot.docs.map((documento) => ({
+          id: documento.id,
+          ...documento.data(),
+        }));
 
         renderizarUltimasVentas(ventas);
       },
@@ -2017,6 +1999,7 @@ function formatearFechaVenta(fecha) {
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+    hour12: false,
   });
 }
 
