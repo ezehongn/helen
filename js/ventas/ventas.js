@@ -1801,9 +1801,9 @@ function renderizarUltimasVentas(ventas) {
           ${escaparHTMLVenta(textoProductos)}
         </strong>
 
-        <span>
-          ${formatearFechaVenta(venta.fecha)}
-        </span>
+        <span class="fecha-venta-historial">
+  ${formatearFechaVenta(venta.fecha)}
+</span>
 
         <span>
           ${escaparHTMLVenta(cliente)}
@@ -1993,14 +1993,21 @@ function formatearFechaVenta(fecha) {
     return "Sin fecha";
   }
 
-  return fechaJS.toLocaleString("es-AR", {
+  const fechaFormateada = fechaJS.toLocaleDateString("es-AR", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
   });
+
+  const horaFormateada = fechaJS
+    .toLocaleTimeString("es-AR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    })
+    .replace(/\s/g, "");
+
+  return `${fechaFormateada}<br>${horaFormateada}`;
 }
 
 /* ========================================
