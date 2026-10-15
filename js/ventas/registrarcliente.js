@@ -114,9 +114,8 @@ async function registrarNuevoCliente(evento) {
     .getElementById("nuevo-cliente-telefono")
     .value.trim();
 
-  if (!nombre || !apellido || !dni || !telefono) {
-    mostrarErrorCliente("Completá todos los campos.");
-
+  if (!nombre || !apellido) {
+    mostrarErrorCliente("Completá el nombre y el apellido.");
     return;
   }
 
@@ -135,38 +134,40 @@ async function registrarNuevoCliente(evento) {
      * otro cliente con el mismo DNI.
      */
 
-    const consultaDni = query(
-      collection(window.db, "clientes"),
-      where("dni", "==", dni),
-    );
+    // Verificar duplicados solo si se ingresó un DNI.
+    if (dni) {
+      const consultaDni = query(
+        collection(window.db, "clientes"),
+        where("dni", "==", dni),
+      );
 
-    const resultadoDni = await getDocs(consultaDni);
+      const resultadoDni = await getDocs(consultaDni);
 
-    if (!resultadoDni.empty) {
-      mostrarErrorCliente("Ya existe un cliente registrado con ese DNI.");
+      if (!resultadoDni.empty) {
+        mostrarErrorCliente("Ya existe un cliente registrado con ese DNI.");
 
-      boton.disabled = false;
-
-      boton.textContent = "Guardar cliente";
-
-      return;
+        boton.disabled = false;
+        boton.textContent = "Guardar cliente";
+        return;
+      }
     }
 
     const usuario = sessionStorage.getItem("usuarioOperativo") || "Gon";
 
     const cliente = {
-      nombre: nombre,
-
-      apellido: apellido,
-
-      dni: dni,
-
-      telefono: telefono,
-
+      nombre,
+      apellido,
       creadoEn: serverTimestamp(),
-
       usuarioCreador: usuario,
     };
+
+    if (dni) {
+      cliente.dni = dni;
+    }
+
+    if (telefono) {
+      cliente.telefono = telefono;
+    }
 
     const referencia = await addDoc(collection(window.db, "clientes"), cliente);
 

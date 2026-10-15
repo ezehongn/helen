@@ -145,53 +145,29 @@ function obtenerMontoDeuda(valor) {
 
 function validarRegistrarCliente(elementos) {
   const nombre = elementos.nombre.value.trim();
-
   const apellido = elementos.apellido.value.trim();
-
-  const dni = elementos.dni.value.trim();
-
-  const telefono = elementos.telefono.value.trim();
-
   const deuda = obtenerMontoDeuda(elementos.deuda.value);
 
   if (!nombre) {
     mostrarMensajeRegistrarCliente("Ingresá el nombre del cliente.");
-
     elementos.nombre.focus();
     return false;
   }
 
   if (!apellido) {
     mostrarMensajeRegistrarCliente("Ingresá el apellido del cliente.");
-
     elementos.apellido.focus();
-    return false;
-  }
-
-  if (!dni) {
-    mostrarMensajeRegistrarCliente("Ingresá el DNI del cliente.");
-
-    elementos.dni.focus();
-    return false;
-  }
-
-  if (!telefono) {
-    mostrarMensajeRegistrarCliente("Ingresá el teléfono del cliente.");
-
-    elementos.telefono.focus();
     return false;
   }
 
   if (elementos.deuda.value.trim() && deuda <= 0) {
     mostrarMensajeRegistrarCliente("El monto de la deuda debe ser mayor a $0.");
-
     elementos.deuda.focus();
     return false;
   }
 
   if (deuda > 0 && !elementos.fechaDeuda.value) {
     mostrarMensajeRegistrarCliente("Seleccioná la fecha de la deuda.");
-
     elementos.fechaDeuda.focus();
     return false;
   }
@@ -271,16 +247,18 @@ async function registrarCliente() {
     // VERIFICAR DNI
     // ========================================
 
-    const dniExistente = await verificarDniExistente(dni);
+    // Verificar el DNI únicamente si fue ingresado.
+    if (dni) {
+      const dniExistente = await verificarDniExistente(dni);
 
-    if (dniExistente) {
-      mostrarMensajeRegistrarCliente(
-        "Ya existe un cliente registrado con ese DNI.",
-      );
+      if (dniExistente) {
+        mostrarMensajeRegistrarCliente(
+          "Ya existe un cliente registrado con ese DNI.",
+        );
 
-      elementos.dni.focus();
-
-      return;
+        elementos.dni.focus();
+        return;
+      }
     }
 
     // ========================================
@@ -322,21 +300,21 @@ async function registrarCliente() {
 
     const datosCliente = {
       nombre,
-
       apellido,
-
-      dni,
-
-      telefono,
-
       deudaTotal: deuda,
-
       creadoEn: serverTimestamp(),
-
       actualizadoEn: serverTimestamp(),
-
       usuarioCreador: usuario,
     };
+
+    // Guardar DNI y teléfono solamente si fueron ingresados.
+    if (dni) {
+      datosCliente.dni = dni;
+    }
+
+    if (telefono) {
+      datosCliente.telefono = telefono;
+    }
 
     if (observaciones) {
       datosCliente.observaciones = observaciones;

@@ -467,22 +467,30 @@ function obtenerPagosDeudasMesInicio(mes) {
 
 function obtenerDineroIngresadoVentasInicio(ventas) {
   return ventas.reduce((total, venta) => {
-    // totalEntregado es lo cobrado al momento de vender.
-    // En ventas antiguas puede faltar: recurrimos a mediosPago o importe.
     let cobrado = Number(venta.totalEntregado);
 
     if (!Number.isFinite(cobrado)) {
       if (Array.isArray(venta.mediosPago) && venta.mediosPago.length > 0) {
         cobrado = venta.mediosPago.reduce(
           (suma, medio) => suma + Number(medio.importe || 0),
-          0,
+          0
         );
       } else {
         cobrado = Number(venta.importe ?? venta.total ?? 0);
       }
     }
 
-    return total + Math.max(0, cobrado - Number(venta.vuelto || 0));
+    // Restar los pagos posteriores de deuda que ya están
+    // incluidos en totalEntregado.
+    const pagosPosteriores =
+      pagosAplicadosPorVentaInicio.get(String(venta.id)) || 0;
+
+    const cobroOriginal = Math.max(0, cobrado - pagosPosteriores);
+
+    return total + Math.max(
+      0,
+      cobroOriginal - Number(venta.vuelto || 0)
+    );
   }, 0);
 }
 
@@ -492,6 +500,7 @@ function obtenerDineroIngresadoVentasInicio(ventas) {
 
 function obtenerDineroIngresadoPagosInicio(pagos) {
   return pagos.reduce((total, pago) => {
+    // Contabilizar el monto completo recibido en el pago de deuda.
     return total + Number(pago.monto || 0);
   }, 0);
 }
@@ -519,63 +528,52 @@ function actualizarEstadisticasInicio() {
     esMismoDiaInicio(gasto.fecha, ahora),
   );
 
+  // Cobros realizados directamente al momento de vender.
   const ingresosVentasHoy = obtenerDineroIngresadoVentasInicio(ventasHoy);
 
+  const ingresosVentasMes = obtenerDineroIngresadoVentasInicio(ventasMes);
+
   const ingresosPagosHoy = obtenerDineroIngresadoPagosInicio(pagosHoy);
+
+  const ingresosPagosMes = obtenerDineroIngresadoPagosInicio(pagosMes);
 
   const totalGastosHoy = gastosHoy.reduce(
     (total, gasto) => total + Number(gasto.monto || 0),
     0,
   );
 
-  const resultadoHoy = ingresosVentasHoy + ingresosPagosHoy - totalGastosHoy;
-
-  const ingresosVentasMes = obtenerDineroIngresadoVentasInicio(ventasMes);
-
-  const ingresosPagosMes = obtenerDineroIngresadoPagosInicio(pagosMes);
-
   const totalGastosMes = gastosMes.reduce(
     (total, gasto) => total + Number(gasto.monto || 0),
     0,
   );
 
+  const resultadoHoy = ingresosVentasHoy + ingresosPagosHoy - totalGastosHoy;
+
   const resultadoMes = ingresosVentasMes + ingresosPagosMes - totalGastosMes;
 
   // Tarjetas superiores.
-
   establecerTextoInicio(
     "ventas-hoy-inicio",
     ingresosVentasHoy + ingresosPagosHoy,
   );
 
   establecerTextoInicio("ventas-mes-inicio", resultadoMes);
-
   establecerTextoInicio("cantidad-ventas-inicio", ventasMes.length, false);
-
   establecerTextoInicio("gastos-mes-inicio", totalGastosMes);
 
   // Resumen de hoy.
-
   establecerTextoInicio("resumen-ventas-hoy-inicio", ingresosVentasHoy);
-
   establecerTextoInicio("resumen-pagos-hoy-inicio", ingresosPagosHoy);
-
   establecerTextoInicio("resumen-gastos-hoy-inicio", totalGastosHoy);
-
   establecerTextoInicio("resumen-resultado-hoy-inicio", resultadoHoy);
 
   // Resumen del mes.
-
   establecerTextoInicio("resumen-ventas-mes-inicio", ingresosVentasMes);
-
   establecerTextoInicio("resumen-pagos-mes-inicio", ingresosPagosMes);
-
   establecerTextoInicio("resumen-gastos-mes-inicio", totalGastosMes);
-
   establecerTextoInicio("resumen-resultado-mes-inicio", resultadoMes);
 
-  // Comparaciones con el período anterior.
-
+  // Comparación con el mes anterior.
   const mesAnterior = obtenerMesAnteriorInicio(mesSeleccionadoInicio);
 
   const ventasMesAnterior = ventasInicio.filter((venta) =>
@@ -627,8 +625,7 @@ function actualizarEstadisticasInicio() {
     "vs mes anterior",
   );
 
-  // Fechas mostradas en los resúmenes.
-
+  // Fechas de los resúmenes.
   const fechaHoy = document.getElementById("fecha-resumen-hoy-inicio");
 
   if (fechaHoy) {
