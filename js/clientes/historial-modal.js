@@ -244,6 +244,10 @@ async function cargarHistorialCliente(cliente) {
       movimientos.push(crearMovimientoCliente(documento.id, movimiento));
     });
 
+    // Calcular el saldo actual de cada producto de deuda inicial
+    // descontando las aplicaciones registradas en los pagos del cliente.
+    aplicarPagosAProductosDeudaInicialHistorial(movimientos);
+
     movimientosHistorialCliente = movimientos
       .filter(Boolean)
       .sort(
@@ -328,14 +332,20 @@ function crearMovimientoCliente(movimientoId, movimiento) {
 
   const fecha = obtenerFechaMovimiento(movimiento.fecha);
 
-  let monto = 0;
+  const productosAdeudados = Array.isArray(movimiento.productosAdeudados)
+    ? movimiento.productosAdeudados.map((producto) => ({ ...producto }))
+    : [];
 
-  if (tipo === "pago") {
-    monto = Number(movimiento.monto) || 0;
-  }
+  // En las deudas iniciales el monto representa la suma adeudada al registrar al cliente.
+  let monto = Number(movimiento.monto) || 0;
 
-  if (tipo === "interes") {
-    monto = Number(movimiento.monto) || 0;
+  if (tipo === "deuda_inicial" && monto <= 0 && productosAdeudados.length) {
+    monto = productosAdeudados.reduce(
+      (total, producto) =>
+        total +
+        (Number(producto.montoAdeudado ?? producto.saldoPendiente) || 0),
+      0,
+    );
   }
 
   let titulo = "Movimiento";
@@ -387,7 +397,69 @@ function crearMovimientoCliente(movimientoId, movimiento) {
     descripcionOriginal: movimiento.descripcion || "",
 
     montoAplicado: Number(movimiento.montoAplicado) || 0,
+
+    productosAdeudados,
+
+    aplicaciones: Array.isArray(movimiento.aplicaciones)
+      ? movimiento.aplicaciones
+      : [],
   };
+}
+
+/* ========================================
+   APLICAR PAGOS A PRODUCTOS DE DEUDA INICIAL
+======================================== */
+
+function aplicarPagosAProductosDeudaInicialHistorial(movimientos) {
+  const pagosPorProducto = new Map();
+
+  movimientos.forEach((movimiento) => {
+    if (movimiento.tipo !== "pago") return;
+
+    const aplicaciones = Array.isArray(movimiento.aplicaciones)
+      ? movimiento.aplicaciones
+      : [];
+
+    aplicaciones.forEach((aplicacion) => {
+      if (
+        aplicacion.origen !== "deuda_inicial" &&
+        aplicacion.tipo !== "deuda_inicial"
+      ) {
+        return;
+      }
+
+      if (!aplicacion.deudaProductoId) return;
+
+      const monto = Number(aplicacion.monto) || 0;
+      pagosPorProducto.set(
+        aplicacion.deudaProductoId,
+        (pagosPorProducto.get(aplicacion.deudaProductoId) || 0) + monto,
+      );
+    });
+  });
+
+  movimientos.forEach((movimiento) => {
+    if (movimiento.tipo !== "deuda_inicial") return;
+
+    movimiento.productosAdeudados = (movimiento.productosAdeudados || []).map(
+      (producto, indice) => {
+        const idProductoDeuda =
+          producto.id || `${movimiento.movimientoId}_${indice}`;
+
+        const montoInicial =
+          Number(producto.montoAdeudado ?? producto.saldoPendiente) || 0;
+
+        const montoPagado = pagosPorProducto.get(idProductoDeuda) || 0;
+
+        return {
+          ...producto,
+          id: idProductoDeuda,
+          montoAdeudado: montoInicial,
+          saldoPendiente: Math.max(0, montoInicial - montoPagado),
+        };
+      },
+    );
+  });
 }
 
 /* ========================================
@@ -666,60 +738,80 @@ function construirDetalleMovimiento(movimiento) {
 }
 
 function construirDetalleDeudaInicial(movimiento) {
-  return `
-        <div class="detalle-grid-historial">
+  let html = `
+    <div class="detalle-grid-historial">
+      <div class="dato-detalle-historial">
+        <span>Monto inicial</span>
+        <strong>${formatearPrecioHistorial(movimiento.monto)}</strong>
+      </div>
+      <div class="dato-detalle-historial">
+        <span>Usuario</span>
+        <strong>${escaparHTMLHistorial(movimiento.usuario)}</strong>
+      </div>
+      <div class="dato-detalle-historial">
+        <span>Fecha de la deuda</span>
+        <strong>${formatearFechaHistorial(movimiento.fecha)}</strong>
+      </div>
+    </div>
+  `;
 
-            <div class="dato-detalle-historial">
-                <span>
-                    Monto inicial
-                </span>
-
-                <strong>
-                    ${formatearPrecioHistorial(movimiento.monto)}
-                </strong>
-            </div>
-
-            <div class="dato-detalle-historial">
-                <span>
-                    Usuario
-                </span>
-
-                <strong>
-                    ${escaparHTMLHistorial(movimiento.usuario)}
-                </strong>
-            </div>
-
-            <div class="dato-detalle-historial">
-                <span>
-                    Fecha
-                </span>
-
-                <strong>
-                    ${formatearFechaHistorial(movimiento.fecha)}
-                </strong>
-            </div>
-
+  if (
+    Array.isArray(movimiento.productosAdeudados) &&
+    movimiento.productosAdeudados.length > 0
+  ) {
+    html += `
+      <div class="productos-detalle-historial">
+        <div class="titulo-productos-historial">Productos adeudados</div>
+        <div class="producto-detalle-historial fila-deuda-inicial-historial encabezado-deuda-inicial-historial">
+          <div class="nombre-producto-historial">Producto</div>
+          <div class="talle-producto-historial">Precio</div>
+          <div class="cantidad-producto-historial">Deuda inicial</div>
+          <div class="subtotal-producto-historial">Saldo pendiente</div>
         </div>
-
-        ${
-          movimiento.descripcionOriginal
-            ? `
-                    <div class="texto-extra-historial">
-                        <strong>
-                            Descripción:
-                        </strong>
-
-                        ${escaparHTMLHistorial(movimiento.descripcionOriginal)}
-                    </div>
-                `
-            : ""
-        }
     `;
-}
 
-/* ========================================
-   DETALLE VENTA
-======================================== */
+    movimiento.productosAdeudados.forEach((producto) => {
+      const nombre = producto.nombre || "Producto";
+      const talle = producto.talle ? `Talle ${producto.talle}` : "";
+      const precio = Number(producto.precioProducto ?? producto.precio) || 0;
+      const montoAdeudado =
+        Number(producto.montoAdeudado ?? producto.saldoPendiente) || 0;
+      const saldoPendiente =
+        Number(producto.saldoPendiente ?? montoAdeudado) || 0;
+
+      html += `
+        <div class="producto-detalle-historial fila-deuda-inicial-historial">
+          <div class="nombre-producto-historial">
+            ${escaparHTMLHistorial(nombre)}
+            ${talle ? `<span class="subdetalle-producto-historial">${escaparHTMLHistorial(talle)}</span>` : ""}
+          </div>
+          <div class="talle-producto-historial">
+            ${formatearPrecioHistorial(precio)}
+          </div>
+          <div class="cantidad-producto-historial">
+            ${formatearPrecioHistorial(montoAdeudado)}
+          </div>
+          <div class="subtotal-producto-historial">
+            ${formatearPrecioHistorial(saldoPendiente)}
+          </div>
+        </div>
+      `;
+    });
+
+    html += `</div>`;
+  }
+
+  if (movimiento.descripcionOriginal) {
+    html += `
+      <div class="texto-extra-historial">
+        <strong>Descripción:</strong>
+        ${escaparHTMLHistorial(movimiento.descripcionOriginal)}
+      </div>
+    `;
+  }
+
+  return html;
+}
 
 function construirDetalleVenta(movimiento) {
   let html = `
@@ -1320,6 +1412,10 @@ function textoTipoMovimiento(tipo) {
 
   if (tipo === "interes") {
     return "Interés";
+  }
+
+  if (tipo === "deuda_inicial") {
+    return "Deuda inicial";
   }
 
   return "Movimiento";

@@ -1,348 +1,577 @@
-/* ========================================
-   MODAL REGISTRAR CLIENTE
-======================================== */
-
+/* MODAL REGISTRAR CLIENTE */
 #modal-registrar-cliente {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 20px;
-
-    background: rgba(15, 23, 42, 0.35);
-
-    opacity: 0;
-    visibility: hidden;
-
-    transition:
-        opacity 0.2s ease,
-        visibility 0.2s ease;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.38);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
 }
-
 #modal-registrar-cliente:not([hidden]) {
-    opacity: 1;
-    visibility: visible;
+  opacity: 1;
+  visibility: visible;
 }
-
-
-/* ========================================
-   CONTENIDO
-======================================== */
-
 #modal-registrar-cliente .contenido-modal-cliente {
-    width: min(100%, 620px);
-    max-height: calc(100vh - 40px);
+  width: min(100%, 1100px);
+  max-height: calc(100vh - 24px);
+  overflow-y: auto;
 
-    overflow-y: auto;
+  background: #ffffff;
+  border-radius: 10px;
 
-    background: #ffffff;
-    border-radius: 10px;
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.18);
 
-    box-shadow: 0 12px 35px rgba(15, 23, 42, 0.18);
-
-    padding: 24px;
+  padding: 20px 24px;
+  box-sizing: border-box;
+}
+#modal-registrar-cliente .encabezado-modal-cliente {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 20px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid #e1e7ef;
+}
+#modal-registrar-cliente .encabezado-modal-cliente h2 {
+  margin: 0 0 6px;
+  font-size: 25px;
+  font-weight: 650;
+}
+#modal-registrar-cliente .encabezado-modal-cliente p {
+  margin: 0;
+  color: #718198;
+  font-size: 14px;
+}
+#modal-registrar-cliente .cerrar-modal-cliente {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #718198;
+  font-size: 25px;
+  cursor: pointer;
+}
+#modal-registrar-cliente .cerrar-modal-cliente:hover {
+  background: #f1f4f8;
+  color: #24344d;
+}
+#modal-registrar-cliente h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 650;
+}
+#modal-registrar-cliente .campos-cliente {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 22px;
+}
+#modal-registrar-cliente .campo-cliente {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+#modal-registrar-cliente .campo-cliente label {
+  color: #24344d;
+  font-size: 13px;
+  font-weight: 550;
+}
+#modal-registrar-cliente .campo-cliente label span {
+  color: #e05252;
+}
+#modal-registrar-cliente .campo-cliente input,
+#modal-registrar-cliente .campo-cliente textarea,
+#modal-registrar-cliente .fila-producto-adeudado input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #d4deea;
+  border-radius: 6px;
+  background: #fff;
+  color: #24344d;
+  font:
+    13px "Segoe UI",
+    Arial,
+    sans-serif;
+  outline: none;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+#modal-registrar-cliente .campo-cliente input,
+#modal-registrar-cliente .fila-producto-adeudado input {
+  height: 40px;
+  padding: 0 12px;
+}
+#modal-registrar-cliente .campo-cliente textarea {
+  min-height: 72px;
+  padding: 11px 12px;
+  resize: vertical;
+}
+#modal-registrar-cliente input::placeholder,
+#modal-registrar-cliente textarea::placeholder {
+  color: #9aa8ba;
+}
+#modal-registrar-cliente input:focus,
+#modal-registrar-cliente textarea:focus {
+  border-color: #2587e8;
+  box-shadow: 0 0 0 2px rgba(37, 135, 232, 0.09);
+}
+#modal-registrar-cliente .seccion-deudas-previas {
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid #e1e7ef;
+}
+#modal-registrar-cliente .titulo-deudas-previas {
+  margin-bottom: 16px;
+}
+#modal-registrar-cliente .titulo-deudas-previas h3 {
+  margin-bottom: 7px;
+}
+#modal-registrar-cliente .titulo-deudas-previas p {
+  margin: 0;
+  color: #718198;
+  font-size: 14px;
+}
+#modal-registrar-cliente .tabla-deudas-previas {
+  border: 1px solid #e0e8f2;
+  border-radius: 8px;
+  overflow: visible;
+}
+#modal-registrar-cliente .cabecera-deudas-previas,
+#modal-registrar-cliente .fila-producto-adeudado {
+  display: grid;
+  grid-template-columns:
+    minmax(220px, 1.5fr) minmax(150px, 0.9fr) minmax(160px, 0.9fr)
+    44px;
+  gap: 14px;
+  align-items: center;
+  padding: 10px 14px;
+}
+#modal-registrar-cliente .cabecera-deudas-previas {
+  background: #f2f6fb;
+  font-size: 13px;
+  font-weight: 650;
+}
+#modal-registrar-cliente .fila-producto-adeudado {
+  border-top: 1px solid #e5ebf3;
+}
+#modal-registrar-cliente .fila-producto-adeudado .precio-producto-adeudado {
+  background: #f2f5f9;
+  color: #718198;
+}
+#modal-registrar-cliente .seccion-fecha-deuda {
+  margin-top: 20px;
+  max-width: 360px;
+}
+#modal-registrar-cliente .selector-producto-contenedor {
+  position: relative;
+  min-width: 0;
+}
+#modal-registrar-cliente .buscador-producto-adeudado {
+  padding-right: 34px !important;
+}
+#modal-registrar-cliente .buscador-producto-adeudado[aria-expanded="true"] {
+  border-color: #2587e8;
+}
+#modal-registrar-cliente .opciones-producto-adeudado {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 260px;
+  overflow-y: auto;
+  border: 1px solid #d4deea;
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.14);
+}
+#modal-registrar-cliente .opciones-producto-adeudado[hidden] {
+  display: none;
+}
+#modal-registrar-cliente .opcion-producto-adeudado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-bottom: 1px solid #edf1f6;
+  background: #fff;
+  color: #24344d;
+  text-align: left;
+  font:
+    13px "Segoe UI",
+    Arial,
+    sans-serif;
+  cursor: pointer;
+}
+#modal-registrar-cliente .opcion-producto-adeudado:last-child {
+  border-bottom: 0;
+}
+#modal-registrar-cliente .opcion-producto-adeudado:hover,
+#modal-registrar-cliente .opcion-producto-adeudado:focus {
+  background: #f1f7ff;
+  outline: none;
+}
+#modal-registrar-cliente .opcion-producto-adeudado small {
+  flex-shrink: 0;
+  color: #718198;
+  font-size: 12px;
+}
+#modal-registrar-cliente .opcion-producto-sin-resultados {
+  padding: 12px;
+  color: #718198;
+  font-size: 12px;
 }
 
-
+#modal-registrar-cliente .boton-quitar-producto-adeudado {
+  height: 40px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d4deea;
+  border-radius: 6px;
+  color: #e3342f;
+  background: #fff;
+  font-size: 19px;
+  cursor: pointer;
+}
+#modal-registrar-cliente .boton-quitar-producto-adeudado:hover {
+  background: #fff3f2;
+  border-color: #f2b8b5;
+}
+#modal-registrar-cliente .boton-agregar-producto-adeudado {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border: 1px dashed #2587e8;
+  border-radius: 7px;
+  background: #fff;
+  color: #1676d2;
+  font:
+    600 13px "Segoe UI",
+    Arial,
+    sans-serif;
+  cursor: pointer;
+}
+#modal-registrar-cliente .boton-agregar-producto-adeudado:hover {
+  background: #f4f9ff;
+}
+#modal-registrar-cliente .resumen-deuda-inicial {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  margin-top: 14px;
+  padding: 14px 18px;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  background: #f3f8ff;
+}
+#modal-registrar-cliente .resumen-deuda-inicial > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-right: 24px;
+  border-right: 1px solid #cbdcf2;
+}
+#modal-registrar-cliente .resumen-deuda-inicial span {
+  font-size: 13px;
+}
+#modal-registrar-cliente .resumen-deuda-inicial strong {
+  color: #1269c7;
+  font-size: 26px;
+}
+#modal-registrar-cliente .cantidad-productos-adeudados {
+  color: #718198;
+}
+#modal-registrar-cliente .campo-observaciones-registrar {
+  margin-top: 18px;
+}
+#modal-registrar-cliente .mensaje-modal-cliente {
+  min-height: 18px;
+  margin-top: 12px;
+  font-size: 13px;
+}
+#modal-registrar-cliente .acciones-modal-cliente {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+#modal-registrar-cliente .boton-cancelar-cliente,
+#modal-registrar-cliente .boton-guardar-cliente {
+  min-height: 40px;
+  padding: 0 18px;
+  border-radius: 7px;
+  font:
+    600 13px "Segoe UI",
+    Arial,
+    sans-serif;
+  cursor: pointer;
+}
+#modal-registrar-cliente .boton-cancelar-cliente {
+  border: 1px solid #d4deea;
+  background: #fff;
+  color: #53647a;
+}
+#modal-registrar-cliente .boton-cancelar-cliente:hover {
+  background: #f5f7fa;
+}
+#modal-registrar-cliente .boton-guardar-cliente {
+  border: 1px solid #2587e8;
+  background: #2587e8;
+  color: #fff;
+}
+#modal-registrar-cliente .boton-guardar-cliente:hover {
+  background: #1976d2;
+}
+#modal-registrar-cliente .boton-guardar-cliente:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+#modal-registrar-cliente .estado-productos-vacio {
+  padding: 18px;
+  color: #718198;
+  font-size: 13px;
+  text-align: center;
+}
 /* ========================================
-   ENCABEZADO
+   MODAL MÁS COMPACTO
 ======================================== */
 
 #modal-registrar-cliente .encabezado-modal-cliente {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+  margin-bottom: 16px;
+}
 
-    gap: 20px;
+#modal-registrar-cliente .separador-modal-cliente {
+  margin: 18px 0 14px;
+}
 
-    margin-bottom: 24px;
+#modal-registrar-cliente .campo-observaciones-registrar {
+  margin-top: 12px;
+}
+
+#modal-registrar-cliente .campo-cliente textarea {
+  min-height: 60px;
+}
+
+#modal-registrar-cliente .mensaje-modal-cliente {
+  margin-top: 8px;
+}
+
+#modal-registrar-cliente .acciones-modal-cliente {
+  margin-top: 14px;
+}
+
+/* ========================================
+   AJUSTE FINAL: MODAL MÁS COMPACTO
+======================================== */
+
+#modal-registrar-cliente .contenido-modal-cliente {
+  padding: 16px 24px;
+  max-height: calc(100vh - 16px);
+}
+
+#modal-registrar-cliente .encabezado-modal-cliente {
+  margin-bottom: 10px;
 }
 
 #modal-registrar-cliente .encabezado-modal-cliente h2 {
-    margin: 0 0 5px;
-
-    color: #24344d;
-
-    font-family: "Segoe UI", Arial, sans-serif;
-    font-size: 20px;
-    font-weight: 600;
+  margin-bottom: 3px;
 }
-
-#modal-registrar-cliente .encabezado-modal-cliente p {
-    margin: 0;
-
-    color: #7a8798;
-
-    font-family: "Segoe UI", Arial, sans-serif;
-    font-size: 12px;
-}
-
-
-/* ========================================
-   BOTÓN CERRAR
-======================================== */
-
-#modal-registrar-cliente .cerrar-modal-cliente {
-    width: 30px;
-    height: 30px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 0;
-
-    border: none;
-    border-radius: 6px;
-
-    background: transparent;
-    color: #7a8798;
-
-    font-size: 23px;
-    line-height: 1;
-
-    cursor: pointer;
-
-    transition:
-        background-color 0.15s ease,
-        color 0.15s ease;
-}
-
-#modal-registrar-cliente .cerrar-modal-cliente:hover {
-    background: #f1f4f8;
-    color: #24344d;
-}
-
-
-/* ========================================
-   CAMPOS
-======================================== */
 
 #modal-registrar-cliente .campos-cliente {
-    display: grid;
-
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    gap: 16px;
+  gap: 10px 16px;
 }
 
 #modal-registrar-cliente .campo-cliente {
-    display: flex;
-    flex-direction: column;
-
-    gap: 6px;
-}
-
-#modal-registrar-cliente .campo-cliente label {
-    color: #24344d;
-
-    font-family: "Segoe UI", Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-#modal-registrar-cliente .campo-cliente label span {
-    color: #e05252;
-}
-
-#modal-registrar-cliente .campo-cliente input,
-#modal-registrar-cliente .campo-cliente textarea {
-    width: 100%;
-    box-sizing: border-box;
-
-    border: 1px solid #d9e0e8;
-    border-radius: 6px;
-
-    background: #ffffff;
-    color: #24344d;
-
-    font-family: "Segoe UI", Arial, sans-serif;
-    font-size: 12px;
-
-    outline: none;
-
-    transition:
-        border-color 0.15s ease,
-        box-shadow 0.15s ease;
+  gap: 4px;
 }
 
 #modal-registrar-cliente .campo-cliente input {
-    height: 38px;
-    padding: 0 11px;
+  height: 34px;
+}
+
+#modal-registrar-cliente .separador-modal-cliente {
+  margin: 12px 0 10px;
+}
+
+#modal-registrar-cliente .campo-observaciones-registrar {
+  margin-top: 8px;
 }
 
 #modal-registrar-cliente .campo-cliente textarea {
-    min-height: 76px;
-
-    padding: 10px 11px;
-
-    resize: vertical;
+  min-height: 48px;
+  padding: 7px 10px;
 }
-
-#modal-registrar-cliente .campo-cliente input::placeholder,
-#modal-registrar-cliente .campo-cliente textarea::placeholder {
-    color: #a7b0bd;
-}
-
-#modal-registrar-cliente .campo-cliente input:focus,
-#modal-registrar-cliente .campo-cliente textarea:focus {
-    border-color: #2587e8;
-
-    box-shadow: 0 0 0 2px rgba(37, 135, 232, 0.08);
-}
-
-
-/* ========================================
-   SEPARADOR DEUDA
-======================================== */
-
-#modal-registrar-cliente .separador-modal-cliente {
-    display: flex;
-    align-items: center;
-
-    gap: 12px;
-
-    margin: 25px 0 18px;
-}
-
-#modal-registrar-cliente .separador-modal-cliente::before,
-#modal-registrar-cliente .separador-modal-cliente::after {
-    content: "";
-
-    flex: 1;
-
-    height: 1px;
-
-    background: #e5e9ef;
-}
-
-#modal-registrar-cliente .separador-modal-cliente span {
-    color: #24344d;
-
-    font-family: "Segoe UI", Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-
-    white-space: nowrap;
-}
-
-
-/* ========================================
-   OBSERVACIONES
-======================================== */
-
-#modal-registrar-cliente .campo-observaciones-registrar {
-    margin-top: 16px;
-}
-
-
-/* ========================================
-   MENSAJE
-======================================== */
-
-#modal-registrar-cliente .mensaje-modal-cliente {
-    min-height: 18px;
-
-    margin-top: 14px;
-
-    font-family: "Segoe UI", Arial, sans-serif;
-    font-size: 12px;
-}
-
-
-/* ========================================
-   ACCIONES
-======================================== */
 
 #modal-registrar-cliente .acciones-modal-cliente {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-
-    gap: 10px;
-
-    margin-top: 22px;
+  margin-top: 10px;
 }
 
 #modal-registrar-cliente .boton-cancelar-cliente,
 #modal-registrar-cliente .boton-guardar-cliente {
-    height: 36px;
-
-    padding: 0 16px;
-
-    border-radius: 6px;
-
-    font-family: "Segoe UI", Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-
-    cursor: pointer;
-
-    transition:
-        background-color 0.15s ease,
-        border-color 0.15s ease,
-        opacity 0.15s ease;
+  height: 32px;
 }
 
-#modal-registrar-cliente .boton-cancelar-cliente {
-    border: 1px solid #d9e0e8;
-
-    background: #ffffff;
-    color: #59677a;
+#modal-registrar-cliente .mensaje-modal-cliente {
+  min-height: 0;
+  margin-top: 4px;
 }
 
-#modal-registrar-cliente .boton-cancelar-cliente:hover {
-    background: #f5f7fa;
+/* Acciones para agregar productos */
+#modal-registrar-cliente .acciones-agregar-productos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
 }
 
-#modal-registrar-cliente .boton-guardar-cliente {
-    border: 1px solid #2587e8;
-
-    background: #2587e8;
-    color: #ffffff;
+#modal-registrar-cliente
+  .acciones-agregar-productos
+  .boton-agregar-producto-adeudado {
+  margin-top: 0;
 }
 
-#modal-registrar-cliente .boton-guardar-cliente:hover {
-    background: #1976d2;
+#modal-registrar-cliente .boton-agregar-producto-libre {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px dashed #aab7c8;
+  border-radius: 7px;
+  background: #fff;
+  color: #52657d;
+  font:
+    600 13px "Segoe UI",
+    Arial,
+    sans-serif;
+  cursor: pointer;
 }
 
-#modal-registrar-cliente .boton-guardar-cliente:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+#modal-registrar-cliente .boton-agregar-producto-libre:hover {
+  background: #f5f7fa;
+  border-color: #718198;
 }
 
+/* El precio del producto libre se puede editar */
+#modal-registrar-cliente .fila-producto-libre .precio-producto-adeudado {
+  background: #fff;
+  color: #24344d;
+}
 
-/* ========================================
-   RESPONSIVE
-======================================== */
+@media (max-width: 760px) {
+  #modal-registrar-cliente {
+    padding: 10px;
+  }
+  #modal-registrar-cliente .contenido-modal-cliente {
+    padding: 20px;
+    max-height: calc(100vh - 20px);
+  }
+  #modal-registrar-cliente .campos-cliente {
+    grid-template-columns: 1fr;
+  }
+  #modal-registrar-cliente .cabecera-deudas-previas {
+    display: none;
+  }
+  #modal-registrar-cliente .fila-producto-adeudado {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 40px;
+    gap: 9px;
+  }
+  #modal-registrar-cliente
+    .fila-producto-adeudado
+    .selector-producto-contenedor {
+    grid-column: 1 / -1;
+  }
+  #modal-registrar-cliente .fila-producto-adeudado::before {
+    content: "Precio del producto";
+    grid-column: 1;
+    grid-row: 2;
+    color: #718198;
+    font-size: 11px;
+  }
+  #modal-registrar-cliente .fila-producto-adeudado::after {
+    content: "Importe adeudado";
+    grid-column: 2;
+    grid-row: 2;
+    color: #718198;
+    font-size: 11px;
+  }
+  #modal-registrar-cliente .fila-producto-adeudado .precio-producto-adeudado {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  #modal-registrar-cliente .fila-producto-adeudado .importe-producto-adeudado {
+    grid-column: 2;
+    grid-row: 3;
+  }
+  #modal-registrar-cliente
+    .fila-producto-adeudado
+    .boton-quitar-producto-adeudado {
+    grid-column: 3;
+    grid-row: 3;
+  }
+  #modal-registrar-cliente .fila-producto-adeudado {
+    position: relative;
+  }
 
-@media (max-width: 600px) {
+  #modal-registrar-cliente .fila-producto-adeudado:focus-within {
+    z-index: 10;
+  }
 
-    #modal-registrar-cliente {
-        padding: 12px;
-    }
+  /* Mostrar los resultados por encima de las filas siguientes */
+  #modal-registrar-cliente .selector-producto-contenedor {
+    position: relative;
+    min-width: 0;
+    z-index: 1;
+  }
+  #modal-registrar-cliente .resumen-deuda-inicial {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+  #modal-registrar-cliente .resumen-deuda-inicial > div {
+    border-right: 0;
+    border-bottom: 1px solid #cbdcf2;
+    padding: 0 0 8px;
+  }
+  #modal-registrar-cliente .selector-producto-contenedor:focus-within {
+    z-index: 20;
+  }
 
-    #modal-registrar-cliente .contenido-modal-cliente {
-        padding: 20px;
-
-        max-height: calc(100vh - 24px);
-    }
-
-    #modal-registrar-cliente .campos-cliente {
-        grid-template-columns: 1fr;
-    }
-
-    #modal-registrar-cliente .acciones-modal-cliente {
-        flex-direction: column-reverse;
-        align-items: stretch;
-    }
-
-    #modal-registrar-cliente .boton-cancelar-cliente,
-    #modal-registrar-cliente .boton-guardar-cliente {
-        width: 100%;
-    }
+  #modal-registrar-cliente .opciones-producto-adeudado {
+    position: absolute;
+    z-index: 100;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    max-height: 260px;
+    overflow-y: auto;
+    border: 1px solid #d4deea;
+    border-radius: 7px;
+    background: #fff;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.14);
+  }
+  #modal-registrar-cliente .acciones-modal-cliente {
+    flex-direction: column-reverse;
+  }
+  #modal-registrar-cliente .boton-cancelar-cliente,
+  #modal-registrar-cliente .boton-guardar-cliente {
+    width: 100%;
+  }
 }

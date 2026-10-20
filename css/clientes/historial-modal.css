@@ -1150,3 +1150,25 @@
     }
 
 }
+
+/* ======================================
+   PRODUCTOS DE DEUDA INICIAL
+====================================== */
+
+.fila-deuda-inicial-historial.encabezado-deuda-inicial-historial {
+    background: #f5f7fa;
+    color: #65748a;
+    font-weight: 600;
+}
+
+.fila-deuda-inicial-historial.encabezado-deuda-inicial-historial > div {
+    font-size: 9px;
+    font-weight: 600;
+}
+
+.subdetalle-producto-historial {
+    display: block;
+    margin-top: 3px;
+    color: #7b8798;
+    font-size: 9px;
+}

@@ -915,90 +915,102 @@ function renderizarProductosPendientes() {
   contenedor.innerHTML = "";
 
   /* ========================================
-       DEUDA INICIAL
+       DEUDA INICIAL DESGLOSADA POR PRODUCTO
   ======================================== */
+
+  const detalleDeudaInicial = obtenerDetalleDeudasInicialesCliente(
+    movimientosClientes[clienteSeleccionado?.id] || [],
+  );
 
   if (deudaInicialPendienteCliente > 0) {
     const bloqueDeudaInicial = document.createElement("div");
-
     bloqueDeudaInicial.className = "bloque-venta-deuda bloque-deuda-inicial";
 
     bloqueDeudaInicial.innerHTML = `
       <div class="encabezado-venta-deuda">
-
         <div class="info-venta-deuda">
-
-          <strong>
-            Deuda inicial
-          </strong>
-
-          <span>
-            Deuda registrada al ingresar el cliente al sistema
-          </span>
-
+          <strong>Deuda inicial</strong>
+          <span>Deuda registrada al ingresar el cliente al sistema</span>
         </div>
-
         <div class="resumen-venta-deuda">
-
           <div class="saldo-venta">
-
             <small>Saldo pendiente</small>
-
-            <strong>
-              ${formatearPrecioCliente(deudaInicialPendienteCliente)}
-            </strong>
-
+            <strong>${formatearPrecioCliente(deudaInicialPendienteCliente)}</strong>
           </div>
-
         </div>
-
       </div>
+    `;
 
-      <div class="fila-producto-deuda deuda-inicial-fila">
+    const productosIniciales = detalleDeudaInicial.productos.filter(
+      (producto) => producto.saldoPendiente > 0,
+    );
 
+    productosIniciales.forEach((producto) => {
+      const fila = document.createElement("div");
+      fila.className = "fila-producto-deuda deuda-inicial-fila";
+
+      fila.innerHTML = `
+        <div>
+          <input
+            type="checkbox"
+            class="checkbox-producto-deuda-inicial"
+            data-deuda-producto-id="${escaparHTMLCliente(producto.id)}"
+            aria-label="Seleccionar deuda de ${escaparHTMLCliente(producto.nombre)}"
+          >
+        </div>
+        <div class="producto-deuda-nombre">
+          <strong>${escaparHTMLCliente(producto.nombre)}${producto.talle ? ` (Talle ${escaparHTMLCliente(producto.talle)})` : ""}</strong>
+        </div>
+        <div>${formatearFechaCortaCliente(obtenerFechaCliente(producto.fecha))}</div>
+        <div>1</div>
+        <div>${formatearPrecioCliente(producto.precioProducto)}</div>
+        <div>${formatearPrecioCliente(producto.montoAdeudado)}</div>
+        <div>${formatearPrecioCliente(producto.saldoPendiente)}</div>
+      `;
+
+      fila.querySelector(".checkbox-producto-deuda-inicial")?.addEventListener(
+        "change",
+        () => actualizarResumenPagoCliente(true),
+      );
+
+      bloqueDeudaInicial.appendChild(fila);
+    });
+
+    const saldoNoDesglosado =
+      detalleDeudaInicial.deudaAgregada + detalleDeudaInicial.intereses;
+
+    if (saldoNoDesglosado > 0) {
+      const fila = document.createElement("div");
+      fila.className = "fila-producto-deuda deuda-inicial-fila";
+
+      const nombreFila =
+        detalleDeudaInicial.deudaAgregada > 0
+          ? "Deuda anterior al sistema"
+          : "Intereses de deuda inicial";
+
+      fila.innerHTML = `
         <div>
           <input
             type="checkbox"
             class="checkbox-deuda-inicial"
+            aria-label="Seleccionar ${nombreFila}"
           >
         </div>
+        <div class="producto-deuda-nombre"><strong>${nombreFila}</strong></div>
+        <div>—</div>
+        <div>—</div>
+        <div>—</div>
+        <div>—</div>
+        <div>${formatearPrecioCliente(saldoNoDesglosado)}</div>
+      `;
 
-        <div class="producto-deuda-nombre">
-          <strong>
-            Deuda anterior al sistema
-          </strong>
-        </div>
+      fila.querySelector(".checkbox-deuda-inicial")?.addEventListener(
+        "change",
+        () => actualizarResumenPagoCliente(true),
+      );
 
-        <div>
-          —
-        </div>
-
-        <div>
-          —
-        </div>
-
-        <div>
-          —
-        </div>
-
-        <div>
-          —
-        </div>
-
-        <div>
-          ${formatearPrecioCliente(deudaInicialPendienteCliente)}
-        </div>
-
-      </div>
-    `;
-
-    const checkboxDeudaInicial = bloqueDeudaInicial.querySelector(
-      ".checkbox-deuda-inicial",
-    );
-
-    checkboxDeudaInicial?.addEventListener("change", () => {
-      actualizarResumenPagoCliente(true);
-    });
+      bloqueDeudaInicial.appendChild(fila);
+    }
 
     contenedor.appendChild(bloqueDeudaInicial);
   }
@@ -1349,13 +1361,47 @@ function actualizarResumenPagoCliente(actualizarMontoDesdeCheckbox = false) {
 ======================================== */
 
 function obtenerDeudaInicialSeleccionada() {
-  const checkbox = document.querySelector(".checkbox-deuda-inicial:checked");
+  if (!clienteSeleccionado) return 0;
 
-  if (!checkbox) {
-    return 0;
-  }
+  const detalle = obtenerDetalleDeudasInicialesCliente(
+    movimientosClientes[clienteSeleccionado.id] || [],
+  );
 
-  return deudaInicialPendienteCliente;
+  const idsSeleccionados = new Set(
+    [...document.querySelectorAll(".checkbox-producto-deuda-inicial:checked")]
+      .map((checkbox) => checkbox.dataset.deudaProductoId)
+      .filter(Boolean),
+  );
+
+  const totalProductos = detalle.productos
+    .filter((producto) => idsSeleccionados.has(producto.id))
+    .reduce((total, producto) => total + producto.saldoPendiente, 0);
+
+  const checkboxGlobal = document.querySelector(".checkbox-deuda-inicial:checked");
+  const totalNoDesglosado = checkboxGlobal
+    ? detalle.deudaAgregada + detalle.intereses
+    : 0;
+
+  return totalProductos + totalNoDesglosado;
+}
+
+function obtenerProductosDeudaInicialSeleccionados() {
+  if (!clienteSeleccionado) return [];
+
+  const detalle = obtenerDetalleDeudasInicialesCliente(
+    movimientosClientes[clienteSeleccionado.id] || [],
+  );
+
+  const idsSeleccionados = new Set(
+    [...document.querySelectorAll(".checkbox-producto-deuda-inicial:checked")]
+      .map((checkbox) => checkbox.dataset.deudaProductoId)
+      .filter(Boolean),
+  );
+
+  return detalle.productos.filter(
+    (producto) =>
+      idsSeleccionados.has(producto.id) && producto.saldoPendiente > 0,
+  );
 }
 
 function obtenerTotalProductosSeleccionados() {
@@ -1608,6 +1654,8 @@ async function registrarPagoCliente() {
 
   const deudaInicialSeleccionada = obtenerDeudaInicialSeleccionada();
 
+  const productosDeudaInicialSeleccionados = obtenerProductosDeudaInicialSeleccionados();
+
   const hayDeudaInicialSeleccionada = deudaInicialSeleccionada > 0;
 
   const deudaCliente = obtenerDeudaCliente(clienteSeleccionado);
@@ -1718,18 +1766,48 @@ async function registrarPagoCliente() {
 ======================================== */
 
   if (hayDeudaInicialSeleccionada) {
-    const montoAplicadoInicial = Math.min(deudaInicialSeleccionada, restante);
+    // Aplicar el pago primero a los productos iniciales seleccionados.
+    for (const producto of productosDeudaInicialSeleccionados) {
+      if (restante <= 0) break;
 
-    if (montoAplicadoInicial > 0) {
+      const montoAplicado = Math.min(producto.saldoPendiente, restante);
+      if (montoAplicado <= 0) continue;
+
       aplicaciones.push({
         tipo: "deuda_inicial",
         origen: "deuda_inicial",
-        monto: montoAplicadoInicial,
-        descripcion: "Pago aplicado a deuda inicial",
+        deudaProductoId: producto.id,
+        productoId: producto.productoId || "",
+        nombreProducto: producto.nombre,
+        monto: montoAplicado,
+        descripcion: `Pago aplicado a ${producto.nombre}`,
       });
 
-      totalAplicadoInicial = montoAplicadoInicial;
-      restante -= montoAplicadoInicial;
+      totalAplicadoInicial += montoAplicado;
+      restante -= montoAplicado;
+    }
+
+    // Compatibilidad con deudas antiguas que todavía no tienen detalle por producto.
+    const checkboxGlobal = document.querySelector(".checkbox-deuda-inicial:checked");
+    if (checkboxGlobal && restante > 0) {
+      const detalleInicial = obtenerDetalleDeudasInicialesCliente(
+        movimientosClientes[clienteSeleccionado.id] || [],
+      );
+      const montoGlobalSeleccionado =
+        detalleInicial.deudaAgregada + detalleInicial.intereses;
+      const montoAplicadoGlobal = Math.min(montoGlobalSeleccionado, restante);
+
+      if (montoAplicadoGlobal > 0) {
+        aplicaciones.push({
+          tipo: "deuda_inicial",
+          origen: "deuda_inicial",
+          monto: montoAplicadoGlobal,
+          descripcion: "Pago aplicado a deuda inicial sin detalle por producto",
+        });
+
+        totalAplicadoInicial += montoAplicadoGlobal;
+        restante -= montoAplicadoGlobal;
+      }
     }
   }
 
@@ -2384,18 +2462,50 @@ function normalizarTipoMovimientoCliente(tipo) {
   return valor;
 }
 
-function obtenerDeudaInicialCliente(movimientos = []) {
-  // Deudas iniciales registradas.
-  const deudaInicial = movimientos
-    .filter(
-      (movimiento) =>
-        normalizarTipoMovimientoCliente(movimiento.tipo) === "deuda_inicial",
-    )
-    .reduce((total, movimiento) => total + (Number(movimiento.monto) || 0), 0);
+function obtenerDetalleDeudasInicialesCliente(movimientos = []) {
+  const movimientosOrdenados = [...movimientos].sort(
+    (a, b) =>
+      obtenerFechaCliente(a.fecha || a.creadoEn) -
+      obtenerFechaCliente(b.fecha || b.creadoEn),
+  );
 
-  // Intereses que fueron agregados
-  // específicamente sobre la deuda inicial.
-  const interesesIniciales = movimientos
+  const movimientosDeudaInicial = movimientosOrdenados.filter(
+    (movimiento) =>
+      normalizarTipoMovimientoCliente(movimiento.tipo) === "deuda_inicial",
+  );
+
+  const productos = [];
+  let deudaAgregadaOriginal = 0;
+
+  movimientosDeudaInicial.forEach((movimiento) => {
+    const listaProductos = Array.isArray(movimiento.productosAdeudados)
+      ? movimiento.productosAdeudados
+      : [];
+
+    if (!listaProductos.length) {
+      deudaAgregadaOriginal += Number(movimiento.monto) || 0;
+      return;
+    }
+
+    listaProductos.forEach((producto, indice) => {
+      const montoAdeudado =
+        Number(producto.montoAdeudado ?? producto.saldoPendiente) || 0;
+
+      productos.push({
+        id: producto.id || `${movimiento.id}_${indice}`,
+        movimientoId: movimiento.id,
+        productoId: producto.productoId || "",
+        nombre: producto.nombre || "Producto sin nombre",
+        talle: producto.talle || "",
+        fecha: movimiento.fecha || movimiento.creadoEn,
+        precioProducto: Number(producto.precioProducto) || 0,
+        montoAdeudado,
+        saldoPendiente: montoAdeudado,
+      });
+    });
+  });
+
+  const interesesOriginales = movimientosOrdenados
     .filter(
       (movimiento) =>
         normalizarTipoMovimientoCliente(movimiento.tipo) === "interes" &&
@@ -2403,35 +2513,99 @@ function obtenerDeudaInicialCliente(movimientos = []) {
     )
     .reduce((total, movimiento) => total + (Number(movimiento.monto) || 0), 0);
 
-  // Pagos que fueron aplicados
-  // específicamente sobre la deuda inicial.
-  const pagosIniciales = movimientos
-    .filter(
-      (movimiento) =>
-        normalizarTipoMovimientoCliente(movimiento.tipo) === "pago",
-    )
-    .reduce((total, movimiento) => {
-      const aplicaciones = Array.isArray(movimiento.aplicaciones)
-        ? movimiento.aplicaciones
-        : [];
+  const pagos = movimientosOrdenados.filter(
+    (movimiento) =>
+      normalizarTipoMovimientoCliente(movimiento.tipo) === "pago",
+  );
 
-      return (
-        total +
-        aplicaciones
-          .filter(
-            (aplicacion) =>
-              aplicacion.tipo === "deuda_inicial" ||
-              aplicacion.origen === "deuda_inicial",
-          )
-          .reduce(
-            (acumulado, aplicacion) =>
-              acumulado + (Number(aplicacion.monto) || 0),
-            0,
-          )
+  // Los pagos identificados con un producto se descuentan de ese producto.
+  pagos.forEach((movimiento) => {
+    const aplicaciones = Array.isArray(movimiento.aplicaciones)
+      ? movimiento.aplicaciones
+      : [];
+
+    aplicaciones.forEach((aplicacion) => {
+      if (!aplicacion.deudaProductoId) return;
+
+      const producto = productos.find(
+        (item) => item.id === aplicacion.deudaProductoId,
       );
-    }, 0);
 
-  return Math.max(0, deudaInicial + interesesIniciales - pagosIniciales);
+      if (producto) {
+        producto.saldoPendiente = Math.max(
+          0,
+          producto.saldoPendiente - (Number(aplicacion.monto) || 0),
+        );
+      }
+    });
+  });
+
+  // Compatibilidad con pagos antiguos que se aplicaban a la deuda inicial global.
+  const pagosGlobales = pagos.reduce((total, movimiento) => {
+    const aplicaciones = Array.isArray(movimiento.aplicaciones)
+      ? movimiento.aplicaciones
+      : [];
+
+    return (
+      total +
+      aplicaciones
+        .filter(
+          (aplicacion) =>
+            !aplicacion.deudaProductoId &&
+            (aplicacion.tipo === "deuda_inicial" ||
+              aplicacion.origen === "deuda_inicial"),
+        )
+        .reduce(
+          (subtotal, aplicacion) =>
+            subtotal + (Number(aplicacion.monto) || 0),
+          0,
+        )
+    );
+  }, 0);
+
+  let deudaAgregada = deudaAgregadaOriginal;
+  let intereses = interesesOriginales;
+  let pagoGlobalRestante = pagosGlobales;
+
+  const aplicadoADeudaAgregada = Math.min(
+    deudaAgregada,
+    pagoGlobalRestante,
+  );
+  deudaAgregada -= aplicadoADeudaAgregada;
+  pagoGlobalRestante -= aplicadoADeudaAgregada;
+
+  // Si un pago viejo se hizo cuando la deuda tenía productos pero no guardaba
+  // el identificador de cada uno, se distribuye por antigüedad.
+  for (const producto of productos) {
+    if (pagoGlobalRestante <= 0) break;
+
+    const aplicado = Math.min(producto.saldoPendiente, pagoGlobalRestante);
+    producto.saldoPendiente -= aplicado;
+    pagoGlobalRestante -= aplicado;
+  }
+
+  if (pagoGlobalRestante > 0) {
+    intereses = Math.max(0, intereses - pagoGlobalRestante);
+  }
+
+  const totalProductos = productos.reduce(
+    (total, producto) => total + producto.saldoPendiente,
+    0,
+  );
+
+  return {
+    productos,
+    deudaAgregada: Math.max(0, deudaAgregada),
+    intereses: Math.max(0, intereses),
+    total:
+      totalProductos +
+      Math.max(0, deudaAgregada) +
+      Math.max(0, intereses),
+  };
+}
+
+function obtenerDeudaInicialCliente(movimientos = []) {
+  return obtenerDetalleDeudasInicialesCliente(movimientos).total;
 }
 
 function calcularDeudaActualCliente(
