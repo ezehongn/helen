@@ -398,6 +398,10 @@
                         $ 0
                     </strong>
 
+                    <button type="button" id="boton-redistribuir-deuda" class="boton-redistribuir-deuda">
+                        ⇄ Redistribuir deuda
+                    </button>
+
                 </div>
 
 
@@ -513,6 +517,7 @@
                                     inputmode="decimal"
                                     placeholder="0"
                                     autocomplete="off"
+                                    readonly
                                 >
 
                             </div>
@@ -746,6 +751,52 @@
 
     </section>
 
+
+
+    <!-- MODAL REDISTRIBUIR DEUDA -->
+    <div class="rd-overlay" id="redistribuirDeudaModal" aria-hidden="true">
+      <section class="rd-modal" role="dialog" aria-modal="true" aria-labelledby="rdTitulo">
+        <header class="rd-header">
+          <div>
+            <h2 id="rdTitulo">Redistribuir deuda</h2>
+            <p class="rd-subtitle">Ajustá el saldo pendiente de cada producto. La suma debe coincidir con la deuda total del cliente.</p>
+          </div>
+          <button class="rd-close" id="rdCerrar" type="button" aria-label="Cerrar">×</button>
+        </header>
+        <div class="rd-main">
+          <aside class="rd-summary">
+            <article class="rd-stat rd-stat-debt"><span>Deuda total del cliente</span><strong id="rdDeudaTotal">$ 0</strong></article>
+            <article class="rd-stat rd-stat-distributed"><span>Total distribuido</span><strong id="rdTotalDistribuido">$ 0</strong><span class="rd-check" id="rdEstadoDistribucion">✓</span></article>
+            <article class="rd-stat rd-stat-difference"><span>Diferencia</span><strong id="rdDiferencia">$ 0</strong></article>
+            <p class="rd-validation" id="rdValidacion" role="status" aria-live="polite"></p>
+          </aside>
+          <section class="rd-products">
+            <div class="rd-table-wrap">
+              <table class="rd-table">
+                <thead><tr>
+                  <th>Producto</th><th>Monto actual<small>(saldo pendiente)</small></th>
+                  <th>Nuevo monto<small>(ajustar)</small></th><th>Diferencia</th>
+                </tr></thead>
+                <tbody id="rdProductos"></tbody>
+                <tfoot><tr><th>Total</th><th id="rdSumaActual">$ 0</th><th id="rdSumaNuevo">$ 0</th><th><span class="rd-total-diff" id="rdSumaDiferencia">$ 0</span></th></tr></tfoot>
+              </table>
+            </div>
+            <div class="rd-actions-secondary">
+              <button class="rd-button rd-button-secondary" id="rdDistribuir" type="button">Ⅱ Distribuir en partes iguales</button>
+              <button class="rd-button rd-button-secondary" id="rdRestablecer" type="button">↻ Restablecer montos originales</button>
+              <button class="rd-button rd-button-secondary" id="rdQuitar" type="button">▤ Quitar toda la distribución</button>
+            </div>
+          </section>
+        </div>
+        <footer class="rd-footer">
+          <span class="rd-save-message" id="rdMensajeGuardado" role="status" aria-live="polite"></span>
+          <div class="rd-actions-primary">
+            <button class="rd-button rd-button-cancel" id="rdCancelar" type="button">Cancelar</button>
+            <button class="rd-button rd-button-save" id="rdGuardar" type="button">▣ Guardar distribución</button>
+          </div>
+        </footer>
+      </section>
+    </div>
 
     <!-- MODALES -->
 

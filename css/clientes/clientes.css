@@ -1,7 +1,6 @@
 /* ========================================
    PANTALLA CLIENTES
 ======================================== */
-
 .pantalla-clientes {
   width: 100%;
 
@@ -848,7 +847,8 @@
 
   border-radius: 6px;
 
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .cabecera-productos-deuda {
@@ -858,12 +858,12 @@
 
   grid-template-columns:
     28px
-    minmax(140px, 1fr)
-    85px
-    65px
-    90px
-    90px
-    105px;
+    minmax(130px, 1.4fr)
+    55px
+    minmax(82px, .8fr)
+    minmax(92px, .9fr)
+    minmax(100px, 1fr)
+    minmax(112px, 1fr);
 
   align-items: center;
 
@@ -889,12 +889,12 @@
 
   grid-template-columns:
     28px
-    minmax(140px, 1fr)
-    85px
-    65px
-    90px
-    90px
-    105px;
+    minmax(130px, 1.4fr)
+    55px
+    minmax(82px, .8fr)
+    minmax(92px, .9fr)
+    minmax(100px, 1fr)
+    minmax(112px, 1fr);
 
   align-items: center;
 
@@ -1777,4 +1777,64 @@
   .resumen-venta-deuda {
     gap: 15px;
   }
+}
+
+
+/* ========================================
+   PAGO POR PRODUCTO + REDISTRIBUCIÓN
+======================================== */
+.bloque-deuda-cliente {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.bloque-deuda-cliente > span {
+  margin-bottom: 3px;
+}
+.boton-redistribuir-deuda {
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid #2485f7;
+  border-radius: 6px;
+  background: #fff;
+  color: #1268e8;
+  font: 600 12px "Segoe UI", Arial, sans-serif;
+  cursor: pointer;
+}
+.boton-redistribuir-deuda:hover { background: #eef6ff; }
+.input-monto-producto {
+  width: 100%;
+  min-width: 75px;
+  height: 32px;
+  padding: 0 8px;
+  box-sizing: border-box;
+  border: 1px solid #d0dbe8;
+  border-radius: 5px;
+  background: #fff;
+  color: #19345c;
+  font: 11px "Segoe UI", Arial, sans-serif;
+}
+.input-monto-producto:focus {
+  outline: 2px solid rgba(18, 104, 232, .16);
+  border-color: #1268e8;
+}
+.saldo-despues-producto { color: #263c60; font-weight: 600; white-space: nowrap; }
+.saldo-producto-deuda { color: #ef2638; font-weight: 700; white-space: nowrap; }
+#detalle-cliente-contenido .cabecera-productos-deuda > div:nth-child(5) { color: #ef2638; font-weight: 700; }
+#detalle-cliente-contenido .cabecera-productos-deuda > div:nth-child(6) { color: #1268e8; }
+#detalle-cliente-contenido .cabecera-productos-deuda > div:nth-child(7) { color: #637294; }
+#lista-productos-deuda { overflow-x: auto; }
+#lista-productos-deuda .bloque-venta-deuda { min-width: 720px; }
+#lista-productos-deuda .encabezado-venta-deuda { min-width: 0; }
+#lista-productos-deuda .cabecera-productos-deuda,
+#lista-productos-deuda .fila-producto-deuda { min-width: 720px; }
+#lista-productos-deuda .fila-producto-deuda { min-height: 50px; }
+#lista-productos-deuda .fila-producto-deuda > div { min-width: 0; }
+#lista-productos-deuda .producto-deuda-nombre strong { font-size: 11px; }
+
+@media (max-width: 900px) {
+  .bloque-deuda-cliente { align-items: flex-start; flex-direction: column; }
+  .boton-redistribuir-deuda { width: 100%; }
 }

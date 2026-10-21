@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Redistribuir deuda del cliente</title>
+  <link rel="stylesheet" href="redistribuirdeudacliente.css">
+</head>
+<body>
+  <!-- Modal de demostración independiente. Luego se podrá insertar en clientes.html. -->
+  <main class="demo-shell">
+    <button class="demo-open" id="abrirModalDemo">Abrir modal de ejemplo</button>
+    <p class="demo-note">Vista independiente de prueba. Los datos de ejemplo corresponden a Mingo Rojas.</p>
+  </main>
+
+  <div class="rd-overlay" id="redistribuirDeudaModal" aria-hidden="true">
+    <section class="rd-modal" role="dialog" aria-modal="true" aria-labelledby="rdTitulo">
+      <header class="rd-header">
+        <div>
+          <h1 id="rdTitulo">Redistribuir deuda</h1>
+          <p class="rd-subtitle">Ajustá el monto adeudado de cada producto. El total distribuido no puede superar la deuda total del cliente.</p>
+        </div>
+        <button class="rd-close" id="rdCerrar" type="button" aria-label="Cerrar">×</button>
+      </header>
+
+      <div class="rd-main">
+        <aside class="rd-summary">
+          <article class="rd-stat rd-stat-debt">
+            <span>Deuda total del cliente</span>
+            <strong id="rdDeudaTotal">$ 32.000</strong>
+          </article>
+          <article class="rd-stat rd-stat-distributed">
+            <span>Total distribuido</span>
+            <strong id="rdTotalDistribuido">$ 32.000</strong>
+            <span class="rd-check" id="rdEstadoDistribucion" aria-label="Distribución dentro del límite">✓</span>
+          </article>
+          <article class="rd-stat rd-stat-difference">
+            <span>Diferencia</span>
+            <strong id="rdDiferencia">$ 0</strong>
+          </article>
+          <p class="rd-validation" id="rdValidacion" role="status" aria-live="polite"></p>
+        </aside>
+
+        <section class="rd-products">
+          <div class="rd-table-wrap">
+            <table class="rd-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Monto actual <small>(adeudado)</small></th>
+                  <th>Nuevo monto <small>(ajustar)</small></th>
+                  <th>Diferencia</th>
+                </tr>
+              </thead>
+              <tbody id="rdProductos"></tbody>
+              <tfoot>
+                <tr>
+                  <th>Total</th>
+                  <th id="rdSumaActual">$ 50.000</th>
+                  <th id="rdSumaNuevo">$ 32.000</th>
+                  <th><span class="rd-total-diff" id="rdSumaDiferencia">$ -18.000</span></th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <div class="rd-actions-secondary">
+            <button class="rd-button rd-button-secondary" id="rdDistribuir" type="button">
+              <span class="rd-button-icon">Ⅱ</span> Distribuir en partes iguales
+            </button>
+            <button class="rd-button rd-button-secondary" id="rdRestablecer" type="button">
+              <span class="rd-button-icon">↻</span> Restablecer montos originales
+            </button>
+            <button class="rd-button rd-button-secondary" id="rdQuitar" type="button">
+              <span class="rd-button-icon">▤</span> Quitar toda la distribución
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <footer class="rd-footer">
+        <span class="rd-save-message" id="rdMensajeGuardado" role="status" aria-live="polite"></span>
+        <div class="rd-actions-primary">
+          <button class="rd-button rd-button-cancel" id="rdCancelar" type="button">Cancelar</button>
+          <button class="rd-button rd-button-save" id="rdGuardar" type="button"><span>▣</span> Guardar distribución</button>
+        </div>
+      </footer>
+    </section>
+  </div>
+
+  <script src="redistribuirdeudacliente.js"></script>
+</body>
+</html>
