@@ -19,6 +19,9 @@ function obtenerElementosRegistrarCliente() {
     agregarProductoLibre: document.getElementById("agregar-producto-libre"),
     totalDeuda: document.getElementById("total-deuda-inicial"),
     cantidadProductos: document.getElementById("cantidad-productos-adeudados"),
+    tipoInteres: document.getElementById("registrar-cliente-tipo-interes"),
+    valorInteres: document.getElementById("registrar-cliente-valor-interes"),
+    interesCalculado: document.getElementById("registrar-cliente-interes-calculado"),
     mensaje: document.getElementById("mensaje-modal-registrar-cliente"),
     cerrar: document.getElementById("cerrar-modal-registrar-cliente"),
     cancelar: document.getElementById("cancelar-registrar-cliente"),
@@ -427,13 +430,12 @@ function obtenerProductosAdeudadosFormulario() {
     .filter(Boolean);
 }
 
-function actualizarResumenDeudaInicial() {
+function obtenerImporteProductosDeudaInicial() {
   const elementos = obtenerElementosRegistrarCliente();
   const filas = [
-    ...(elementos.listaProductos?.querySelectorAll(".fila-producto-adeudado") ||
-      []),
+    ...(elementos.listaProductos?.querySelectorAll(".fila-producto-adeudado") || []),
   ];
-  const total = filas.reduce(
+  return filas.reduce(
     (suma, fila) =>
       suma +
       obtenerMontoDeuda(
@@ -441,8 +443,41 @@ function actualizarResumenDeudaInicial() {
       ),
     0,
   );
+}
+
+function obtenerInteresDeudaInicial() {
+  const elementos = obtenerElementosRegistrarCliente();
+  const valor = obtenerMontoDeuda(elementos.valorInteres?.value);
+  if (valor <= 0) return 0;
+
+  if (elementos.tipoInteres?.value === "porcentaje") {
+    return Math.round(obtenerImporteProductosDeudaInicial() * (valor / 100) * 100) / 100;
+  }
+
+  return Math.round(valor * 100) / 100;
+}
+
+function actualizarResumenDeudaInicial() {
+  const elementos = obtenerElementosRegistrarCliente();
+  const filas = [
+    ...(elementos.listaProductos?.querySelectorAll(".fila-producto-adeudado") ||
+      []),
+  ];
+  const totalProductos = filas.reduce(
+    (suma, fila) =>
+      suma +
+      obtenerMontoDeuda(
+        fila.querySelector(".importe-producto-adeudado")?.value,
+      ),
+    0,
+  );
+  const interes = obtenerInteresDeudaInicial();
+  const total = totalProductos + interes;
+
   if (elementos.totalDeuda)
     elementos.totalDeuda.textContent = formatearPrecioRegistroCliente(total);
+  if (elementos.interesCalculado)
+    elementos.interesCalculado.textContent = formatearPrecioRegistroCliente(interes);
   if (elementos.cantidadProductos) {
     elementos.cantidadProductos.textContent = `${filas.length} ${filas.length === 1 ? "producto adeudado" : "productos adeudados"}`;
   }
@@ -461,6 +496,11 @@ function limpiarFormularioRegistrarCliente() {
   elementos.formulario?.reset();
   if (elementos.fechaDeuda)
     elementos.fechaDeuda.value = obtenerFechaLocalISORegistroCliente();
+  if (elementos.tipoInteres) elementos.tipoInteres.value = "porcentaje";
+  if (elementos.valorInteres) {
+    elementos.valorInteres.value = "";
+    elementos.valorInteres.placeholder = "Ej. 10 para 10%";
+  }
   if (elementos.listaProductos) elementos.listaProductos.innerHTML = "";
   if (elementos.mensaje) {
     elementos.mensaje.textContent = "";
@@ -530,6 +570,12 @@ function validarRegistrarCliente(elementos) {
   if (!elementos.fechaDeuda?.value) {
     mostrarMensajeRegistrarCliente("Seleccioná la fecha de la deuda.");
     elementos.fechaDeuda?.focus();
+    return false;
+  }
+  const valorInteres = obtenerMontoDeuda(elementos.valorInteres?.value);
+  if (elementos.valorInteres?.value.trim() && valorInteres < 0) {
+    mostrarMensajeRegistrarCliente("El interés no puede ser negativo.");
+    elementos.valorInteres.focus();
     return false;
   }
   const filas = [
@@ -629,10 +675,14 @@ async function registrarCliente() {
   const observaciones = elementos.observaciones.value.trim();
   const fechaDeuda = elementos.fechaDeuda.value;
   const productosAdeudados = obtenerProductosAdeudadosFormulario();
-  const deuda = productosAdeudados.reduce(
+  const deudaProductos = productosAdeudados.reduce(
     (total, producto) => total + producto.montoAdeudado,
     0,
   );
+  const tipoInteres = elementos.tipoInteres?.value || "porcentaje";
+  const valorInteres = obtenerMontoDeuda(elementos.valorInteres?.value);
+  const interes = obtenerInteresDeudaInicial();
+  const deuda = deudaProductos + interes;
   const botonGuardar = elementos.guardar;
   try {
     botonGuardar.disabled = true;
@@ -667,7 +717,7 @@ async function registrarCliente() {
     batch.set(clienteRef, datosCliente);
     batch.set(movimientoRef, {
       tipo: "deuda_inicial",
-      monto: deuda,
+      monto: deudaProductos,
       montoAplicado: 0,
       productosAdeudados,
       fecha: Timestamp.fromDate(new Date(`${fechaDeuda}T12:00:00`)),
@@ -675,6 +725,24 @@ async function registrarCliente() {
       descripcion: observaciones || "Deuda anterior al registro en el sistema",
       creadoEn: serverTimestamp(),
     });
+
+    if (interes > 0) {
+      const interesRef = doc(
+        collection(window.db, "clientes", clienteRef.id, "movimientos"),
+      );
+      batch.set(interesRef, {
+        tipo: "interes",
+        monto: interes,
+        tipoInteres,
+        valor: valorInteres,
+        origen: "deuda_inicial",
+        fecha: Timestamp.fromDate(new Date(`${fechaDeuda}T12:00:00`)),
+        usuario,
+        descripcion: "Interés agregado al registrar deuda anterior",
+        creadoEn: serverTimestamp(),
+      });
+    }
+
     await batch.commit();
 
     mostrarMensajeRegistrarCliente(
@@ -714,6 +782,16 @@ function inicializarRegistrarCliente() {
     "click",
     agregarFilaProductoLibre,
   );
+  elementos.tipoInteres?.addEventListener("change", () => {
+    if (elementos.valorInteres) {
+      elementos.valorInteres.placeholder =
+        elementos.tipoInteres.value === "porcentaje"
+          ? "Ej. 10 para 10%"
+          : "Ej. 5000";
+    }
+    actualizarResumenDeudaInicial();
+  });
+  elementos.valorInteres?.addEventListener("input", actualizarResumenDeudaInicial);
   elementos.modal.addEventListener("click", (evento) => {
     if (evento.target === elementos.modal) cerrarModalRegistrarCliente();
   });

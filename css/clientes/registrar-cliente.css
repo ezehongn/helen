@@ -575,3 +575,80 @@
     width: 100%;
   }
 }
+
+
+/* Interés opcional al registrar una deuda anterior */
+#modal-registrar-cliente .seccion-interes-deuda-inicial {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border: 1px solid #e0e8f2;
+  border-radius: 8px;
+  background: #fbfcfe;
+}
+
+#modal-registrar-cliente .encabezado-interes-deuda-inicial h3 {
+  margin: 0 0 5px;
+  font-size: 16px;
+}
+
+#modal-registrar-cliente .encabezado-interes-deuda-inicial p {
+  margin: 0;
+  color: #718198;
+  font-size: 13px;
+}
+
+#modal-registrar-cliente .campos-interes-deuda-inicial {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.8fr) minmax(180px, 0.8fr) minmax(180px, 1fr);
+  gap: 14px;
+  align-items: end;
+  margin-top: 14px;
+}
+
+#modal-registrar-cliente .campo-interes-deuda-inicial {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+#modal-registrar-cliente .campo-interes-deuda-inicial label,
+#modal-registrar-cliente .resumen-interes-deuda-inicial span {
+  color: #24344d;
+  font-size: 13px;
+  font-weight: 550;
+}
+
+#modal-registrar-cliente .campo-interes-deuda-inicial input,
+#modal-registrar-cliente .campo-interes-deuda-inicial select {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: 38px;
+  padding: 0 11px;
+  border: 1px solid #d4deea;
+  border-radius: 6px;
+  background: #fff;
+  color: #24344d;
+  font: 13px "Segoe UI", Arial, sans-serif;
+}
+
+#modal-registrar-cliente .resumen-interes-deuda-inicial {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-height: 38px;
+  justify-content: center;
+}
+
+#modal-registrar-cliente .resumen-interes-deuda-inicial strong {
+  color: #b45309;
+  font-size: 20px;
+}
+
+@media (max-width: 760px) {
+  #modal-registrar-cliente .campos-interes-deuda-inicial {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}

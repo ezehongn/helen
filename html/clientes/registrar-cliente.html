@@ -74,6 +74,32 @@
   </button>
 </div>
 
+        <div class="seccion-interes-deuda-inicial">
+          <div class="encabezado-interes-deuda-inicial">
+            <div>
+              <h3>Interés por deuda antigua</h3>
+              <p>Opcional. Podés agregar un recargo sobre la deuda de los productos.</p>
+            </div>
+          </div>
+          <div class="campos-interes-deuda-inicial">
+            <div class="campo-interes-deuda-inicial">
+              <label for="registrar-cliente-tipo-interes">Tipo de interés</label>
+              <select id="registrar-cliente-tipo-interes">
+                <option value="porcentaje">Porcentaje (%)</option>
+                <option value="monto">Monto fijo ($)</option>
+              </select>
+            </div>
+            <div class="campo-interes-deuda-inicial">
+              <label for="registrar-cliente-valor-interes">Valor del interés</label>
+              <input id="registrar-cliente-valor-interes" type="text" inputmode="decimal" placeholder="Ej. 10 para 10%" autocomplete="off">
+            </div>
+            <div class="resumen-interes-deuda-inicial">
+              <span>Interés calculado</span>
+              <strong id="registrar-cliente-interes-calculado">$0</strong>
+            </div>
+          </div>
+        </div>
+
         <div class="resumen-deuda-inicial">
           <div>
             <span>Total de deuda inicial</span>

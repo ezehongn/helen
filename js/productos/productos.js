@@ -71,13 +71,10 @@ async function inicializarProductos() {
   cargarCSSModal();
 
   await cargarModalRegistrarProducto();
-
   await cargarScriptModalRegistrarProducto();
 
   await cargarModalConsultarProducto();
-
   cargarCSSConsultarProducto();
-
   await cargarScriptModalConsultarProducto();
 
   await cargarModalNuevaCategoria();
@@ -87,6 +84,11 @@ async function inicializarProductos() {
   await cargarModalRegistrarIngresos();
   cargarCSSRegistrarIngresos();
   await cargarScriptRegistrarIngresos();
+
+  // NUEVO MODAL: COSTOS DE REPOSICIÓN
+  cargarCSSCostosReposicion();
+  await cargarModalCostosReposicion();
+  await cargarScriptCostosReposicion();
 
   configurarEventos();
 
@@ -425,6 +427,22 @@ function configurarEventos() {
   botonRegistrarIngresos?.addEventListener("click", () => {
     if (window.abrirModalRegistrarIngresos) {
       window.abrirModalRegistrarIngresos();
+    }
+  });
+
+  // ========================================
+  // ABRIR COSTOS DE REPOSICIÓN
+  // ========================================
+
+  const botonCostosReposicion = document.getElementById(
+    "boton-costos-reposicion",
+  );
+
+  botonCostosReposicion?.addEventListener("click", () => {
+    if (typeof window.abrirModalCostosReposicion === "function") {
+      window.abrirModalCostosReposicion();
+    } else {
+      console.error("No se cargó el módulo de costos de reposición.");
     }
   });
 }
@@ -1319,6 +1337,85 @@ function cargarScriptRegistrarIngresos() {
 
     script.onload = resolve;
     script.onerror = reject;
+
+    document.body.appendChild(script);
+  });
+}
+
+// ========================================
+// COSTOS DE REPOSICIÓN: CARGAR CSS
+// ========================================
+
+function cargarCSSCostosReposicion() {
+  if (document.getElementById("css-costos-reposicion")) {
+    return;
+  }
+
+  const link = document.createElement("link");
+
+  link.id = "css-costos-reposicion";
+  link.rel = "stylesheet";
+  link.href = "css/productos/reposicionproducto.css";
+
+  document.head.appendChild(link);
+}
+
+// ========================================
+// COSTOS DE REPOSICIÓN: CARGAR HTML
+// ========================================
+
+async function cargarModalCostosReposicion() {
+  try {
+    const contenedor = document.getElementById("modales-productos");
+
+    if (!contenedor) {
+      throw new Error("No se encontró el contenedor #modales-productos.");
+    }
+
+    // Evitar insertar el modal más de una vez.
+    if (document.getElementById("modal-costos-reposicion")) {
+      return;
+    }
+
+    const respuesta = await fetch(
+      "html/productos/reposicionproducto.html",
+    );
+
+    if (!respuesta.ok) {
+      throw new Error("No se pudo cargar el modal de costos de reposición.");
+    }
+
+    const html = await respuesta.text();
+
+    contenedor.insertAdjacentHTML("beforeend", html);
+  } catch (error) {
+    console.error("Error cargando modal de costos de reposición:", error);
+  }
+}
+
+// ========================================
+// COSTOS DE REPOSICIÓN: CARGAR JS
+// ========================================
+
+function cargarScriptCostosReposicion() {
+  return new Promise((resolve, reject) => {
+    const existente = document.getElementById("js-costos-reposicion");
+
+    if (existente) {
+      existente.remove();
+    }
+
+    const script = document.createElement("script");
+
+    script.id = "js-costos-reposicion";
+    script.type = "module";
+    script.src = `js/productos/reposicionproducto.js?t=${Date.now()}`;
+
+    script.onload = resolve;
+
+    script.onerror = () => {
+      reject(new Error("No se pudo cargar reposicionproducto.js."));
+    };
 
     document.body.appendChild(script);
   });

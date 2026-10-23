@@ -1664,3 +1664,49 @@
     background: #fff0f1;
 
 }
+
+/* ========================================
+   BOTÓN COSTOS DE REPOSICIÓN
+======================================== */
+
+.boton-costos-reposicion {
+    height: 40px;
+    padding: 0 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    border: 1px solid #16a36a;
+    border-radius: 6px;
+
+    background: #ecfdf5;
+    color: #087f50;
+
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        transform 0.15s ease;
+}
+
+.boton-costos-reposicion:hover {
+    background: #d1fae5;
+    border-color: #087f50;
+}
+
+.boton-costos-reposicion:active {
+    transform: scale(0.98);
+}
+
+.icono-costos-reposicion {
+    font-size: 17px;
+    line-height: 1;
+}

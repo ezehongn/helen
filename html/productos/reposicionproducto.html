@@ -1,0 +1,29 @@
+<!-- Modal de costos de reposición. Integrar una sola vez en la página principal. -->
+<div id="modal-costos-reposicion" class="rp-overlay" aria-hidden="true">
+  <section class="rp-modal" role="dialog" aria-modal="true" aria-labelledby="rp-titulo">
+    <header class="rp-header">
+      <div class="rp-title-wrap"><span class="rp-title-icon" aria-hidden="true">◇</span><div><h2 id="rp-titulo">Costos de reposición</h2><p>Estimación de cuánto costaría reponer los productos vendidos en el período seleccionado.</p></div></div>
+      <div class="rp-header-actions"><label class="rp-periodo"><span>Período de ventas</span><input id="rp-desde" type="date" aria-label="Desde"><span class="rp-separador">—</span><input id="rp-hasta" type="date" aria-label="Hasta"></label><button type="button" class="rp-cerrar-icono" id="rp-cerrar-x" aria-label="Cerrar">×</button></div>
+    </header>
+    <div class="rp-resumen">
+      <article class="rp-card rp-card-total"><span class="rp-card-icon">$</span><div><span class="rp-label">Costo total de reposición</span><strong id="rp-total-reposicion">$ 0</strong><small>Productos que ya alcanzaron su costo de compra.</small></div></article>
+      <article class="rp-card rp-card-pagados"><span class="rp-card-icon">✓</span><div><span class="rp-label">Productos pagados</span><strong id="rp-cantidad-pagados">0</strong><small id="rp-total-pagados">$ 0 incluidos</small></div></article>
+      <article class="rp-card rp-card-deuda"><span class="rp-card-icon">◷</span><div><span class="rp-label">Productos con deuda</span><strong id="rp-cantidad-deuda">0</strong><small id="rp-total-deuda">$ 0 pendientes</small></div></article>
+    </div>
+    <div class="rp-toolbar"><label class="rp-busqueda"><span>⌕</span><input id="rp-buscar" type="search" placeholder="Buscar producto..." autocomplete="off"></label><label class="rp-filtro-wrap"><span>Categoría</span><select id="rp-categoria"><option value="">Todas las categorías</option></select></label><label class="rp-filtro-wrap"><span>Estado</span><select id="rp-estado"><option value="">Todos los estados</option><option value="pagado">Pagado</option><option value="deuda">Con deuda</option></select></label><button id="rp-actualizar" class="rp-btn-secundario" type="button">↻ Actualizar</button></div>
+    <div class="rp-columnas">
+      <section class="rp-lista rp-lista-pagados" aria-labelledby="rp-heading-pagados">
+        <div class="rp-lista-header"><div class="rp-lista-titulo"><span class="rp-check">✓</span><div><h3 id="rp-heading-pagados">Productos pagados</h3><p>Se incluyen en el costo de reposición.</p></div></div><div class="rp-total-lista"><small>Total</small><strong id="rp-subtotal-pagados">$ 0</strong></div></div>
+        <div class="rp-tabla-scroll"><table><thead><tr><th>Producto</th><th>Categoría</th><th>Unid.</th><th>Costo unit.</th><th>Costo a reponer</th></tr></thead><tbody id="rp-filas-pagados"><tr><td colspan="5" class="rp-vacio">Cargando productos…</td></tr></tbody></table></div>
+        <p class="rp-pie-lista" id="rp-pie-pagados">0 productos</p>
+      </section>
+      <section class="rp-lista rp-lista-deuda" aria-labelledby="rp-heading-deuda">
+        <div class="rp-lista-header"><div class="rp-lista-titulo"><span class="rp-reloj">◷</span><div><h3 id="rp-heading-deuda">Productos con deuda</h3><p>No se incluyen hasta que lo cubierto alcance el costo de compra.</p></div></div><div class="rp-total-lista"><small>Total pendiente</small><strong id="rp-subtotal-deuda">$ 0</strong></div></div>
+        <div class="rp-tabla-scroll"><table><thead><tr><th>Producto</th><th>Categoría</th><th>Unid.</th><th>Costo unit.</th><th>Cubierto</th><th>Falta cubrir</th><th>Costo a reponer</th></tr></thead><tbody id="rp-filas-deuda"><tr><td colspan="7" class="rp-vacio">Cargando productos…</td></tr></tbody></table></div>
+        <p class="rp-pie-lista" id="rp-pie-deuda">0 productos</p>
+      </section>
+    </div>
+    <footer class="rp-footer"><p id="rp-nota">Solo se consideran líneas de venta vinculadas a productos del catálogo.</p><button type="button" id="rp-cerrar" class="rp-btn-cerrar">Cerrar</button></footer>
+    <div id="rp-error" class="rp-error" role="status" hidden></div>
+  </section>
+</div>
