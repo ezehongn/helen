@@ -203,10 +203,17 @@ function renderizarHistorialVentas() {
 
     const numero = String(venta.numero || "").toLowerCase();
 
+    // Obtener los nombres de todos los productos vendidos.
+    const nombresProductos = (
+      Array.isArray(venta.productos) ? venta.productos : []
+    ).map((producto) => String(producto.nombre || "").toLowerCase());
+
+    // Buscar por número de venta, cliente o producto.
     const coincideBusqueda =
       !busqueda ||
       numero.includes(busqueda) ||
-      cliente.toLowerCase().includes(busqueda);
+      cliente.toLowerCase().includes(busqueda) ||
+      nombresProductos.some((nombre) => nombre.includes(busqueda));
 
     /* ==========================
                    ESTADO
@@ -659,7 +666,6 @@ function formatearPrecioHistorial(valor) {
   })}`;
 }
 
-
 function formatearFechaHistorial(fecha) {
   const fechaJS = obtenerFechaHistorial(fecha);
 
@@ -683,7 +689,6 @@ function formatearFechaHistorial(fecha) {
 
   return `${fechaFormateada}<br>${horaFormateada}`;
 }
-
 
 function obtenerFechaHistorial(fecha) {
   if (!fecha) {

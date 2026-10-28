@@ -905,56 +905,57 @@ function renderizarCostosReposicionInicio() {
   const leyenda = document.getElementById("leyenda-costos-reposicion-inicio");
 
   if (!canvas) return;
-
-  if (!ventasInicioCargadas || !productosInicioCargados) {
-    return;
-  }
+  if (!ventasInicioCargadas || !productosInicioCargados) return;
 
   const costosPorCategoria = new Map();
-
-  // Indexar productos por ID para encontrarlos rápidamente.
   const productosPorId = new Map(
     productosInicio.map((producto) => [String(producto.id), producto]),
   );
-
-  // Obtener únicamente las ventas del período seleccionado.
   const ventasPeriodo = obtenerVentasMesSeleccionado();
 
+  // Misma regla del modal: una venta con saldo pendiente no se considera
+  // producto pagado. Solo las ventas sin deuda aportan al costo incluido.
+  const obtenerSaldoPendiente = (venta) => {
+    const saldoDirecto = Number(
+      venta.saldoAdeber ?? venta.saldoAdeudar ?? venta.deudaPendiente ?? 0,
+    );
+    if (saldoDirecto > 0) return saldoDirecto;
+
+    const total = Number(
+      venta.total ?? venta.totalVenta ?? venta.subtotalConDescuento ?? 0,
+    );
+    const entregado = Number(venta.totalEntregado ?? venta.montoPagado ?? 0);
+    return Math.max(0, total - entregado);
+  };
+
   ventasPeriodo.forEach((venta) => {
+    const tieneDeuda =
+      obtenerSaldoPendiente(venta) > 0 || venta.estado === "con_deuda";
+
+    // El modal no suma al costo de reposición incluido las ventas con deuda.
+    if (tieneDeuda) return;
     if (!Array.isArray(venta.productos)) return;
 
     venta.productos.forEach((articulo) => {
       const productoId =
         articulo.productoId ?? articulo.idProducto ?? articulo.id;
-
-      if (productoId == null) {
-        console.warn("Artículo de venta sin identificador:", articulo);
-        return;
-      }
+      if (productoId == null) return;
 
       const producto = productosPorId.get(String(productoId));
+      if (!producto) return;
 
-      if (!producto) {
-        console.warn("No se encontró el producto vendido:", productoId);
-        return;
-      }
-
-      const cantidad = Number(articulo.cantidad ?? 0);
-      const precioCompra = Number(producto.precioCompra);
-
-      // Evitar cantidades o costos inválidos.
+      const cantidad = Number(articulo.cantidad ?? 1);
+      const precioCompra = Number(
+        producto.precioCompra ?? producto.costoCompra ?? producto.precioCosto ?? 0,
+      );
       if (
-        !Number.isFinite(cantidad) ||
-        cantidad <= 0 ||
-        !Number.isFinite(precioCompra) ||
-        precioCompra <= 0
-      ) {
-        return;
-      }
+        !Number.isFinite(cantidad) || cantidad <= 0 ||
+        !Number.isFinite(precioCompra) || precioCompra <= 0
+      ) return;
 
-      const categoria = producto.categoria || "Sin categoría";
+      const categoria =
+        producto.categoria || producto.categorias?.[0] || "Sin categoría";
       const costoReposicion = cantidad * precioCompra;
-
       costosPorCategoria.set(
         categoria,
         (costosPorCategoria.get(categoria) || 0) + costoReposicion,

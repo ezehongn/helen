@@ -42,16 +42,20 @@ function cargarCSSRedistribuirDeuda() {
 }
 
 async function cargarScriptRedistribuirDeuda() {
-  // Si la función ya está disponible, no hace falta recargar.
-  if (typeof window.abrirRedistribucionDeuda === "function") {
-    return;
+  const modalActual = document.getElementById("redistribuirDeudaModal");
+
+  if (!modalActual) {
+    throw new Error(
+      "No se encontró #redistribuirDeudaModal en el DOM al cargar el script.",
+    );
   }
 
-  // Si quedó un script anterior sin la función disponible,
-  // eliminarlo para volver a cargarlo correctamente.
+  // Si el script ya estaba cargado, eliminarlo para que tome
+  // la instancia actual del modal y no una referencia antigua.
   document.getElementById("js-redistribuir-deuda")?.remove();
 
   delete window.abrirRedistribucionDeuda;
+  delete window.cerrarRedistribucionDeuda;
 
   return new Promise((resolve, reject) => {
     const script = document.createElement("script");
@@ -60,10 +64,18 @@ async function cargarScriptRedistribuirDeuda() {
     script.src = `js/clientes/redistribuirdeudacliente.js?t=${Date.now()}`;
 
     script.onload = () => {
-      if (typeof window.abrirRedistribucionDeuda !== "function") {
+      // Verificar que el script haya inicializado el modal actual.
+      const modalDespuesDeCargar = document.getElementById(
+        "redistribuirDeudaModal",
+      );
+
+      if (
+        !modalDespuesDeCargar ||
+        typeof window.abrirRedistribucionDeuda !== "function"
+      ) {
         reject(
           new Error(
-            "El script se cargó, pero no inicializó abrirRedistribucionDeuda.",
+            "El script cargó, pero el modal o su función de apertura no están disponibles.",
           ),
         );
         return;
@@ -399,10 +411,16 @@ async function cargarClientes() {
       await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
 
     /* ================================
-       CLIENTES
+       CLIENTES Y VENTAS
+
+       Ambas consultas son independientes. Ejecutarlas en paralelo reduce
+       la espera inicial sin cambiar los documentos ni los cálculos.
     ================================ */
 
-    const clientesSnapshot = await getDocs(collection(window.db, "clientes"));
+    const [clientesSnapshot, ventasSnapshot] = await Promise.all([
+      getDocs(collection(window.db, "clientes")),
+      getDocs(collection(window.db, "ventas")),
+    ]);
 
     const clientesBase = clientesSnapshot.docs.map((documento) => {
       const datos = documento.data();
@@ -423,10 +441,8 @@ async function cargarClientes() {
     });
 
     /* ================================
-       VENTAS
+       PREPARAR VENTAS
     ================================ */
-
-    const ventasSnapshot = await getDocs(collection(window.db, "ventas"));
 
     ventasClientes = ventasSnapshot.docs.map((documento) => ({
       id: documento.id,

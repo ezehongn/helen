@@ -7,8 +7,11 @@
   });
   const $ = (id) => document.getElementById(id);
   const overlay = $("redistribuirDeudaModal");
+
   if (!overlay) {
-    console.error("No se encontró el HTML del modal Redistribuir deuda.");
+    console.error(
+      "No se encontró #redistribuirDeudaModal. Verificá que el HTML del modal esté insertado antes de cargar redistribuirdeudacliente.js.",
+    );
     return;
   }
   const tbody = $("rdProductos");

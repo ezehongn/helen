@@ -31,7 +31,19 @@
         })[c],
     );
   const startDate = (d) => {
+    if (!d) return null;
+
+    // Los campos date de HTML vienen como YYYY-MM-DD.
+    // Construirlos directamente en horario local evita el desfase UTC.
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(d));
+
+    if (match) {
+      const [, year, month, day] = match;
+      return new Date(Number(year), Number(month) - 1, Number(day));
+    }
+
     const x = new Date(d);
+
     return Number.isNaN(x.getTime())
       ? null
       : new Date(x.getFullYear(), x.getMonth(), x.getDate());
@@ -128,30 +140,46 @@
     const debt = new Map();
     const from = startDate($("rp-desde").value);
     const to = startDate($("rp-hasta").value);
+
     if (to) to.setHours(23, 59, 59, 999);
+
     for (const sale of sales) {
-      // Cada cuenta ve exclusivamente las ventas del usuario operativo seleccionado.
+      // Cada cuenta ve exclusivamente las ventas del usuario activo.
       if (
         String(sale.usuario || "")
           .trim()
           .toLowerCase() !== usuarioActivo.toLowerCase()
-      )
+      ) {
         continue;
+      }
+
       const date = getDate(sale.fecha || sale.creadoEn);
+
       if (from && date && date < from) continue;
       if (to && date && date > to) continue;
+
       const saleLines = Array.isArray(sale.productos) ? sale.productos : [];
-      // Solo líneas cuyo ID exista en el catálogo; excluye deudas antiguas y productos libres.
+
+      // Excluir productos que no estén vinculados al catálogo.
       const lines = saleLines
-        .map((line) => ({ line, product: catalog.get(getLineProductId(line)) }))
+        .map((line) => ({
+          line,
+          product: catalog.get(getLineProductId(line)),
+        }))
         .filter((x) => x.product);
+
       if (!lines.length) continue;
+
       const isDebt = saleIsDebt(sale);
+
+      // Ventas completamente pagadas: todo el costo está cubierto.
       if (!isDebt) {
         for (const { line, product } of lines) {
           const qty = getLineQty(line);
           const cost = lineCost(product, qty);
+
           if (!cost) continue;
+
           const id = getLineProductId(line);
           const current = paid.get(id) || {
             id,
@@ -162,19 +190,24 @@
             unidades: 0,
             costo: 0,
           };
+
           current.unidades += qty;
           current.costo += cost;
           paid.set(id, current);
         }
+
         continue;
       }
-      // Si ya existe una distribución manual, se respeta. Se toleran formatos de array u objeto.
+
+      // Recuperar distribución manual de deuda, si existe.
       const saved = sale.distribucionDeudaProductos;
       const allocationById = new Map();
-      if (Array.isArray(saved))
+
+      if (Array.isArray(saved)) {
         saved.forEach((item) => {
           const id = item.productoId || item.id || item.idProducto;
-          if (id)
+
+          if (id) {
             allocationById.set(
               id,
               Math.max(
@@ -187,40 +220,71 @@
                 ),
               ),
             );
+          }
         });
-      else if (saved && typeof saved === "object")
-        Object.entries(saved).forEach(([id, v]) =>
+      } else if (saved && typeof saved === "object") {
+        Object.entries(saved).forEach(([id, value]) => {
           allocationById.set(
             id,
             Math.max(
               0,
               num(
-                typeof v === "object"
-                  ? (v.saldoPendiente ??
-                      v.montoPendiente ??
-                      v.montoActual ??
-                      v.saldo)
-                  : v,
+                typeof value === "object"
+                  ? (value.saldoPendiente ??
+                      value.montoPendiente ??
+                      value.montoActual ??
+                      value.saldo)
+                  : value,
               ),
             ),
-          ),
-        );
+          );
+        });
+      }
+
+      // Si no hay distribución manual, repartir el saldo entre las líneas.
       const allocations = equalAllocation(
         lines.map((x) => x.line),
         getSaleBalance(sale),
       );
+
       lines.forEach(({ line, product }, i) => {
         const id = getLineProductId(line);
         const qty = getLineQty(line);
         const cost = lineCost(product, qty);
+
         if (!cost) return;
+
         const subtotal = Math.max(0, getLineSubtotal(line));
         const outstanding = allocationById.has(id)
           ? allocationById.get(id)
           : allocations[i];
+
+        // Importe de la venta ya cubierto por pagos.
         const covered = Math.max(0, subtotal - Math.min(subtotal, outstanding));
-        const key = id;
-        const current = debt.get(key) || {
+
+        // NUEVA LÓGICA:
+        // Si lo cubierto alcanza el costo de reposición,
+        // contabilizar el producto como pagado para reposición.
+        if (covered >= cost) {
+          const current = paid.get(id) || {
+            id,
+            nombre: product.nombre || line.nombre || "Producto",
+            categoria:
+              product.categoria || product.categorias?.[0] || "Sin categoría",
+            costoUnitario: lineCost(product, 1),
+            unidades: 0,
+            costo: 0,
+          };
+
+          current.unidades += qty;
+          current.costo += cost;
+          paid.set(id, current);
+
+          return;
+        }
+
+        // Si todavía no se cubrió el costo, mostrar lo que falta.
+        const current = debt.get(id) || {
           id,
           nombre: product.nombre || line.nombre || "Producto",
           categoria:
@@ -231,20 +295,24 @@
           cubierto: 0,
           falta: 0,
         };
+
         current.unidades += qty;
         current.costo += cost;
         current.cubierto += Math.min(cost, covered);
-        current.falta += Math.max(0, cost - Math.min(cost, covered));
-        debt.set(key, current);
+        current.falta += Math.max(0, cost - covered);
+
+        debt.set(id, current);
       });
     }
+
     rowsPagados = [...paid.values()].sort((a, b) =>
       a.nombre.localeCompare(b.nombre, "es"),
     );
-    // Debt rows include only products that have not yet reached their replacement cost.
+
     rowsDeuda = [...debt.values()]
       .filter((x) => x.falta > 0)
       .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
+
     render();
   }
   function rowPaid(x) {
