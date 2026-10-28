@@ -473,7 +473,7 @@ function obtenerDineroIngresadoVentasInicio(ventas) {
       if (Array.isArray(venta.mediosPago) && venta.mediosPago.length > 0) {
         cobrado = venta.mediosPago.reduce(
           (suma, medio) => suma + Number(medio.importe || 0),
-          0
+          0,
         );
       } else {
         cobrado = Number(venta.importe ?? venta.total ?? 0);
@@ -487,10 +487,7 @@ function obtenerDineroIngresadoVentasInicio(ventas) {
 
     const cobroOriginal = Math.max(0, cobrado - pagosPosteriores);
 
-    return total + Math.max(
-      0,
-      cobroOriginal - Number(venta.vuelto || 0)
-    );
+    return total + Math.max(0, cobroOriginal - Number(venta.vuelto || 0));
   }, 0);
 }
 
@@ -908,58 +905,233 @@ function renderizarCostosReposicionInicio() {
   if (!ventasInicioCargadas || !productosInicioCargados) return;
 
   const costosPorCategoria = new Map();
+
   const productosPorId = new Map(
     productosInicio.map((producto) => [String(producto.id), producto]),
   );
+
   const ventasPeriodo = obtenerVentasMesSeleccionado();
 
-  // Misma regla del modal: una venta con saldo pendiente no se considera
-  // producto pagado. Solo las ventas sin deuda aportan al costo incluido.
-  const obtenerSaldoPendiente = (venta) => {
+  function obtenerSaldoPendiente(venta) {
     const saldoDirecto = Number(
       venta.saldoAdeber ?? venta.saldoAdeudar ?? venta.deudaPendiente ?? 0,
     );
+
     if (saldoDirecto > 0) return saldoDirecto;
 
     const total = Number(
       venta.total ?? venta.totalVenta ?? venta.subtotalConDescuento ?? 0,
     );
+
     const entregado = Number(venta.totalEntregado ?? venta.montoPagado ?? 0);
+
     return Math.max(0, total - entregado);
-  };
+  }
+
+  function obtenerSubtotalArticulo(articulo) {
+    const cantidad = Math.max(0, Number(articulo.cantidad) || 1);
+    const subtotal = Number(articulo.subtotal) || 0;
+
+    if (subtotal > 0) return subtotal;
+
+    const precio = Number(articulo.precioUnitario ?? articulo.precio ?? 0);
+
+    return Math.max(0, precio * cantidad);
+  }
+
+  function distribuirSaldoEquitativamente(articulos, saldo) {
+    const importes = articulos.map((articulo) =>
+      Math.max(0, Math.round(obtenerSubtotalArticulo(articulo))),
+    );
+
+    const distribucion = importes.map(() => 0);
+    let restante = Math.max(0, Math.round(saldo));
+
+    let activos = importes
+      .map((importe, indice) => indice)
+      .filter((indice) => importes[indice] > 0);
+
+    while (restante > 0 && activos.length > 0) {
+      const cuota = Math.max(1, Math.floor(restante / activos.length));
+
+      let huboProgreso = false;
+
+      for (const indice of [...activos]) {
+        const asignado = Math.min(
+          importes[indice] - distribucion[indice],
+          cuota,
+          restante,
+        );
+
+        if (asignado > 0) {
+          distribucion[indice] += asignado;
+          restante -= asignado;
+          huboProgreso = true;
+        }
+
+        if (distribucion[indice] >= importes[indice]) {
+          activos = activos.filter((x) => x !== indice);
+        }
+
+        if (restante <= 0) break;
+      }
+
+      if (!huboProgreso) break;
+    }
+
+    return distribucion;
+  }
+
+  function obtenerDistribucionGuardada(venta) {
+    const guardada = venta.distribucionDeudaProductos;
+    const distribucion = new Map();
+
+    if (Array.isArray(guardada)) {
+      guardada.forEach((item, posicion) => {
+        const indice = Number.isInteger(Number(item.productoIndice))
+          ? Number(item.productoIndice)
+          : posicion;
+
+        const id = item.productoId ?? item.id ?? item.idProducto;
+
+        const monto = Math.max(
+          0,
+          Number(
+            item.saldoPendiente ??
+              item.montoPendiente ??
+              item.montoActual ??
+              item.saldo ??
+              0,
+          ) || 0,
+        );
+
+        // Prioridad: identificar la línea exacta de la venta.
+        distribucion.set(`indice:${indice}`, monto);
+
+        // Compatibilidad con registros antiguos.
+        if (id != null && id !== "") {
+          distribucion.set(`id:${String(id)}`, monto);
+        }
+      });
+    } else if (guardada && typeof guardada === "object") {
+      Object.entries(guardada).forEach(([id, valor]) => {
+        const monto =
+          typeof valor === "object" && valor !== null
+            ? (valor.saldoPendiente ??
+              valor.montoPendiente ??
+              valor.montoActual ??
+              valor.saldo ??
+              0)
+            : valor;
+
+        distribucion.set(`id:${String(id)}`, Math.max(0, Number(monto) || 0));
+      });
+    }
+
+    return distribucion;
+  }
+
+  function agregarCostoCategoria(categoria, importe) {
+    if (!Number.isFinite(importe) || importe <= 0) return;
+
+    costosPorCategoria.set(
+      categoria,
+      (costosPorCategoria.get(categoria) || 0) + importe,
+    );
+  }
 
   ventasPeriodo.forEach((venta) => {
-    const tieneDeuda =
-      obtenerSaldoPendiente(venta) > 0 || venta.estado === "con_deuda";
-
-    // El modal no suma al costo de reposición incluido las ventas con deuda.
-    if (tieneDeuda) return;
     if (!Array.isArray(venta.productos)) return;
 
-    venta.productos.forEach((articulo) => {
-      const productoId =
-        articulo.productoId ?? articulo.idProducto ?? articulo.id;
-      if (productoId == null) return;
+    const articulosValidos = venta.productos
+      .map((articulo, indiceOriginal) => {
+        const productoId =
+          articulo.productoId ?? articulo.idProducto ?? articulo.id;
 
-      const producto = productosPorId.get(String(productoId));
-      if (!producto) return;
+        if (productoId == null) return null;
 
-      const cantidad = Number(articulo.cantidad ?? 1);
-      const precioCompra = Number(
-        producto.precioCompra ?? producto.costoCompra ?? producto.precioCosto ?? 0,
+        const producto = productosPorId.get(String(productoId));
+
+        if (!producto) return null;
+
+        const cantidad = Math.max(0, Number(articulo.cantidad) || 1);
+
+        const precioCompra = Number(
+          producto.precioCompra ??
+            producto.costoCompra ??
+            producto.precioCosto ??
+            0,
+        );
+
+        if (
+          cantidad <= 0 ||
+          !Number.isFinite(precioCompra) ||
+          precioCompra <= 0
+        ) {
+          return null;
+        }
+
+        return {
+          articulo,
+          producto,
+          productoId: String(productoId),
+          indiceOriginal,
+          cantidad,
+          costo: cantidad * precioCompra,
+          subtotal: obtenerSubtotalArticulo(articulo),
+          categoria:
+            producto.categoria || producto.categorias?.[0] || "Sin categoría",
+        };
+      })
+      .filter(Boolean);
+
+    if (!articulosValidos.length) return;
+
+    const saldoPendiente = obtenerSaldoPendiente(venta);
+
+    const tieneDeuda = saldoPendiente > 0 || venta.estado === "con_deuda";
+
+    // Las ventas sin deuda aportan el costo de reposición completo.
+    if (!tieneDeuda) {
+      articulosValidos.forEach((item) => {
+        agregarCostoCategoria(item.categoria, item.costo);
+      });
+
+      return;
+    }
+
+    // En ventas con deuda se respeta la distribución manual guardada.
+    const distribucionGuardada = obtenerDistribucionGuardada(venta);
+
+    // Si no hay distribución manual, se reparte el saldo entre las líneas.
+    const distribucionAutomatica = distribuirSaldoEquitativamente(
+      articulosValidos.map((item) => item.articulo),
+      saldoPendiente,
+    );
+
+    articulosValidos.forEach((item, indice) => {
+      let saldoProducto;
+
+      if (distribucionGuardada.has(`indice:${item.indiceOriginal}`)) {
+        saldoProducto = distribucionGuardada.get(
+          `indice:${item.indiceOriginal}`,
+        );
+      } else if (distribucionGuardada.has(`id:${item.productoId}`)) {
+        saldoProducto = distribucionGuardada.get(`id:${item.productoId}`);
+      } else {
+        saldoProducto = distribucionAutomatica[indice];
+      }
+
+      const importeCubierto = Math.max(
+        0,
+        item.subtotal - Math.min(item.subtotal, saldoProducto),
       );
-      if (
-        !Number.isFinite(cantidad) || cantidad <= 0 ||
-        !Number.isFinite(precioCompra) || precioCompra <= 0
-      ) return;
 
-      const categoria =
-        producto.categoria || producto.categorias?.[0] || "Sin categoría";
-      const costoReposicion = cantidad * precioCompra;
-      costosPorCategoria.set(
-        categoria,
-        (costosPorCategoria.get(categoria) || 0) + costoReposicion,
-      );
+      // Seguir exactamente el criterio de reposicionproducto.js:
+      // sumar el costo completo únicamente si ya está cubierto.
+      if (importeCubierto >= item.costo) {
+        agregarCostoCategoria(item.categoria, item.costo);
+      }
     });
   });
 
