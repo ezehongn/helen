@@ -1838,3 +1838,441 @@
   .bloque-deuda-cliente { align-items: flex-start; flex-direction: column; }
   .boton-redistribuir-deuda { width: 100%; }
 }
+
+
+/* ========================================
+   AJUSTES DE DISTRIBUCIÓN - PANTALLA CLIENTES
+   Optimizado para notebooks
+======================================== */
+
+/* ----------------------------------------
+   DISTRIBUCIÓN DE LOS DOS PANELES
+---------------------------------------- */
+
+.contenedor-clientes,
+.contenido-clientes {
+  display: grid;
+  grid-template-columns: minmax(340px, 0.78fr) minmax(0, 1.22fr);
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  align-items: stretch;
+}
+
+.panel-listado-clientes,
+.panel-detalle-cliente {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* El listado conserva un ancho más reducido */
+.panel-listado-clientes {
+  overflow: hidden;
+}
+
+/* El detalle aprovecha el espacio disponible */
+.panel-detalle-cliente {
+  overflow: hidden;
+}
+
+.detalle-cliente-contenido {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+
+/* ----------------------------------------
+   TABLA DE PRODUCTOS CON DEUDA
+   Eliminar desplazamientos horizontales dobles
+---------------------------------------- */
+
+.tabla-productos-deuda {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  border: 1px solid #dce4ed;
+  border-radius: 6px;
+}
+
+/* Lista de ventas */
+#lista-productos-deuda {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  width: 100%;
+  min-width: 0;
+
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Cada venta se adapta al ancho del panel */
+#lista-productos-deuda .bloque-venta-deuda {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Encabezado de cada venta */
+#lista-productos-deuda .encabezado-venta-deuda {
+  width: 100%;
+  min-width: 0;
+  padding: 9px 10px;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+/* Información de la venta */
+#lista-productos-deuda .info-venta-deuda {
+  min-width: 0;
+  gap: 8px;
+}
+
+#lista-productos-deuda .info-venta-deuda span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Resumen de la venta */
+#lista-productos-deuda .resumen-venta-deuda {
+  min-width: 0;
+  gap: 10px;
+}
+
+/* ----------------------------------------
+   COLUMNAS DE LA TABLA
+---------------------------------------- */
+
+#lista-productos-deuda .cabecera-productos-deuda,
+#lista-productos-deuda .fila-producto-deuda {
+  display: grid;
+
+  grid-template-columns:
+    26px
+    minmax(105px, 1.5fr)
+    48px
+    minmax(65px, 0.85fr)
+    minmax(70px, 0.9fr)
+    minmax(78px, 1fr)
+    minmax(82px, 1fr);
+
+  align-items: center;
+  gap: 5px;
+
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+
+  padding-left: 8px;
+  padding-right: 8px;
+
+  box-sizing: border-box;
+}
+
+/* Encabezado */
+#lista-productos-deuda .cabecera-productos-deuda {
+  min-height: 36px;
+  font-size: 9px;
+}
+
+/* Filas */
+#lista-productos-deuda .fila-producto-deuda {
+  min-height: 46px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size: 10px;
+}
+
+/* Evitar que el contenido fuerce el ancho de las columnas */
+#lista-productos-deuda .cabecera-productos-deuda > div,
+#lista-productos-deuda .fila-producto-deuda > div {
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Nombre del producto */
+#lista-productos-deuda .producto-deuda-nombre {
+  min-width: 0;
+  overflow: hidden;
+}
+
+#lista-productos-deuda .producto-deuda-nombre strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+}
+
+/* Importes */
+#lista-productos-deuda .saldo-producto-deuda,
+#lista-productos-deuda .saldo-despues-producto {
+  white-space: nowrap;
+  font-size: 10px;
+}
+
+/* Campo para ingresar el importe */
+#lista-productos-deuda .input-monto-producto {
+  width: 100%;
+  min-width: 0;
+  height: 30px;
+  padding: 0 5px;
+  box-sizing: border-box;
+  font-size: 10px;
+}
+
+
+/* ----------------------------------------
+   NOTEBOOKS Y PANTALLAS MEDIANAS
+---------------------------------------- */
+
+@media (min-width: 901px) and (max-width: 1250px) {
+
+  .contenedor-clientes,
+  .contenido-clientes {
+    grid-template-columns: minmax(310px, 0.72fr) minmax(0, 1.28fr);
+    gap: 9px;
+  }
+
+  .detalle-cliente-contenido {
+    padding: 11px;
+  }
+
+  .cabecera-detalle-cliente {
+    gap: 8px;
+  }
+
+  .avatar-detalle-cliente {
+    width: 48px;
+    height: 48px;
+    font-size: 17px;
+  }
+
+  .datos-detalle-cliente h2 {
+    font-size: 18px;
+  }
+
+  .acciones-detalle-cliente {
+    gap: 4px;
+  }
+
+  .boton-secundario-cliente {
+    padding: 0 7px;
+    font-size: 9px;
+  }
+
+  #lista-productos-deuda .cabecera-productos-deuda,
+  #lista-productos-deuda .fila-producto-deuda {
+    grid-template-columns:
+      22px
+      minmax(85px, 1.4fr)
+      40px
+      minmax(55px, 0.85fr)
+      minmax(60px, 0.9fr)
+      minmax(68px, 1fr)
+      minmax(72px, 1fr);
+
+    gap: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  #lista-productos-deuda .cabecera-productos-deuda {
+    font-size: 8px;
+  }
+
+  #lista-productos-deuda .fila-producto-deuda {
+    font-size: 9px;
+  }
+
+  #lista-productos-deuda .input-monto-producto {
+    font-size: 9px;
+  }
+}
+
+
+/* ----------------------------------------
+   TABLETS Y PANTALLAS ANGOSTAS
+---------------------------------------- */
+
+@media (max-width: 900px) {
+
+  .contenedor-clientes,
+  .contenido-clientes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panel-listado-clientes,
+  .panel-detalle-cliente {
+    width: 100%;
+  }
+
+  #lista-productos-deuda {
+    overflow-x: auto;
+  }
+
+  #lista-productos-deuda .bloque-venta-deuda {
+    min-width: 650px;
+  }
+
+  #lista-productos-deuda .cabecera-productos-deuda,
+  #lista-productos-deuda .fila-producto-deuda {
+    min-width: 650px;
+  }
+}
+
+/* ========================================
+   PANEL INDEPENDIENTE DE INTERESES
+======================================== */
+
+.seccion-registrar-interes {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #e5dafa;
+  border-radius: 7px;
+  background: #faf8ff;
+}
+
+.seccion-registrar-interes .titulo-seccion-cliente {
+  margin-bottom: 12px;
+}
+
+.seccion-registrar-interes .titulo-seccion-cliente h3 {
+  color: #6336a5;
+}
+
+.campos-interes {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 9px;
+  margin-top: 0;
+}
+
+.campos-interes select,
+.campos-interes > div > input,
+.input-interes,
+.resultado-interes {
+  width: 100%;
+  height: 36px;
+  box-sizing: border-box;
+  border: 1px solid #d9d0eb;
+  border-radius: 5px;
+  background: #ffffff;
+}
+
+.campos-interes select,
+.campos-interes > div > input {
+  padding: 0 9px;
+  color: #334155;
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.campos-interes label {
+  display: block;
+  margin-bottom: 5px;
+  color: #65577e;
+  font-size: 10px;
+}
+
+.input-interes {
+  display: flex;
+  align-items: center;
+}
+
+.input-interes input {
+  width: 100%;
+  height: 100%;
+  padding: 0 8px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #49346d;
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.input-interes span {
+  padding-right: 9px;
+  color: #65577e;
+  font-size: 11px;
+}
+
+.resultado-interes {
+  display: flex;
+  align-items: center;
+  padding: 0 9px;
+  color: #6336a5;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.resumen-interes-cliente {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.resumen-interes-cliente > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 9px 11px;
+  border-radius: 5px;
+  background: #f0eafd;
+}
+
+.resumen-interes-cliente span {
+  color: #74648d;
+  font-size: 10px;
+}
+
+.resumen-interes-cliente strong {
+  color: #493078;
+  font-size: 16px;
+}
+
+.boton-registrar-interes {
+  width: 100%;
+  height: 39px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5px;
+  background: #7042b5;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.boton-registrar-interes:hover:not(:disabled) {
+  background: #5d349b;
+}
+
+.boton-registrar-interes:disabled {
+  background: #b6a9ca;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1100px) {
+  .campos-interes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  .campos-interes {
+    grid-template-columns: 1fr;
+  }
+
+  .resumen-interes-cliente {
+    grid-template-columns: 1fr;
+  }
+}

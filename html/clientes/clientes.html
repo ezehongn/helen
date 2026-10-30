@@ -428,37 +428,6 @@
 
                     <div class="tabla-productos-deuda">
 
-                        <div class="cabecera-productos-deuda">
-
-                            <span></span>
-
-                            <span>
-                                Producto
-                            </span>
-
-                            <span>
-                                Fecha
-                            </span>
-
-                            <span>
-                                Cantidad
-                            </span>
-
-                            <span>
-                                Precio unit.
-                            </span>
-
-                            <span>
-                                Subtotal
-                            </span>
-
-                            <span>
-                                Saldo pendiente
-                            </span>
-
-                        </div>
-
-
                         <div
                             id="lista-productos-deuda"
                             class="lista-productos-deuda"
@@ -572,165 +541,31 @@
                     </div>
 
 
-                    <!-- INTERÉS -->
-
-                    <div class="interes-pago-cliente">
-
-                        <div class="encabezado-interes">
-
-                            <div>
-
-                                <strong>
-                                    Recargo de intereses
-                                </strong>
-
-                                <span>
-                                    (opcional)
-                                </span>
-
-                            </div>
-
-                            <button
-                                type="button"
-                                id="activar-interes-cliente"
-                                class="boton-interes"
-                            >
-                                + Agregar interés
-                            </button>
-
-                        </div>
-
-
-                        <div
-                            class="campos-interes"
-                            id="campos-interes"
-                            hidden
-                        >
-
-                            <div>
-
-                                <label>
-                                    Tipo de recargo
-                                </label>
-
-                                <select
-                                    id="tipo-interes-cliente"
-                                >
-
-                                    <option value="porcentaje">
-                                        Porcentaje
-                                    </option>
-
-                                    <option value="monto">
-                                        Monto fijo
-                                    </option>
-
-                                </select>
-
-                            </div>
-
-
-                            <div>
-
-                                <label id="label-valor-interes">
-                                    Porcentaje
-                                </label>
-
-                                <div class="input-interes">
-
-                                    <input
-                                        type="text"
-                                        id="valor-interes-cliente"
-                                        inputmode="decimal"
-                                        placeholder="0"
-                                    >
-
-                                    <span id="simbolo-interes">
-                                        %
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-
-                            <div>
-
-                                <label>
-                                    Monto del recargo
-                                </label>
-
-                                <div
-                                    class="resultado-interes"
-                                    id="monto-interes-cliente"
-                                >
-                                    $ 0
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- RESUMEN -->
-
+                    
+                    <!-- RESUMEN Y REGISTRO DEL PAGO -->
                     <div class="resumen-pago-cliente">
 
                         <div class="resumen-pago-item seleccionado">
-
-                            <span>
-                                Total seleccionado
-                            </span>
-
-                            <strong id="total-seleccionado-cliente">
-                                $ 0
-                            </strong>
-
+                            <span>Total seleccionado</span>
+                            <strong id="total-seleccionado-cliente">$ 0</strong>
                         </div>
-
 
                         <div class="resumen-pago-item entregado">
-
-                            <span>
-                                Total entregado
-                            </span>
-
-                            <strong id="total-entregado-cliente">
-                                $ 0
-                            </strong>
-
+                            <span>Total entregado</span>
+                            <strong id="total-entregado-cliente">$ 0</strong>
                         </div>
-
 
                         <div class="resumen-pago-item vuelto">
-
-                            <span>
-                                Vuelto
-                            </span>
-
-                            <strong id="vuelto-cliente">
-                                $ 0
-                            </strong>
-
+                            <span>Vuelto</span>
+                            <strong id="vuelto-cliente">$ 0</strong>
                         </div>
 
-
                         <div class="resumen-pago-item deuda">
-
-                            <span>
-                                Saldo a deber
-                            </span>
-
-                            <strong id="saldo-deber-cliente">
-                                $ 0
-                            </strong>
-
+                            <span>Saldo a deber</span>
+                            <strong id="saldo-deber-cliente">$ 0</strong>
                         </div>
 
                     </div>
-
 
                     <button
                         type="button"
@@ -738,12 +573,96 @@
                         id="boton-registrar-pago"
                         disabled
                     >
-
                         ✓ Registrar pago
-
                     </button>
 
                 </section>
+
+                <!-- ====================================
+                     REGISTRAR INTERÉS
+                ==================================== -->
+
+                <section class="seccion-registrar-interes">
+
+                    <div class="titulo-seccion-cliente">
+                        <div>
+                            <h3>Registrar interés</h3>
+                            <p>Agregá un recargo a la deuda pendiente del cliente</p>
+                        </div>
+                    </div>
+
+                    <div class="campos-interes">
+
+                        <div>
+                            <label>Tipo de recargo</label>
+
+                            <select id="tipo-interes-cliente">
+                                <option value="porcentaje">Porcentaje</option>
+                                <option value="monto">Monto fijo</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label id="label-valor-interes">Porcentaje</label>
+
+                            <div class="input-interes">
+                                <input
+                                    type="text"
+                                    id="valor-interes-cliente"
+                                    inputmode="decimal"
+                                    placeholder="0"
+                                    autocomplete="off"
+                                >
+
+                                <span id="simbolo-interes">%</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label>Monto del recargo</label>
+
+                            <div
+                                class="resultado-interes"
+                                id="monto-interes-cliente"
+                            >
+                                $ 0
+                            </div>
+                        </div>
+
+                        <div>
+                            <label>Fecha del interés</label>
+
+                            <input
+                                type="date"
+                                id="fecha-interes-cliente"
+                            >
+                        </div>
+
+                    </div>
+
+                    <div class="resumen-interes-cliente">
+                        <div>
+                            <span>Deuda actual</span>
+                            <strong id="deuda-actual-interes-cliente">$ 0</strong>
+                        </div>
+
+                        <div>
+                            <span>Nuevo saldo</span>
+                            <strong id="nueva-deuda-interes-cliente">$ 0</strong>
+                        </div>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="boton-registrar-interes"
+                        id="boton-registrar-interes"
+                        disabled
+                    >
+                        + Registrar interés
+                    </button>
+
+                </section>
+
 
             </div>
 

@@ -169,6 +169,17 @@ async function inicializarClientes() {
 
   establecerFechaPago();
 
+  const fechaInteres = document.getElementById("fecha-interes-cliente");
+
+  if (fechaInteres) {
+    const hoy = new Date();
+    const anio = hoy.getFullYear();
+    const mes = String(hoy.getMonth() + 1).padStart(2, "0");
+    const dia = String(hoy.getDate()).padStart(2, "0");
+
+    fechaInteres.value = `${anio}-${mes}-${dia}`;
+  }
+
   /* ================================
        ESTADO INICIAL DEL DETALLE
   ================================ */
@@ -246,54 +257,20 @@ function configurarEventosClientes() {
     });
 
   /* ================================
-       TIPO INTERÉS
+       INTERÉS
   ================================ */
 
   document
     .getElementById("tipo-interes-cliente")
     ?.addEventListener("change", actualizarInteresCliente);
 
-  /* ================================
-       VALOR INTERÉS
-  ================================ */
-
   document
     .getElementById("valor-interes-cliente")
     ?.addEventListener("input", actualizarInteresCliente);
 
-  /* ================================
-       ACTIVAR INTERÉS
-  ================================ */
-
-  const botonInteres = document.getElementById("activar-interes-cliente");
-
-  botonInteres?.addEventListener("click", () => {
-    const campos = document.getElementById("campos-interes");
-
-    if (!campos) {
-      console.error("No se encontró #campos-interes");
-      return;
-    }
-
-    const estaOculto = campos.hasAttribute("hidden");
-
-    if (estaOculto) {
-      campos.removeAttribute("hidden");
-      botonInteres.textContent = "− Quitar interés";
-      actualizarInteresCliente();
-    } else {
-      campos.setAttribute("hidden", "");
-      botonInteres.textContent = "+ Agregar interés";
-
-      const valor = document.getElementById("valor-interes-cliente");
-
-      if (valor) {
-        valor.value = "";
-      }
-
-      actualizarInteresCliente();
-    }
-  });
+  document
+    .getElementById("boton-registrar-interes")
+    ?.addEventListener("click", registrarInteresCliente);
 
   /* ================================
        REGISTRAR PAGO
@@ -1264,42 +1241,46 @@ function renderizarProductosPendientes() {
    RESUMEN PAGO
 ======================================== */
 
-function actualizarResumenPagoCliente(actualizarMontoDesdeCheckbox = false) {
+function actualizarResumenPagoCliente() {
   if (!clienteSeleccionado) return;
 
   const inputMonto = document.getElementById("monto-pago-cliente");
   const totalVentasSeleccionadas = obtenerTotalProductosSeleccionados();
   const totalInicialSeleccionada = obtenerDeudaInicialSeleccionada();
-  const baseOperacion = totalVentasSeleccionadas + totalInicialSeleccionada;
-  const interes = obtenerMontoInteresCliente(baseOperacion);
-  const totalOperacion = baseOperacion + interes;
 
-  if (inputMonto) inputMonto.value = String(Math.round(baseOperacion));
+  const totalAplicar = totalVentasSeleccionadas + totalInicialSeleccionada;
 
-  const totalEntregado = baseOperacion;
-  const vuelto = 0;
-  const saldo = Math.max(
-    0,
-    obtenerDeudaCliente(clienteSeleccionado) - baseOperacion + interes,
-  );
+  if (inputMonto) {
+    inputMonto.value = String(Math.round(totalAplicar));
+  }
+
+  const deudaActual = obtenerDeudaCliente(clienteSeleccionado);
+  const saldo = Math.max(0, deudaActual - totalAplicar);
 
   const totalElemento = document.getElementById("total-seleccionado-cliente");
-  if (totalElemento)
-    totalElemento.textContent = formatearPrecioCliente(totalOperacion);
+  if (totalElemento) {
+    totalElemento.textContent = formatearPrecioCliente(totalAplicar);
+  }
 
   const entregadoElemento = document.getElementById("total-entregado-cliente");
-  if (entregadoElemento)
-    entregadoElemento.textContent = formatearPrecioCliente(totalEntregado);
+  if (entregadoElemento) {
+    entregadoElemento.textContent = formatearPrecioCliente(totalAplicar);
+  }
 
   const vueltoElemento = document.getElementById("vuelto-cliente");
-  if (vueltoElemento)
-    vueltoElemento.textContent = formatearPrecioCliente(vuelto);
+  if (vueltoElemento) {
+    vueltoElemento.textContent = formatearPrecioCliente(0);
+  }
 
   const saldoElemento = document.getElementById("saldo-deber-cliente");
-  if (saldoElemento) saldoElemento.textContent = formatearPrecioCliente(saldo);
+  if (saldoElemento) {
+    saldoElemento.textContent = formatearPrecioCliente(saldo);
+  }
 
   const boton = document.getElementById("boton-registrar-pago");
-  if (boton) boton.disabled = baseOperacion <= 0 && interes <= 0;
+  if (boton) {
+    boton.disabled = totalAplicar <= 0;
+  }
 }
 
 /* ========================================
@@ -1397,54 +1378,42 @@ function actualizarInteresCliente() {
     document.getElementById("tipo-interes-cliente")?.value || "porcentaje";
 
   const label = document.getElementById("label-valor-interes");
-
   const simbolo = document.getElementById("simbolo-interes");
 
-  /*
-   * Actualizar texto según tipo.
-   */
   if (tipo === "porcentaje") {
-    if (label) {
-      label.textContent = "Porcentaje";
-    }
-
-    if (simbolo) {
-      simbolo.textContent = "%";
-    }
+    if (label) label.textContent = "Porcentaje";
+    if (simbolo) simbolo.textContent = "%";
   } else {
-    if (label) {
-      label.textContent = "Monto";
-    }
-
-    if (simbolo) {
-      simbolo.textContent = "$";
-    }
+    if (label) label.textContent = "Monto";
+    if (simbolo) simbolo.textContent = "$";
   }
 
-  /*
-   * Obtener la base actual.
-   */
-  const base =
-    obtenerTotalProductosSeleccionados() + obtenerDeudaInicialSeleccionada();
+  const deudaActual = obtenerDeudaCliente(clienteSeleccionado);
 
-  /*
-   * Calcular interés.
-   */
-  const monto = obtenerMontoInteresCliente(base);
+  const interes = obtenerMontoInteresCliente(deudaActual);
+  const nuevaDeuda = deudaActual + interes;
 
-  /*
-   * Mostrar importe del recargo.
-   */
   const resultado = document.getElementById("monto-interes-cliente");
-
   if (resultado) {
-    resultado.textContent = formatearPrecioCliente(monto);
+    resultado.textContent = formatearPrecioCliente(interes);
   }
 
-  /*
-   * Actualizar todo el resumen.
-   */
-  actualizarResumenPagoCliente();
+  const deudaElemento = document.getElementById("deuda-actual-interes-cliente");
+  if (deudaElemento) {
+    deudaElemento.textContent = formatearPrecioCliente(deudaActual);
+  }
+
+  const nuevaDeudaElemento = document.getElementById(
+    "nueva-deuda-interes-cliente",
+  );
+  if (nuevaDeudaElemento) {
+    nuevaDeudaElemento.textContent = formatearPrecioCliente(nuevaDeuda);
+  }
+
+  const boton = document.getElementById("boton-registrar-interes");
+  if (boton) {
+    boton.disabled = !clienteSeleccionado || interes <= 0;
+  }
 }
 
 /* ========================================
@@ -1452,57 +1421,25 @@ function actualizarInteresCliente() {
 ======================================== */
 
 function obtenerMontoInteresCliente(basePersonalizada = null) {
-  const campos = document.getElementById("campos-interes");
-
-  /*
-   * Si el bloque de interés está oculto,
-   * no hay interés.
-   */
-  if (!campos || campos.hasAttribute("hidden")) {
-    return 0;
-  }
-
   const valor = convertirNumeroCliente(
     document.getElementById("valor-interes-cliente")?.value,
   );
 
-  if (valor <= 0) {
-    return 0;
-  }
+  if (valor <= 0) return 0;
 
   const tipo =
     document.getElementById("tipo-interes-cliente")?.value || "porcentaje";
 
-  /*
-   * Interés como monto fijo.
-   */
   if (tipo === "monto") {
-    return valor;
+    return Math.round(valor);
   }
 
-  /*
-   * Base sobre la que se calcula
-   * el porcentaje.
-   */
-  let base = basePersonalizada;
+  const base =
+    basePersonalizada === null || basePersonalizada === undefined
+      ? obtenerDeudaCliente(clienteSeleccionado)
+      : Number(basePersonalizada) || 0;
 
-  /*
-   * Si no recibimos una base,
-   * obtenerla automáticamente.
-   */
-  if (base === null || base === undefined) {
-    base =
-      obtenerTotalProductosSeleccionados() + obtenerDeudaInicialSeleccionada();
-  }
-
-  /*
-   * Calcular porcentaje.
-   *
-   * Ejemplo:
-   *
-   * 80.000 × 5 / 100 = 4.000
-   */
-  return (Number(base) * valor) / 100;
+  return Math.round((base * valor) / 100);
 }
 
 /* ========================================
@@ -1584,7 +1521,6 @@ async function registrarPagoCliente() {
     sessionStorage.getItem("usuarioActivo") ||
     "desconocido";
 
-  const interes = obtenerMontoInteresCliente(totalAplicar);
   const deudaCliente = obtenerDeudaCliente(clienteSeleccionado);
   if (totalAplicar > deudaCliente) {
     alert("El monto seleccionado supera la deuda total actual del cliente.");
@@ -1716,21 +1652,6 @@ async function registrarPagoCliente() {
       return;
     }
 
-    // Si el recargo corresponde a ventas, se agrega al saldo de la primera
-    // venta afectada y a su distribución para que no desaparezca al recargar.
-    if (interes > 0 && totalAplicadoVentas > 0) {
-      const primera = ventasAfectadas.values().next().value;
-      if (primera) {
-        if (primera.montos.length > 0) {
-          primera.montos[0] =
-            Math.max(0, Number(primera.montos[0]) || 0) + interes;
-        } else {
-          primera.restanteSinAsignar += interes;
-        }
-        primera.interesAgregado = interes;
-      }
-    }
-
     for (const [ventaId, estado] of ventasAfectadas) {
       const venta = estado.venta;
       const saldoAnterior = Math.max(0, Number(venta.saldoAdeber) || 0);
@@ -1779,7 +1700,7 @@ async function registrarPagoCliente() {
     }
 
     const totalAplicadoDeuda = totalAplicadoVentas + totalAplicadoInicial;
-    const nuevaDeuda = Math.max(0, deudaCliente - totalAplicadoDeuda + interes);
+    const nuevaDeuda = Math.max(0, deudaCliente - totalAplicadoDeuda);
     batch.update(doc(window.db, "clientes", clienteSeleccionado.id), {
       deudaTotal: nuevaDeuda,
       actualizadoEn: serverTimestamp(),
@@ -1800,47 +1721,8 @@ async function registrarPagoCliente() {
       aplicaciones,
       creadoEn: serverTimestamp(),
     });
-
-    if (interes > 0) {
-      const tipoInteres =
-        document.getElementById("tipo-interes-cliente")?.value || "porcentaje";
-      const valorInteres = convertirNumeroCliente(
-        document.getElementById("valor-interes-cliente")?.value,
-      );
-      const interesRef = doc(
-        collection(
-          window.db,
-          "clientes",
-          clienteSeleccionado.id,
-          "movimientos",
-        ),
-      );
-      batch.set(interesRef, {
-        tipo: "interes",
-        monto: interes,
-        tipoInteres,
-        valor: valorInteres,
-        origen:
-          totalAplicadoInicial > 0 && totalAplicadoVentas === 0
-            ? "deuda_inicial"
-            : "venta",
-        fecha: Timestamp.fromDate(fechaPago),
-        usuario,
-        descripcion: "Recargo de interés",
-        creadoEn: serverTimestamp(),
-      });
-    }
-
     await batch.commit();
     alert("Pago registrado correctamente.");
-
-    const valorInteres = document.getElementById("valor-interes-cliente");
-    const camposInteres = document.getElementById("campos-interes");
-    const botonInteres = document.getElementById("activar-interes-cliente");
-    if (valorInteres) valorInteres.value = "";
-    if (camposInteres) camposInteres.setAttribute("hidden", "");
-    if (botonInteres) botonInteres.textContent = "+ Agregar interés";
-
     await cargarClientes();
     const clienteActual = clientes.find(
       (cliente) => cliente.id === clienteSeleccionado.id,
@@ -1864,6 +1746,120 @@ async function registrarPagoCliente() {
     if (boton) {
       boton.disabled = false;
       boton.textContent = "✓ Registrar pago";
+    }
+  }
+}
+
+async function registrarInteresCliente() {
+  if (!clienteSeleccionado) return;
+
+  const deudaActual = obtenerDeudaCliente(clienteSeleccionado);
+  const interes = obtenerMontoInteresCliente(deudaActual);
+
+  if (interes <= 0) {
+    alert("Ingresá un interés válido mayor a cero.");
+    return;
+  }
+
+  const fechaInput = document.getElementById("fecha-interes-cliente");
+  const fechaValor = fechaInput?.value;
+
+  if (!fechaValor) {
+    alert("Seleccioná la fecha del interés.");
+    return;
+  }
+
+  const fechaInteres = new Date(`${fechaValor}T12:00:00`);
+
+  if (Number.isNaN(fechaInteres.getTime())) {
+    alert("La fecha ingresada no es válida.");
+    return;
+  }
+
+  const tipoInteres =
+    document.getElementById("tipo-interes-cliente")?.value || "porcentaje";
+
+  const valorInteres = convertirNumeroCliente(
+    document.getElementById("valor-interes-cliente")?.value,
+  );
+
+  const usuario =
+    sessionStorage.getItem("usuarioOperativo") ||
+    sessionStorage.getItem("usuarioActivo") ||
+    "desconocido";
+
+  const boton = document.getElementById("boton-registrar-interes");
+
+  if (!boton || boton.disabled) return;
+
+  boton.disabled = true;
+  boton.textContent = "Registrando...";
+
+  try {
+    const { doc, writeBatch, collection, serverTimestamp, Timestamp } =
+      await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
+
+    const batch = writeBatch(window.db);
+
+    const nuevaDeuda = deudaActual + interes;
+
+    batch.update(doc(window.db, "clientes", clienteSeleccionado.id), {
+      deudaTotal: nuevaDeuda,
+      actualizadoEn: serverTimestamp(),
+      ultimoMovimiento: serverTimestamp(),
+    });
+
+    const movimientoRef = doc(
+      collection(window.db, "clientes", clienteSeleccionado.id, "movimientos"),
+    );
+
+    batch.set(movimientoRef, {
+      tipo: "interes",
+      monto: interes,
+      tipoInteres,
+      valor: valorInteres,
+      origen: "deuda_inicial",
+      fecha: Timestamp.fromDate(fechaInteres),
+      usuario,
+      descripcion: "Recargo de interés",
+      creadoEn: serverTimestamp(),
+    });
+
+    await batch.commit();
+
+    alert("Interés registrado correctamente.");
+
+    document.getElementById("valor-interes-cliente").value = "";
+
+    await cargarClientes();
+
+    const clienteActual = clientes.find(
+      (cliente) => cliente.id === clienteSeleccionado.id,
+    );
+
+    if (clienteActual) {
+      clienteSeleccionado = clienteActual;
+      cargarDatosClienteDetalle(clienteActual);
+    }
+
+    renderizarClientes();
+    actualizarEstadisticasClientes();
+
+    await cargarProductosPendientesCliente(clienteSeleccionado);
+
+    renderizarProductosPendientes();
+    actualizarResumenPagoCliente();
+    actualizarInteresCliente();
+  } catch (error) {
+    console.error("Error registrando interés:", error);
+
+    alert(
+      "No se pudo registrar el interés. Revisá la consola para ver el detalle.",
+    );
+  } finally {
+    if (boton) {
+      boton.disabled = false;
+      boton.textContent = "+ Registrar interés";
     }
   }
 }
